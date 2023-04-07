@@ -39,6 +39,10 @@ public abstract class Pessoa {
     @ToString.Exclude
     private Set<Endereco> enderecos = new LinkedHashSet<>();
 
+    @OneToMany(targetEntity = ContaReceber.class, mappedBy = "pessoa", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @ToString.Exclude
+    private Set<ContaReceber> contasReceber = new LinkedHashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
