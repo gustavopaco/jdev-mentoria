@@ -1,5 +1,6 @@
 package com.pacoprojects.model;
 
+import com.pacoprojects.enums.TipoEndereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -47,6 +48,9 @@ public class Endereco {
     @NotBlank(message = "Estado obrigatório.")
     @Column(name = "estado", nullable = false)
     private String estado;
+
+    @Enumerated(value = EnumType.STRING)
+    private TipoEndereco tipoEndereco;
 
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(name = "pessoa_id", nullable = false,
