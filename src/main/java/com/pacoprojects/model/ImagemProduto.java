@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,11 +24,13 @@ public class ImagemProduto {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
+    @NotBlank(message = "Imagem original obrigatório.")
+    @Column(name = "imagem_original", columnDefinition = "TEXT", nullable = false)
     private String imagemOriginal;
 
-    @Column(columnDefinition = "TEXT")
-    private String imegemMiniatura;
+    @NotBlank(message = "Imagem miniatura obrigatório")
+    @Column(name = "imagem_miniatura", columnDefinition = "TEXT", nullable = false)
+    private String imagemMiniatura;
 
     @ManyToOne(targetEntity = Produto.class)
     @JoinColumn(

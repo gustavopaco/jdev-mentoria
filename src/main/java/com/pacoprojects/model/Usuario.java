@@ -2,7 +2,10 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +38,7 @@ public class Usuario implements UserDetails {
     private String password;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "date_last_password_change", nullable = false)
     private LocalDateTime dateLastPasswordChange;
 
     @Column(name = "jwt", columnDefinition = "TEXT")
@@ -51,6 +55,14 @@ public class Usuario implements UserDetails {
 
     @Column(name = "enabled")
     private boolean enabled = true;
+
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "pessoa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa pessoa;
 
     @Override
     public boolean isAccountNonExpired() {

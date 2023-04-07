@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,8 @@ public class ItemVendaCompra {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull(message = "Quantidade de itens obrigatório.")
+    @Column(name = "quantidade", nullable = false)
     private Double quantidade;
 
     @ManyToOne(targetEntity = Produto.class)

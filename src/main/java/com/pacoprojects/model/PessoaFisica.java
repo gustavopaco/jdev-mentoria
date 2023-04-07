@@ -24,6 +24,7 @@ public class PessoaFisica extends Pessoa{
     private String cpf;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
 
 }

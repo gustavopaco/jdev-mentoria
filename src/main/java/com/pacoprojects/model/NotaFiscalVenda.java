@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,16 +24,24 @@ public class NotaFiscalVenda {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Número da nota obrigatório.")
+    @Column(name = "numero", nullable = false)
     private String numero;
 
+    @NotBlank(message = "Série da nota obrigatório.")
+    @Column(name = "serie", nullable = false)
     private String serie;
 
+    @NotBlank(message = "Tipo da nota obrigatório.")
+    @Column(name = "tipo", nullable = false)
     private String tipo;
 
-    @Column(name = "xml", columnDefinition = "TEXT")
+    @NotBlank(message = "Xml da nota obrigatório.")
+    @Column(name = "xml", columnDefinition = "TEXT", nullable = false)
     private String xml;
 
-    @Column(name = "pdf", columnDefinition = "TEXT")
+    @NotBlank(message = "Pdf da nota obrigatório.")
+    @Column(name = "pdf", columnDefinition = "TEXT", nullable = false)
     private String pdf;
 
     @OneToOne(targetEntity = VendaCompra.class)

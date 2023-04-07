@@ -2,6 +2,7 @@ package com.pacoprojects.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class ItemNotaProduto {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull(message = "Quantidade de items obrigatório.")
     @Column(name = "quantidade", nullable = false)
     private Double quantidade;
 

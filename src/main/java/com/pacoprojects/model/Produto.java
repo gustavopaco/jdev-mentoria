@@ -1,6 +1,9 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,33 +29,56 @@ public class Produto {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Tipo da unidade do produto obrigatório.")
+    @Column(name = "tipo_unidade", nullable = false)
     private String tipoUnidade;
 
+    @NotBlank(message = "Nome do produto obrigatório.")
+    @Column(name = "nome", nullable = false)
     private String nome;
 
+    @NotBlank(message = "Descrição do produto obrigatório.")
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
 
+    @NotNull(message = "Peso do produto obrigatório.")
+    @Column(name = "peso", nullable = false)
     private Double peso;
 
+    @NotNull(message = "Largura do produto obrigatório.")
+    @Column(name = "largura", nullable = false)
     private Double largura;
 
+    @NotNull(message = "Altura do produto obrigatório.")
+    @Column(name = "altura", nullable = false)
     private Double altura;
 
+    @NotNull(message = "Profundidade do produto obrigatório.")
+    @Column(name = "profundidade", nullable = false)
     private Double profundidade;
 
+    @NotNull(message = "Valor de venda obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_venda", nullable = false)
     private BigDecimal valorVenda = BigDecimal.ZERO;
 
+    @NotNull(message = "Quantidade de estoque do produto obrigatório.")
+    @Column(name = "quantidade_estoque", nullable = false)
     private Integer quantidadeEstoque = 0;
 
+    @Column(name = "quantidade_alerta_estoque")
     private Integer quantidadeAlertaEstoque = 0;
 
+    @Column(name = "link_youtube")
     private String linkYoutube;
 
+    @Column(name = "quantidade_click")
     private Integer quantidadeClick = 0;
 
+    @Column(name = "alerta_estoque_enabled")
     private Boolean alertaEstoqueEnabled = Boolean.FALSE;
 
+    @Column(name = "enabled", nullable = false)
     private Boolean enabled = Boolean.TRUE;
 
     // TODO NotaItemProduto Associonar

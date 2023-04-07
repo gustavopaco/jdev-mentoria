@@ -1,8 +1,14 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pacoprojects.enums.StatusContaReceber;
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,19 +30,31 @@ public class ContaReceber {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Descrição obrigatório.")
+    @Column(name = "descricao", nullable = false)
     private String descricao;
 
     @Enumerated(value = EnumType.STRING)
+    @NotNull(message = "Status da conta obrigatório.")
+    @Column(name = "status", nullable = false)
     private StatusContaReceber status;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @NotNull(message = "Data de vencimento obrigatório.")
+    @Column(name = "data_vencimento", nullable = false)
     private LocalDate dataVencimento;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @Column(name = "data_pagamento")
     private LocalDate dataPagamento;
 
+    @NotNull(message = "Valor total obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_desconto")
     private BigDecimal valorDesconto;
 
     @ManyToOne(targetEntity = Pessoa.class)

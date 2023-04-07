@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,8 +24,12 @@ public class AvaliacaoProduto {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Descrição obrigatório.")
+    @Column(name = "descricao", nullable = false)
     private String descricao;
 
+    @NotBlank(message = "Nota obrigatório.")
+    @Column(name = "nota", nullable = false)
     private Integer nota;
 
     @ManyToOne(targetEntity = Produto.class)

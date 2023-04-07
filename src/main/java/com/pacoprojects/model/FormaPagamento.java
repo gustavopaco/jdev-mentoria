@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,6 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
-
 
 @Getter
 @Setter
@@ -23,6 +23,8 @@ public class FormaPagamento {
     @GeneratedValue(generator = "sequence_forma_pagamento", strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank(message = "Descrição obrigatório.")
+    @Column(name = "descricao", nullable = false)
     private String descricao;
 
     @Override

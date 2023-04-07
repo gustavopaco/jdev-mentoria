@@ -1,6 +1,8 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,6 +28,31 @@ public class VendaCompra {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull(message = "Valor total obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_total",  nullable = false)
+    private BigDecimal valorTotal;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_desconto")
+    private BigDecimal valorDesconto;
+
+    @NotNull(message = "Valor do frete obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_frete",  nullable = false)
+    private BigDecimal valorFrete;
+
+    @Column(name = "dia_entrega",  nullable = false)
+    private Integer diasParaEntrega;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @Column(name = "data_venda", nullable = false)
+    private LocalDate dataVenda;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @Column(name = "data_entrega", nullable = false)
+    private LocalDate dataEntrega;
+
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "pessoa_id",
@@ -50,21 +77,6 @@ public class VendaCompra {
             foreignKey = @ForeignKey(name = "endereco_cobranca_id_fk", value = ConstraintMode.CONSTRAINT))
     private Endereco enderecoCobranca;
 
-    private BigDecimal valorTotal;
-
-    private BigDecimal valorDesconto;
-
-
-    private BigDecimal valorFrete;
-
-    private Integer diaEntrega;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
-    private LocalDate dataVenda;
-
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
-    private LocalDate dataEntrega;
-
     @ManyToOne(targetEntity = FormaPagamento.class)
     @JoinColumn(
             name = "forma_pagamento_id",
@@ -85,7 +97,6 @@ public class VendaCompra {
     @JoinColumn(
             name = "cupom_desconto_id",
             referencedColumnName = "id",
-            nullable = false,
             foreignKey = @ForeignKey(name = "cupom_desconto_id_fk", value = ConstraintMode.CONSTRAINT))
     private CupomDesconto cupomDesconto;
 

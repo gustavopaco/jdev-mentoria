@@ -3,7 +3,11 @@ package com.pacoprojects.model;
 import com.pacoprojects.enums.TipoEndereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -50,6 +54,8 @@ public class Endereco {
     private String estado;
 
     @Enumerated(value = EnumType.STRING)
+    @NotNull(message = "Tipo de endereço obrigatório.")
+    @Column(name = "tipo_endereco", nullable = false)
     private TipoEndereco tipoEndereco;
 
     @ManyToOne(targetEntity = Pessoa.class)

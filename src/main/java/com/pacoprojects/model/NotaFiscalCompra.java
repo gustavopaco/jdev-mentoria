@@ -1,6 +1,9 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,19 +29,34 @@ public class NotaFiscalCompra {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Número da nota obrigatório.")
+    @Column(name = "numero", nullable = false)
     private String numero;
 
+    @NotBlank(message = "Série da nota obrigatório.")
+    @Column(name = "serie", nullable = false)
     private String serie;
 
+    @Column(name = "descricao")
     private String descricao;
 
+    @NotNull(message = "Valor total obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_desconto")
     private BigDecimal valorDesconto;
 
-    private BigDecimal valorICMS;
+    @NotNull(message = "Valor de ICMS obrigatório.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_icms", nullable = false)
+    private BigDecimal valorIcms;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @NotNull(message = "Data da compra obrigatório.")
+    @Column(name = "data_compra", nullable = false)
     private LocalDate dataCompra;
 
     @ManyToOne(targetEntity = Pessoa.class)

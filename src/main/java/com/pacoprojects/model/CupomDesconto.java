@@ -1,6 +1,9 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -26,13 +29,21 @@ public class CupomDesconto {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotBlank(message = "Código do cupom obrigatório.")
+    @Column(name = "codigo_descricao", nullable = false)
     private String codigoDescricao;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_real_desconto")
     private BigDecimal valorRealDesconto;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Column(name = "valor_porcentagem_descricao")
     private BigDecimal valorPorcentagemDescricao;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @NotNull(message = "Data de validade obrigatório.")
+    @Column(name = "validade_cupom", nullable = false)
     private LocalDate validadeCupom;
 
     @Override

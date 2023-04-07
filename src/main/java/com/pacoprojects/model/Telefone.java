@@ -2,7 +2,10 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -24,7 +27,6 @@ public class Telefone {
     @NotBlank(message = "Número obrigatório.")
     @Column(name = "numero", nullable = false)
     private String numero;
-
 
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
