@@ -18,6 +18,7 @@ public class Telefone {
     @Id
     @SequenceGenerator(name = "sequence_telefone", sequenceName = "sequence_telefone", allocationSize = 1)
     @GeneratedValue(generator = "sequence_telefone", strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @NotBlank(message = "Número obrigatório.")
