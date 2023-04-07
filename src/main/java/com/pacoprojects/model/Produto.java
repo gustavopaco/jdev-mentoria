@@ -8,7 +8,9 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -55,6 +57,17 @@ public class Produto {
 
     // TODO NotaItemProduto Associonar
 
+    @ManyToOne(targetEntity = MarcaProduto.class)
+    @JoinColumn(
+            name = "marca_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "marca_id_fk", value = ConstraintMode.CONSTRAINT))
+    private MarcaProduto marcaProduto;
+
+    @ManyToMany(targetEntity = Categoria.class, mappedBy = "produtos")
+    @ToString.Exclude
+    private Set<Categoria> categorias = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

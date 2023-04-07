@@ -28,7 +28,8 @@ public class Telefone {
 
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
-            name = "pessoa_id", nullable = false,
+            name = "pessoa_id",
+            nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;

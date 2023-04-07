@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -24,6 +24,15 @@ public class Categoria {
     @NotBlank(message = "Nome da Categoria obrigatório")
     @Column(name = "nome", nullable = false)
     private String nome;
+
+    @ManyToMany(targetEntity = Produto.class, cascade = CascadeType.MERGE)
+    @JoinTable(name = "categoria_produto",
+    joinColumns = @JoinColumn(name = "categoria_id"),
+    foreignKey = @ForeignKey(name = "categoria_id_fk", value = ConstraintMode.CONSTRAINT),
+    inverseJoinColumns = @JoinColumn(name = "produto_id"),
+    inverseForeignKey = @ForeignKey(name = "produto_id_fk", value = ConstraintMode.CONSTRAINT))
+    @ToString.Exclude
+    private Set<Produto> produtos = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {
