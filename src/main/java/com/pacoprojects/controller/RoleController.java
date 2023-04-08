@@ -3,10 +3,8 @@ package com.pacoprojects.controller;
 import com.pacoprojects.model.Role;
 import com.pacoprojects.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "roles")
@@ -16,7 +14,12 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public void addRole(@RequestBody Role role) {
-        roleService.addRole(role);
+    public ResponseEntity<Role> addRole(@RequestBody Role role) {
+        return ResponseEntity.ok(roleService.addRole(role));
+    }
+
+    @DeleteMapping(path = "{id}")
+    public void deleteRole(@PathVariable(name = "id") Long id) {
+        roleService.deleteRole(id);
     }
 }

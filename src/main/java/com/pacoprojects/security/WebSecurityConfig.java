@@ -29,6 +29,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/error", "/health", "/auth/**").permitAll()
+                .requestMatchers("/roles/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
