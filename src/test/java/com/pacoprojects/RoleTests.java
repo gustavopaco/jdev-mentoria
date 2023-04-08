@@ -197,7 +197,7 @@ public class RoleTests {
 
 
         assertEquals(200, retornoApi.andReturn().getResponse().getStatus());
-        List<Role> roles= objectMapper.readValue(retornoApi.andReturn().getResponse().getContentAsString(), new TypeReference<>() {
+        List<Role> roles = objectMapper.readValue(retornoApi.andReturn().getResponse().getContentAsString(), new TypeReference<>() {
         });
         assertNotNull(roles);
         assertEquals(1, roles.size());
