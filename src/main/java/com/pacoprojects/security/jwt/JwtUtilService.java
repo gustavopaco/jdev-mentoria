@@ -87,4 +87,8 @@ public class JwtUtilService {
         Date expirationDate = getExpirationDate(basicToken);
         return new Date().after(expirationDate);
     }
+
+    public JwtConfig configuration() {
+        return jwtConfig;
+    }
 }

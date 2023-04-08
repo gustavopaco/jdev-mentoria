@@ -3,6 +3,7 @@ package com.pacoprojects.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,6 +42,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
             } else if (exception instanceof MalformedJwtException) {
                 map.put("message", "Sessão foi invalidada, por favor faça o login novamente.");
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+            } else if (exception instanceof SignatureException){
+                map.put("message", "Token inválido");
                 response.setStatus(HttpStatus.FORBIDDEN.value());
             } else {
                 map.put("message", exception.getMessage());
