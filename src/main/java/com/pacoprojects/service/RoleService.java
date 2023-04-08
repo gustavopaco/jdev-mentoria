@@ -1,36 +1,42 @@
 package com.pacoprojects.service;
 
+import com.pacoprojects.dto.RoleDto;
+import com.pacoprojects.mapper.RoleMapper;
 import com.pacoprojects.model.Role;
 import com.pacoprojects.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RoleService {
 
-    private final RoleRepository roleRepository;
+    private final RoleRepository repositoryRole;
+    private final RoleMapper mapperRole;
 
-    public Role addRole(Role role) {
-        return roleRepository.save(role);
+    public RoleDto addRole(Role role) {
+        return mapperRole.toDto(repositoryRole.save(role));
     }
 
     public void deleteRole(Long id) {
-        Optional<Role> optionalRole = roleRepository.findById(id);
-        roleRepository.delete(optionalRole.orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(400), "Role nao existe")));
+        Optional<Role> optionalRole = repositoryRole.findById(id);
+        repositoryRole.delete(optionalRole.orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(400), "Role nao existe")));
     }
 
-    public Role loadById(Long id) {
-        return roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(400)));
+    public RoleDto loadById(Long id) {
+        return mapperRole.toDto(repositoryRole.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Permissão não foi encontrada")));
     }
 
-    public Set<Role> loadAllByAuthority(String authority) {
-        return new HashSet<>(roleRepository.findRolesByAuthorityContainsIgnoreCase(authority));
+    public Set<RoleDto> loadAllByAuthority(String authority) {
+        return repositoryRole.findRolesByAuthorityContainsIgnoreCase(authority)
+                .stream().map(mapperRole::toDto).collect(Collectors.toSet());
     }
 }

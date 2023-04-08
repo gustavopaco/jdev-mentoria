@@ -24,30 +24,49 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class, RuntimeException.class, Throwable.class})
     protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception exception, Object body, @NonNull HttpHeaders headers, @NonNull HttpStatusCode statusCode, @NonNull WebRequest request) {
 
-        StringBuilder message = new StringBuilder();
+        String message = exception.getMessage();
+        exception.printStackTrace();
 
-        if (exception instanceof ResponseStatusException) {
-            message.append(((ResponseStatusException) exception).getReason());
-        } else if (exception instanceof MethodArgumentNotValidException) {
-            BindingResult bindingResult = ((MethodArgumentNotValidException) exception).getBindingResult();
-            if (bindingResult.hasErrors()) {
-                bindingResult.getAllErrors().forEach(objectError -> message.append(objectError.getDefaultMessage()).append("\n"));
-                String formatStringBuilder = message.substring(0, message.length() - 1);
-                message.delete(0, message.length());
-                message.append(formatStringBuilder);
-            }
-        } else {
-            message.append(exception.getMessage());
-            exception.printStackTrace();
-        }
-
-        return new ResponseEntity<>(ExpcetionObject
+        return new ResponseEntity<>(ExceptionObject
                 .builder()
-                .message(message.toString())
+                .message(message)
                 .code(statusCode.value())
-                .build(),headers, statusCode);
+                .build(), headers, statusCode);
     }
 
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
+
+        StringBuilder message = new StringBuilder();
+
+        BindingResult bindingResult = exception.getBindingResult();
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> message.append(objectError.getDefaultMessage()).append("\n"));
+            String formatStringBuilder = message.substring(0, message.length() - 1);
+            message.delete(0, message.length());
+            message.append(formatStringBuilder);
+        }
+
+        return ResponseEntity
+                .badRequest()
+                .body(ExceptionObject
+                        .builder()
+                        .message(message.toString())
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .build());
+    }
+
+
+    @ExceptionHandler(value = {ResponseStatusException.class})
+    protected ResponseEntity<Object> handleExceptionResponseStatus(ResponseStatusException exception) {
+        String message = exception.getReason();
+        return new ResponseEntity<>(ExceptionObject
+                .builder()
+                .message(message)
+                .code(exception.getStatusCode().value())
+                .build(), exception.getStatusCode());
+    }
 
     @ExceptionHandler(value = {DataIntegrityViolationException.class, SQLException.class, ConstraintViolationException.class})
     protected ResponseEntity<Object> handleExceptionDataIntegrity(Exception exception) {
@@ -65,7 +84,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
 
         return ResponseEntity
                 .internalServerError()
-                .body(ExpcetionObject
+                .body(ExceptionObject
                         .builder()
                         .message(message.toString())
                         .code(HttpStatus.INTERNAL_SERVER_ERROR.value())

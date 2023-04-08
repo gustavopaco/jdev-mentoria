@@ -3,6 +3,7 @@ package com.pacoprojects;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacoprojects.controller.RoleController;
+import com.pacoprojects.dto.RoleDto;
 import com.pacoprojects.model.Role;
 import com.pacoprojects.repository.RoleRepository;
 import org.junit.jupiter.api.Test;
@@ -48,22 +49,22 @@ public class RoleTests {
 
         assertNull(role.getId());
 
-        ResponseEntity<Role> response = controllerRole.addRole(role);
-        role = response.getBody();
+        ResponseEntity<RoleDto> response = controllerRole.addRole(role);
+        RoleDto roleDto = response.getBody();
 
         // Teste Status 200
         assertEquals(200, response.getStatusCode().value());
 
         // Teste Save
-        assertNotNull(role);
-        assertTrue(role.getId() > 0);
-        assertEquals("ROLE_JUNIOR", role.getAuthority());
+        assertNotNull(roleDto);
+        assertTrue(roleDto.id() > 0);
+        assertEquals("ROLE_JUNIOR", roleDto.authority());
 
 
-        Optional<Role> optionalRole = repositoryRole.findById(role.getId());
+        Optional<Role> optionalRole = repositoryRole.findById(roleDto.id());
         // Teste LoadById
         assertTrue(optionalRole.isPresent());
-        assertEquals(role.getId(), optionalRole.get().getId());
+        assertEquals(roleDto.id(), optionalRole.get().getId());
 
         repositoryRole.deleteById(optionalRole.get().getId());
         Role role1 = repositoryRole.findById(optionalRole.get().getId()).orElse(null);
@@ -73,11 +74,11 @@ public class RoleTests {
 
         role = new Role();
         role.setAuthority("ROLE_TESTE");
-        ResponseEntity<Role> response2 = controllerRole.addRole(role);
+        ResponseEntity<RoleDto> response2 = controllerRole.addRole(role);
         List<Role> roles = repositoryRole.findRolesByAuthorityContainsIgnoreCase("TESTE");
         // Teste Query
         assertEquals(1, roles.size());
-        repositoryRole.deleteById(Objects.requireNonNull(response2.getBody()).getId());
+        repositoryRole.deleteById(Objects.requireNonNull(response2.getBody()).id());
 
     }
 
