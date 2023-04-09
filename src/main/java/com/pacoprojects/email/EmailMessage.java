@@ -17,4 +17,12 @@ public class EmailMessage {
 
         return builder.toString();
     }
+
+    public static String getMandatoryPasswordChangeMessage(String nomeDoUsuario) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Olá, ").append(nomeDoUsuario).append("<br/>");
+        builder.append("Está no momento de trocar sua senha, já passou os 90 dias de validade. ").append("<br/>");
+        builder.append("Troque sua senha da loja virtual https://www.pacoprojects.com/jdev-mentoria");
+        return builder.toString();
+    }
 }

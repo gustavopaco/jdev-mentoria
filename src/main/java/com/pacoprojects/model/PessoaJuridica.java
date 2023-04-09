@@ -13,7 +13,10 @@ import org.hibernate.validator.constraints.br.CNPJ;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name = "pessoa_juridica")
+@Table(name = "pessoa_juridica",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_cnpj", columnNames = "cnpj"),
+                @UniqueConstraint(name = "unique_inscricao_estadual", columnNames = "inscricao_estadual")})
 @Entity
 @PrimaryKeyJoinColumn(name = "pessoa_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "pessoa_juridica_fk", value = ConstraintMode.CONSTRAINT))
 public class PessoaJuridica extends Pessoa {

@@ -35,11 +35,15 @@ public class PessoaUserService {
     public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridica) {
 
         if (pessoaJuridica == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pessoa não pode ser nula");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empresa não pode ser nula");
         }
 
         if (pessoaJuridica.id() == null && repositoryJuridica.existsPessoaJuridicaByCnpj(pessoaJuridica.cnpj())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe uma pessoa registrada com esse Cnpj: " + pessoaJuridica.cnpj());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe uma empresa registrada com esse Cnpj: " + pessoaJuridica.cnpj());
+        }
+
+        if (pessoaJuridica.id() == null && repositoryJuridica.existsPessoaJuridicaByInscricaoEstadual(pessoaJuridica.inscricaoEstadual())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe uma empresa registrada com essa Inscrição Estadual.");
         }
 
         Optional<Usuario> optionalUsuario = repositoryUsuario.findUsuarioByUsername(pessoaJuridica.email());

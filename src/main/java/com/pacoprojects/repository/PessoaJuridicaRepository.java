@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface PessoaJuridicaRepository extends JpaRepository<PessoaJuridica, Long> {
 
     boolean existsPessoaJuridicaByCnpj(String cnpj);
+
+    boolean existsPessoaJuridicaByInscricaoEstadual(String inscricaoEstadual);
 }
