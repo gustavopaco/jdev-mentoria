@@ -1,6 +1,9 @@
 package com.pacoprojects.service;
 
-import com.pacoprojects.dto.PessoaJuridicaDto;
+import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.email.EmailMessage;
+import com.pacoprojects.email.EmailObject;
+import com.pacoprojects.email.EmailService;
 import com.pacoprojects.mapper.PessoaJuridicaMapper;
 import com.pacoprojects.model.PessoaJuridica;
 import com.pacoprojects.model.Role;
@@ -27,8 +30,9 @@ public class PessoaUserService {
     private final RoleRepository repositoryRole;
     private final ApplicationConfig applicationConfig;
     private final PessoaJuridicaMapper mapperJuridica;
+    private final EmailService serviceEmail;
 
-    public PessoaJuridicaDto addPessoaJuridica(PessoaJuridicaDto pessoaJuridica) {
+    public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridica) {
 
         if (pessoaJuridica == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pessoa não pode ser nula");
@@ -46,10 +50,10 @@ public class PessoaUserService {
 
         PessoaJuridica juridicaEntity = mapperJuridica.toEntity(pessoaJuridica);
 
-
         Usuario usuario = new Usuario();
         usuario.setUsername(juridicaEntity.getEmail());
-        usuario.setPassword(applicationConfig.passwordEncoder().encode(Long.toString(Instant.now().toEpochMilli())));
+        String password = generateRandomPassword();
+        usuario.setPassword(applicationConfig.passwordEncoder().encode(password));
         usuario.getAuthorities().add(getRoleJuridica());
         usuario.setDateLastPasswordChange(LocalDateTime.now());
         usuario.setPessoa(juridicaEntity);
@@ -57,6 +61,7 @@ public class PessoaUserService {
 
         usuario = repositoryUsuario.save(usuario);
 
+        enviarEmail(usuario.getUsername(), password);
 
         return mapperJuridica.toDto(juridicaEntity);
     }
@@ -64,6 +69,20 @@ public class PessoaUserService {
     private Role getRoleJuridica() {
         Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase("ROLE_JURIDICA");
         return optionalRole.orElseGet(() -> repositoryRole.save(Role.builder().authority("ROLE_JURIDICA").build()));
+    }
+
+    private String generateRandomPassword() {
+        return Long.toString(Instant.now().toEpochMilli());
+    }
+
+    private void enviarEmail(String username, String password) {
+            serviceEmail.sendMailWithAttachment(
+                    EmailObject
+                            .builder()
+                            .destinatario(username)
+                            .assunto("Acesso ao sistema")
+                            .menssagem(EmailMessage.getDefaultMessage(username, password))
+                            .build());
     }
 
 //    private PessoaJuridica checkUs

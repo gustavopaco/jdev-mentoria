@@ -28,7 +28,7 @@ public class AuthenticationService {
 
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password()));
-            return authenticateRegister((Usuario) authentication.getPrincipal(), response);
+            return auth((Usuario) authentication.getPrincipal(), response);
         } catch (AuthenticationException exception) {
             if (exception instanceof BadCredentialsException) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário ou senha incorretos");
@@ -39,7 +39,7 @@ public class AuthenticationService {
         }
     }
 
-    private AuthenticateResponse authenticateRegister(Usuario usuario, HttpServletResponse response) {
+    private AuthenticateResponse auth(Usuario usuario, HttpServletResponse response) {
 
         String basicToken = jwt.generateToken(usuario);
         usuario.setJwt(basicToken);

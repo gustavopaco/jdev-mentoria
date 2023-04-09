@@ -11,7 +11,7 @@ import java.util.Set;
  * A DTO for the {@link com.pacoprojects.model.PessoaJuridica} entity
  */
 @Builder
-public record PessoaJuridicaDto(
+public record RegisterPessoaJuridicaDto(
 
         Long id,
 
@@ -24,8 +24,6 @@ public record PessoaJuridicaDto(
         Set<TelefoneDto> telefones,
 
         Set<EnderecoDto> enderecos,
-
-        Set<ContaReceberDto> contasReceber,
 
         @CNPJ(message = "CNPJ obrigatório.")
         @NotBlank(message = "CNPJ obrigatório.")

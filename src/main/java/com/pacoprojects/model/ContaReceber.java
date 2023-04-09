@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pacoprojects.enums.StatusContaReceber;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -57,6 +58,7 @@ public class ContaReceber {
     @Column(name = "valor_desconto")
     private BigDecimal valorDesconto;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "pessoa_id",
@@ -65,6 +67,7 @@ public class ContaReceber {
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",

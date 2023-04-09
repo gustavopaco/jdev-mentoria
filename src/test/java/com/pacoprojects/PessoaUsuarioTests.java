@@ -1,12 +1,20 @@
 package com.pacoprojects;
 
 import com.pacoprojects.controller.PessoaController;
+import com.pacoprojects.dto.EnderecoDto;
+import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.TelefoneDto;
+import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.mapper.PessoaJuridicaMapper;
-import com.pacoprojects.model.PessoaJuridica;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -23,18 +31,59 @@ public class PessoaUsuarioTests {
 
     @Test
     void addPessoaJuridica() {
-        PessoaJuridica pessoaJuridica = new PessoaJuridica();
-        pessoaJuridica.setCnpj("41.646.729/0001-17");
-        pessoaJuridica.setNome("Jose Maria");
-        pessoaJuridica.setNomeFantasia("Supermercado BH");
-        pessoaJuridica.setEmail("josemaria@gmail.com");
-        pessoaJuridica.setInscricaoEstadual("as4d56d64ad8w7ad4a");
-        pessoaJuridica.setInscricaoMunicipal("a54547re4t6re4te56t4e54");
-        pessoaJuridica.setRazaoSocial("Supermercado BH S/A");
+
+        EnderecoDto enderecoDto = EnderecoDto
+                .builder()
+                .rua("Rua do Indio")
+                .cep("36985124")
+                .numero("950")
+                .bairro("CENTRO")
+                .cidade("Belo Horizonte")
+                .estado("MG")
+                .tipoEndereco(TipoEndereco.COBRANCA)
+                .build();
+
+        EnderecoDto enderecoDto2 = EnderecoDto
+                .builder()
+                .rua("Rua as trincheiras")
+                .cep("95462741")
+                .numero("50")
+                .bairro("Jardim America")
+                .cidade("Belo Horizonte")
+                .estado("MG")
+                .tipoEndereco(TipoEndereco.ENTREGA)
+                .build();
+
+        TelefoneDto telefoneDto = TelefoneDto
+                .builder()
+                .numero("987650241")
+                .build();
+
+        RegisterPessoaJuridicaDto juridicaDto = RegisterPessoaJuridicaDto
+                .builder()
+                .cnpj("65.080.136/0001-02")
+                .nome("Joao")
+                .nomeFantasia("Supermercado do Joao")
+                .email("joao@gmail.com")
+                .inscricaoEstadual("re4t56er4t2f1gdf24g1df")
+                .inscricaoMunicipal("ghg4jmgh4j5k4hgj5k4hj5k")
+                .razaoSocial("Supermercado do Joao S/A")
+                .telefones(Set.of(telefoneDto))
+                .enderecos(Set.of(enderecoDto, enderecoDto2))
+                .build();
 
 
+        ResponseEntity<RegisterPessoaJuridicaDto> dtoResponseEntity = controllerPessoa.addPessoaJuridica(juridicaDto);
 
-        controllerPessoa.addPessoaJuridica(mapper.toDto(pessoaJuridica));
+        assertNotNull(dtoResponseEntity.getBody());
+
+        RegisterPessoaJuridicaDto responseEntityBody = dtoResponseEntity.getBody();
+
+        assertNotNull(responseEntityBody.id());
+        responseEntityBody.telefones().forEach(telefoneDto1 -> assertNotNull(telefoneDto1.id()));
+        responseEntityBody.enderecos().forEach(enderecoDto1 -> assertNotNull(enderecoDto1.id()));
+
+
 
 //        PessoaFisica pessoaFisica = new PessoaFisica();
 //        pessoaFisica.setCpf("107.775.376-48");

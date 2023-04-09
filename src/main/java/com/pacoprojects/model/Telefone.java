@@ -1,5 +1,6 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Telefone {
     @Column(name = "numero", nullable = false)
     private String numero;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "pessoa_id",
@@ -36,6 +38,7 @@ public class Telefone {
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",

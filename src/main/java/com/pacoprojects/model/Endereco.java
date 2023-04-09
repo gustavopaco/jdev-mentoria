@@ -1,5 +1,6 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pacoprojects.enums.TipoEndereco;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -58,12 +59,14 @@ public class Endereco {
     @Column(name = "tipo_endereco", nullable = false)
     private TipoEndereco tipoEndereco;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(name = "pessoa_id", nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;
 
+    @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",

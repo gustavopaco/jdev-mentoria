@@ -1,6 +1,6 @@
 package com.pacoprojects.controller;
 
-import com.pacoprojects.dto.PessoaJuridicaDto;
+import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.service.PessoaUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PessoaController {
     private final PessoaUserService pessoaUserService;
 
     @PostMapping(path = "addJuridica")
-    public ResponseEntity<PessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody PessoaJuridicaDto pessoaJuridica) {
+    public ResponseEntity<RegisterPessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody RegisterPessoaJuridicaDto pessoaJuridica) {
         return ResponseEntity.ok(pessoaUserService.addPessoaJuridica(pessoaJuridica));
     }
 }

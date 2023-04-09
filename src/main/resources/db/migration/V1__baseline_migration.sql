@@ -45,13 +45,15 @@ CREATE TABLE avaliacao_produto
     nota       INTEGER      NOT NULL,
     produto_id BIGINT,
     pessoa_id  BIGINT,
+    empresa_id BIGINT,
     CONSTRAINT pk_avaliacao_produto PRIMARY KEY (id)
 );
 
 CREATE TABLE categoria
 (
-    id   BIGINT       NOT NULL,
-    nome VARCHAR(255) NOT NULL,
+    id         BIGINT       NOT NULL,
+    nome       VARCHAR(255) NOT NULL,
+    empresa_id BIGINT,
     CONSTRAINT pk_categoria PRIMARY KEY (id)
 );
 
@@ -73,6 +75,7 @@ CREATE TABLE conta_pagar
     valor_desconto       DECIMAL,
     pessoa_id            BIGINT,
     pessoa_fornecedor_id BIGINT,
+    empresa_id           BIGINT,
     CONSTRAINT pk_conta_pagar PRIMARY KEY (id)
 );
 
@@ -86,6 +89,7 @@ CREATE TABLE conta_receber
     valor_total     DECIMAL      NOT NULL,
     valor_desconto  DECIMAL,
     pessoa_id       BIGINT,
+    empresa_id      BIGINT,
     CONSTRAINT pk_conta_receber PRIMARY KEY (id)
 );
 
@@ -96,6 +100,7 @@ CREATE TABLE cupom_desconto
     valor_real_desconto         DECIMAL,
     valor_porcentagem_descricao DECIMAL,
     validade_cupom              date         NOT NULL,
+    empresa_id                  BIGINT,
     CONSTRAINT pk_cupom_desconto PRIMARY KEY (id)
 );
 
@@ -111,13 +116,15 @@ CREATE TABLE endereco
     estado        VARCHAR(255) NOT NULL,
     tipo_endereco VARCHAR(255) NOT NULL,
     pessoa_id     BIGINT,
+    empresa_id    BIGINT,
     CONSTRAINT pk_endereco PRIMARY KEY (id)
 );
 
 CREATE TABLE forma_pagamento
 (
-    id        BIGINT       NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
+    id         BIGINT       NOT NULL,
+    descricao  VARCHAR(255) NOT NULL,
+    empresa_id BIGINT,
     CONSTRAINT pk_forma_pagamento PRIMARY KEY (id)
 );
 
@@ -127,6 +134,7 @@ CREATE TABLE imagem_produto
     imagem_original  TEXT   NOT NULL,
     imagem_miniatura TEXT   NOT NULL,
     produto_id       BIGINT,
+    empresa_id       BIGINT,
     CONSTRAINT pk_imagem_produto PRIMARY KEY (id)
 );
 
@@ -136,6 +144,7 @@ CREATE TABLE item_nota_produto
     quantidade            DOUBLE PRECISION NOT NULL,
     produto_id            BIGINT,
     nota_fiscal_compra_id BIGINT,
+    empresa_id            BIGINT,
     CONSTRAINT pk_item_nota_produto PRIMARY KEY (id)
 );
 
@@ -145,13 +154,15 @@ CREATE TABLE item_venda_compra
     quantidade      DOUBLE PRECISION NOT NULL,
     produto_id      BIGINT,
     venda_compra_id BIGINT,
+    empresa_id      BIGINT,
     CONSTRAINT pk_item_venda_compra PRIMARY KEY (id)
 );
 
 CREATE TABLE marca_produto
 (
-    id   BIGINT       NOT NULL,
-    nome VARCHAR(255) NOT NULL,
+    id         BIGINT       NOT NULL,
+    nome       VARCHAR(255) NOT NULL,
+    empresa_id BIGINT,
     CONSTRAINT pk_marca_produto PRIMARY KEY (id)
 );
 
@@ -167,6 +178,7 @@ CREATE TABLE nota_fiscal_compra
     data_compra    date         NOT NULL,
     pessoa_id      BIGINT,
     conta_pagar_id BIGINT,
+    empresa_id     BIGINT,
     CONSTRAINT pk_nota_fiscal_compra PRIMARY KEY (id)
 );
 
@@ -179,14 +191,16 @@ CREATE TABLE nota_fiscal_venda
     xml             TEXT         NOT NULL,
     pdf             TEXT         NOT NULL,
     venda_compra_id BIGINT,
+    empresa_id      BIGINT,
     CONSTRAINT pk_nota_fiscal_venda PRIMARY KEY (id)
 );
 
 CREATE TABLE pessoa
 (
-    id    BIGINT       NOT NULL,
-    nome  VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    id         BIGINT       NOT NULL,
+    nome       VARCHAR(255) NOT NULL,
+    email      VARCHAR(255) NOT NULL,
+    empresa_id BIGINT,
     CONSTRAINT pk_pessoa PRIMARY KEY (id)
 );
 
@@ -228,6 +242,7 @@ CREATE TABLE produto
     alerta_estoque_enabled    BOOLEAN,
     enabled                   BOOLEAN          NOT NULL,
     marca_id                  BIGINT,
+    empresa_id                BIGINT,
     CONSTRAINT pk_produto PRIMARY KEY (id)
 );
 
@@ -246,14 +261,16 @@ CREATE TABLE status_rastreio
     estado              VARCHAR(255),
     status              VARCHAR(255),
     venda_compra_id     BIGINT,
+    empresa_id          BIGINT,
     CONSTRAINT pk_status_rastreio PRIMARY KEY (id)
 );
 
 CREATE TABLE telefone
 (
-    id        BIGINT       NOT NULL,
-    numero    VARCHAR(255) NOT NULL,
-    pessoa_id BIGINT,
+    id         BIGINT       NOT NULL,
+    numero     VARCHAR(255) NOT NULL,
+    pessoa_id  BIGINT,
+    empresa_id BIGINT,
     CONSTRAINT pk_telefone PRIMARY KEY (id)
 );
 
@@ -266,6 +283,7 @@ CREATE TABLE usuario
     jwt                       TEXT,
     enabled                   BOOLEAN,
     pessoa_id                 BIGINT,
+    empresa_id                BIGINT,
     CONSTRAINT pk_usuario PRIMARY KEY (id)
 );
 
@@ -291,14 +309,75 @@ CREATE TABLE venda_compra
     forma_pagamento_id   BIGINT,
     nota_fiscal_venda_id BIGINT,
     cupom_desconto_id    BIGINT,
+    empresa_id           BIGINT,
     CONSTRAINT pk_venda_compra PRIMARY KEY (id)
 );
+
+ALTER TABLE usuario
+    ADD CONSTRAINT unique_username UNIQUE (username);
 
 ALTER TABLE nota_fiscal_compra
     ADD CONSTRAINT CONTA_PAGAR_ID_FK FOREIGN KEY (conta_pagar_id) REFERENCES conta_pagar (id);
 
 ALTER TABLE venda_compra
     ADD CONSTRAINT CUPOM_DESCONTO_ID_FK FOREIGN KEY (cupom_desconto_id) REFERENCES cupom_desconto (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE usuario
+    ADD CONSTRAINT EMPRESA_ID_FKAhCqVP FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE item_nota_produto
+    ADD CONSTRAINT EMPRESA_ID_FKJocrAK FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE item_venda_compra
+    ADD CONSTRAINT EMPRESA_ID_FKKHyJe0 FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE avaliacao_produto
+    ADD CONSTRAINT EMPRESA_ID_FKN5DmdT FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE imagem_produto
+    ADD CONSTRAINT EMPRESA_ID_FKSvydDI FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE conta_receber
+    ADD CONSTRAINT EMPRESA_ID_FKYMM0OR FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE telefone
+    ADD CONSTRAINT EMPRESA_ID_FKfBNP4d FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE conta_pagar
+    ADD CONSTRAINT EMPRESA_ID_FKlMjvhV FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
+
+ALTER TABLE status_rastreio
+    ADD CONSTRAINT EMPRESA_ID_FKxYtgI5 FOREIGN KEY (empresa_id) REFERENCES pessoa (id);
 
 ALTER TABLE venda_compra
     ADD CONSTRAINT ENDERECO_COBRANCA_ID_FK FOREIGN KEY (endereco_cobranca_id) REFERENCES endereco (id);
@@ -339,47 +418,47 @@ ALTER TABLE venda_compra
 ALTER TABLE venda_compra
     ADD CONSTRAINT PESSOA_ID_FK FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
 
+ALTER TABLE avaliacao_produto
+    ADD CONSTRAINT PESSOA_ID_FK5NbwSw FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
+
 ALTER TABLE conta_pagar
-    ADD CONSTRAINT PESSOA_ID_FK3mzc5V FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
+    ADD CONSTRAINT PESSOA_ID_FK8Eroze FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
 
 ALTER TABLE usuario
-    ADD CONSTRAINT PESSOA_ID_FKEhV632 FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
-
-ALTER TABLE avaliacao_produto
-    ADD CONSTRAINT PESSOA_ID_FKHQA7gp FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
+    ADD CONSTRAINT PESSOA_ID_FK8aw8Sc FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
 
 ALTER TABLE conta_receber
-    ADD CONSTRAINT PESSOA_ID_FKt91hpX FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
+    ADD CONSTRAINT PESSOA_ID_FK93mVmM FOREIGN KEY (pessoa_id) REFERENCES pessoa (id);
 
 ALTER TABLE item_nota_produto
     ADD CONSTRAINT PRODUTO_ID_FK FOREIGN KEY (produto_id) REFERENCES produto (id);
 
-ALTER TABLE avaliacao_produto
-    ADD CONSTRAINT PRODUTO_ID_FK0FBeDL FOREIGN KEY (produto_id) REFERENCES produto (id);
+ALTER TABLE item_venda_compra
+    ADD CONSTRAINT PRODUTO_ID_FK7DZH1w FOREIGN KEY (produto_id) REFERENCES produto (id);
 
 ALTER TABLE imagem_produto
-    ADD CONSTRAINT PRODUTO_ID_FK85SpYU FOREIGN KEY (produto_id) REFERENCES produto (id);
+    ADD CONSTRAINT PRODUTO_ID_FKE9jNZo FOREIGN KEY (produto_id) REFERENCES produto (id);
 
-ALTER TABLE item_venda_compra
-    ADD CONSTRAINT PRODUTO_ID_FKHxkyi6 FOREIGN KEY (produto_id) REFERENCES produto (id);
-
-ALTER TABLE status_rastreio
-    ADD CONSTRAINT VENDA_COMPRA_ID_FK FOREIGN KEY (venda_compra_id) REFERENCES venda_compra (id);
+ALTER TABLE avaliacao_produto
+    ADD CONSTRAINT PRODUTO_ID_FKFnkw6a FOREIGN KEY (produto_id) REFERENCES produto (id);
 
 ALTER TABLE status_rastreio
     ADD CONSTRAINT VENDA_COMPRA_ID_FK FOREIGN KEY (venda_compra_id) REFERENCES venda_compra (id);
 
+ALTER TABLE status_rastreio
+    ADD CONSTRAINT VENDA_COMPRA_ID_FK FOREIGN KEY (venda_compra_id) REFERENCES venda_compra (id);
+
 ALTER TABLE item_venda_compra
-    ADD CONSTRAINT VENDA_COMPRA_ID_FKEQlCPy FOREIGN KEY (venda_compra_id) REFERENCES venda_compra (id);
+    ADD CONSTRAINT VENDA_COMPRA_ID_FK8oYQLH FOREIGN KEY (venda_compra_id) REFERENCES venda_compra (id);
 
 ALTER TABLE categoria_produto
     ADD CONSTRAINT categoria_id_fk FOREIGN KEY (categoria_id) REFERENCES categoria (id);
 
 ALTER TABLE categoria_produto
-    ADD CONSTRAINT categoria_id_fk6t0MXQ FOREIGN KEY (produto_id) REFERENCES produto (id);
+    ADD CONSTRAINT categoria_id_fk5azRc0 FOREIGN KEY (produto_id) REFERENCES produto (id);
 
 ALTER TABLE usuario_role
     ADD CONSTRAINT usuario_id_fk FOREIGN KEY (usuario_id) REFERENCES usuario (id);
 
 ALTER TABLE usuario_role
-    ADD CONSTRAINT usuario_id_fk4eA4Ch FOREIGN KEY (role_id) REFERENCES role (id);
+    ADD CONSTRAINT usuario_id_fkPxL0ud FOREIGN KEY (role_id) REFERENCES role (id);

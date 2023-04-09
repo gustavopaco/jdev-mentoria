@@ -1,18 +1,18 @@
 package com.pacoprojects.mapper;
 
-import com.pacoprojects.dto.PessoaJuridicaDto;
+import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.model.PessoaJuridica;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PessoaJuridicaMapper {
 
-    PessoaJuridica toEntity(PessoaJuridicaDto pessoaJuridicaDto);
+    PessoaJuridica toEntity(RegisterPessoaJuridicaDto registerPessoaJuridicaDto);
 
-    PessoaJuridicaDto toDto(PessoaJuridica pessoaJuridica);
+    RegisterPessoaJuridicaDto toDto(PessoaJuridica pessoaJuridica);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    PessoaJuridica partialUpdate(PessoaJuridicaDto pessoaJuridicaDto, @MappingTarget PessoaJuridica pessoaJuridica);
+    PessoaJuridica partialUpdate(RegisterPessoaJuridicaDto registerPessoaJuridicaDto, @MappingTarget PessoaJuridica pessoaJuridica);
 
     @AfterMapping
     default void linkTelefones(@MappingTarget PessoaJuridica pessoaJuridica) {
@@ -37,4 +37,5 @@ public interface PessoaJuridicaMapper {
             contasReceber.setEmpresa(pessoaJuridica);
         });
     }
+
 }
