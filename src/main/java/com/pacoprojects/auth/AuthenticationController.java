@@ -15,8 +15,6 @@ public class AuthenticationController {
 
     private final AuthenticationService serviceAuthentication;
 
-//    @PostMapping(path = "register")
-
     @PostMapping(path = "authenticate")
     public ResponseEntity<AuthenticateResponse> authenticate(@RequestBody AuthenticateRequest authRequest, HttpServletResponse response) {
         return ResponseEntity.ok(serviceAuthentication.authenticate(authRequest, response));

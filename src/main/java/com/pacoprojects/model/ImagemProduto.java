@@ -39,6 +39,14 @@ public class ImagemProduto {
             foreignKey = @ForeignKey(name = "produto_id_fk", value = ConstraintMode.CONSTRAINT))
     private Produto produto;
 
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

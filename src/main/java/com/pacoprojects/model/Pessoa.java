@@ -2,7 +2,10 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.LinkedHashSet;
@@ -42,6 +45,13 @@ public abstract class Pessoa {
     @OneToMany(targetEntity = ContaReceber.class, mappedBy = "pessoa", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @ToString.Exclude
     private Set<ContaReceber> contasReceber = new LinkedHashSet<>();
+
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
 
     @Override
     public boolean equals(Object o) {

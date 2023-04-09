@@ -19,6 +19,7 @@ import org.hibernate.validator.constraints.br.CNPJ;
 public class PessoaJuridica extends Pessoa {
 
     @CNPJ(message = "CNPJ obrigatório.")
+    @NotBlank(message = "CNPJ obrigatório.")
     @Column(name = "cnpj", nullable = false)
     private String cnpj;
 

@@ -44,6 +44,14 @@ public class ItemVendaCompra {
             foreignKey = @ForeignKey(name = "venda_compra_id_fk", value = ConstraintMode.CONSTRAINT))
     private VendaCompra vendaCompra;
 
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

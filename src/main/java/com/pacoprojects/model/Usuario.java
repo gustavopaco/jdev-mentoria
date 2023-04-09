@@ -19,7 +19,8 @@ import java.util.Set;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table
+@Table( name = "usuario",
+        uniqueConstraints = @UniqueConstraint(name = "unique_username", columnNames = "username"))
 @Entity
 public class Usuario implements UserDetails {
 
@@ -46,23 +47,31 @@ public class Usuario implements UserDetails {
 
     @ManyToMany(targetEntity = Role.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_role",
-    joinColumns = @JoinColumn(name = "usuario_id"),
-    foreignKey = @ForeignKey(name = "usuario_id_fk", value = ConstraintMode.CONSTRAINT),
-    inverseJoinColumns = @JoinColumn(name = "role_id"),
-    inverseForeignKey = @ForeignKey(name = "role_id_fk", value = ConstraintMode.CONSTRAINT),
-    uniqueConstraints = @UniqueConstraint(name = "unique_usuario_role", columnNames = {"usuario_id", "role_id"}))
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            foreignKey = @ForeignKey(name = "usuario_id_fk", value = ConstraintMode.CONSTRAINT),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            inverseForeignKey = @ForeignKey(name = "role_id_fk", value = ConstraintMode.CONSTRAINT),
+            uniqueConstraints = @UniqueConstraint(name = "unique_usuario_role", columnNames = {"usuario_id", "role_id"}))
     private Set<Role> authorities = new LinkedHashSet<>();
 
     @Column(name = "enabled")
     private boolean enabled = true;
 
-    @ManyToOne(targetEntity = Pessoa.class)
+    @OneToOne(targetEntity = Pessoa.class, cascade = {CascadeType.PERSIST})
     @JoinColumn(
             name = "pessoa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;
+
+    @ManyToOne(targetEntity = Pessoa.class, cascade = {CascadeType.PERSIST})
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
 
     @Override
     public boolean isAccountNonExpired() {

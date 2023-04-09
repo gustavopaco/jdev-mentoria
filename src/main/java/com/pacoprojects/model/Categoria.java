@@ -2,10 +2,15 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,6 +38,14 @@ public class Categoria {
     inverseForeignKey = @ForeignKey(name = "produto_id_fk", value = ConstraintMode.CONSTRAINT))
     @ToString.Exclude
     private Set<Produto> produtos = new LinkedHashSet<>();
+
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
 
     @Override
     public boolean equals(Object o) {

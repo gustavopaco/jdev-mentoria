@@ -44,6 +44,14 @@ public class ItemNotaProduto {
             foreignKey = @ForeignKey(name = "nota_fiscal_compra_id_fk", value = ConstraintMode.CONSTRAINT))
     private NotaFiscalCompra notaFiscalCompra;
 
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

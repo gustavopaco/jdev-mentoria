@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,12 +25,19 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class, RuntimeException.class, Throwable.class})
     protected ResponseEntity<Object> handleExceptionInternal(@NonNull Exception exception, Object body, @NonNull HttpHeaders headers, @NonNull HttpStatusCode statusCode, @NonNull WebRequest request) {
 
-        String message = exception.getMessage();
-        exception.printStackTrace();
+        StringBuilder message = new StringBuilder();
+
+        if (exception instanceof HttpMessageNotReadableException) {
+            message.append("Não está sendo enviado o BODY no corpo da requisição");
+        } else {
+            message.append(exception.getMessage());
+            exception.printStackTrace();
+        }
+
 
         return new ResponseEntity<>(ExceptionObject
                 .builder()
-                .message(message)
+                .message(message.toString())
                 .code(statusCode.value())
                 .build(), headers, statusCode);
     }

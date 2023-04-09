@@ -73,6 +73,14 @@ public class ContaPagar {
             foreignKey = @ForeignKey(name = "pessoa_fornecedor_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoaFornecedor;
 
+    @ManyToOne(targetEntity = Pessoa.class)
+    @JoinColumn(
+            name = "empresa_id",
+            nullable = false,
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
+    private Pessoa empresa;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

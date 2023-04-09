@@ -22,6 +22,13 @@ public class RoleService {
     private final RoleMapper mapperRole;
 
     public RoleDto addRole(Role role) {
+
+        Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase(role.getAuthority());
+
+        if (optionalRole.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Está permissão já existe");
+        }
+
         return mapperRole.toDto(repositoryRole.save(role));
     }
 
