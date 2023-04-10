@@ -25,4 +25,11 @@ public class EmailMessage {
         builder.append("Troque sua senha da loja virtual https://www.pacoprojects.com/jdev-mentoria");
         return builder.toString();
     }
+
+    public static String getServerErrorMessage(String message) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<b>Olá Admin, ocorreu um erro inesperado no servidor</b>").append("<br/>").append("<br/>");
+        builder.append(message);
+        return builder.toString();
+    }
 }

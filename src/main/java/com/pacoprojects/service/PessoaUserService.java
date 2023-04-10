@@ -4,6 +4,8 @@ import com.pacoprojects.api.ApiConsultaCep;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.projections.PessoaFisicaProjection;
+import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.email.EmailMessage;
 import com.pacoprojects.email.EmailObject;
 import com.pacoprojects.email.EmailService;
@@ -23,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -181,5 +184,21 @@ public class PessoaUserService {
                         .assunto("Acesso ao sistema")
                         .menssagem(EmailMessage.getDefaultMessage(username, password))
                         .build());
+    }
+
+    public List<PessoaFisicaProjection> findPessoaFisicaByName(String nome) {
+        return repositoryFisica.findAllByNomeContainsIgnoreCase(nome.trim());
+    }
+
+    public PessoaFisicaProjection findPessoaFisicaByCpf(String cpf) {
+        return repositoryFisica.findByCpf(cpf).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe Pessoa com esse Cpf: " + cpf));
+    }
+
+    public List<PessoaJuridicaProjection> findPessoaJuridicaByName(String nome) {
+        return repositoryJuridica.findAllByNomeContainsIgnoreCase(nome.trim());
+    }
+
+    public PessoaJuridicaProjection findPessoaJuridicaByCnpj(String cnpj) {
+        return repositoryJuridica.findByCnpj(cnpj).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe empresa com esse Cnpj: " + cnpj));
     }
 }

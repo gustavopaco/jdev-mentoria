@@ -1,10 +1,12 @@
 package com.pacoprojects.repository;
 
+import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.model.PessoaJuridica;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -12,8 +14,10 @@ public interface PessoaJuridicaRepository extends JpaRepository<PessoaJuridica, 
 
     boolean existsPessoaJuridicaByCnpj(String cnpj);
 
-    @EntityGraph(attributePaths = {"enderecos", "telefones", "contasReceber"})
-    Optional<PessoaJuridica> findPessoaJuridicaByCnpj(String cnpj);
-
     boolean existsPessoaJuridicaByInscricaoEstadual(String inscricaoEstadual);
+
+    @EntityGraph(attributePaths = {"enderecos", "telefones", "contasReceber"})
+    Optional<PessoaJuridicaProjection> findByCnpj(String cnpj);
+
+    List<PessoaJuridicaProjection> findAllByNomeContainsIgnoreCase(String nome);
 }

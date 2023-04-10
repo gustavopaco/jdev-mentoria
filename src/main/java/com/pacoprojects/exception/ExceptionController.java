@@ -1,6 +1,12 @@
 package com.pacoprojects.exception;
 
+import com.pacoprojects.email.EmailMessage;
+import com.pacoprojects.email.EmailObject;
+import com.pacoprojects.email.EmailService;
+import com.pacoprojects.util.Constantes;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,7 +25,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.sql.SQLException;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionController extends ResponseEntityExceptionHandler {
+
+    private final EmailService emailService;
 
     @Override
     @ExceptionHandler(value = {Exception.class, RuntimeException.class, Throwable.class})
@@ -31,10 +40,14 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
             message.append("Não está sendo enviado o BODY no corpo da requisição");
         } else {
             message.append(exception.getMessage());
-            exception.printStackTrace();
         }
-
-
+        exception.printStackTrace();
+        emailService.sendMailWithAttachment(EmailObject
+                .builder()
+                .destinatario(Constantes.ADMIN_EMAIL)
+                .assunto(Constantes.SERVER_ERROR_EXCEPTION_MESSAGE)
+                .menssagem(EmailMessage.getServerErrorMessage(ExceptionUtils.getStackTrace(exception)))
+                .build());
         return new ResponseEntity<>(ExceptionObject
                 .builder()
                 .message(message.toString())
@@ -55,7 +68,6 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
             message.delete(0, message.length());
             message.append(formatStringBuilder);
         }
-
         return ResponseEntity
                 .badRequest()
                 .body(ExceptionObject
@@ -81,15 +93,21 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         StringBuilder message = new StringBuilder();
 
         if (exception instanceof DataIntegrityViolationException) {
-            message.append(exception.getCause().getCause().getMessage());
+            message.append("Erro de integridade no banco: ").append(exception.getCause().getCause().getMessage());
         } else if (exception instanceof ConstraintViolationException) {
-            message.append(exception.getCause().getCause().getMessage());
+            message.append("Erro de Chave estrangeira: ").append(exception.getCause().getCause().getMessage());
         } else if (exception instanceof SQLException) {
-            message.append(exception.getCause().getCause().getMessage());
+            message.append("Erro de SQL do banco: ").append(exception.getCause().getCause().getMessage());
         } else {
             message.append(exception.getMessage());
         }
-
+        exception.printStackTrace();
+        emailService.sendMailWithAttachment(EmailObject
+                .builder()
+                .destinatario(Constantes.ADMIN_EMAIL)
+                .assunto(Constantes.SERVER_ERROR_EXCEPTION_MESSAGE)
+                .menssagem(EmailMessage.getServerErrorMessage(ExceptionUtils.getStackTrace(exception)))
+                .build());
         return ResponseEntity
                 .internalServerError()
                 .body(ExceptionObject

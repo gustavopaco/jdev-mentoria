@@ -5,7 +5,9 @@ import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.dto.TelefoneDto;
+import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.enums.TipoEndereco;
+import com.pacoprojects.mapper.PessoaJuridicaMapper;
 import com.pacoprojects.model.PessoaJuridica;
 import com.pacoprojects.repository.PessoaJuridicaRepository;
 import org.junit.jupiter.api.Test;
@@ -28,13 +30,15 @@ public class PessoaUsuarioTests {
 
     private final PessoaController controllerPessoa;
     private final PessoaJuridicaRepository repositoryJuridica;
+    private final PessoaJuridicaMapper mapperJuridica;
 
 
     @Autowired
-    public PessoaUsuarioTests(PessoaController controllerPessoa, PessoaJuridicaRepository repositoryJuridica) {
+    public PessoaUsuarioTests(PessoaController controllerPessoa, PessoaJuridicaRepository repositoryJuridica, PessoaJuridicaMapper mapperJuridica) {
         this.controllerPessoa = controllerPessoa;
         this.repositoryJuridica = repositoryJuridica;
 
+        this.mapperJuridica = mapperJuridica;
     }
 
     @Test
@@ -128,8 +132,9 @@ public class PessoaUsuarioTests {
                 .numero("926451587")
                 .build();
 
-        Optional<PessoaJuridica> optionalPessoaJuridica = repositoryJuridica.findPessoaJuridicaByCnpj("78.643.209/0001-60");
-
+        Optional<PessoaJuridicaProjection> optionalPessoaJuridica = repositoryJuridica.findByCnpj("78.643.209/0001-60");
+        PessoaJuridica juridica = mapperJuridica.toEntity(optionalPessoaJuridica
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe pessoa com esse ID")));
         RegisterPessoaFisicaDto pessoaFisicaDto = RegisterPessoaFisicaDto
                 .builder()
                 .nome("Gustavo")
@@ -138,8 +143,7 @@ public class PessoaUsuarioTests {
                 .dataNascimento(LocalDate.of(1989,9,24))
                 .telefones(Set.of(telefoneDto, telefoneDto2))
                 .enderecos(Set.of(enderecoDto, enderecoDto2))
-                .empresa(optionalPessoaJuridica
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe pessoa com esse ID")))
+                .empresa(juridica)
                 .build();
 
         ResponseEntity<RegisterPessoaFisicaDto> dtoResponseEntity = controllerPessoa.addPessoaFisica(pessoaFisicaDto);

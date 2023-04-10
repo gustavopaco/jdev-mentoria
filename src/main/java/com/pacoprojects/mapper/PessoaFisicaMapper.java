@@ -9,10 +9,17 @@ import org.mapstruct.*;
 public interface PessoaFisicaMapper {
     PessoaFisica toEntity(RegisterPessoaFisicaDto registerPessoaFisicaDto);
 
+    PessoaFisica toEntity(PessoaFisicaDto pessoaFisicaDto);
+
     RegisterPessoaFisicaDto toDto(PessoaFisica pessoaFisica);
+
+    PessoaFisicaDto toDto1(PessoaFisica pessoaFisica);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PessoaFisica partialUpdate(RegisterPessoaFisicaDto registerPessoaFisicaDto, @MappingTarget PessoaFisica pessoaFisica);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    PessoaFisica partialUpdate(PessoaFisicaDto pessoaFisicaDto, @MappingTarget PessoaFisica pessoaFisica);
 
     @AfterMapping
     default void linkTelefones(@MappingTarget PessoaFisica pessoaFisica) {
@@ -37,13 +44,4 @@ public interface PessoaFisicaMapper {
             contasReceber.setEmpresa(pessoaFisica.getEmpresa());
         });
     }
-
-    PessoaFisica toEntity1(PessoaFisicaDto pessoaFisicaDto);
-
-    PessoaFisicaDto toDto1(PessoaFisica pessoaFisica);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    PessoaFisica partialUpdate1(PessoaFisicaDto pessoaFisicaDto, @MappingTarget PessoaFisica pessoaFisica);
-
-
 }
