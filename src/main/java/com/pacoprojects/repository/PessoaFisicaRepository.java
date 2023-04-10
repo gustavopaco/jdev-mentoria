@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PessoaFisicaRepository extends JpaRepository<PessoaFisica, Long> {
+
+    boolean existsPessoaFisicaByCpf(String cpf);
 }

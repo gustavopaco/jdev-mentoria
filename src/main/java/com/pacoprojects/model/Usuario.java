@@ -65,7 +65,7 @@ public class Usuario implements UserDetails {
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private Pessoa pessoa;
 
-    @ManyToOne(targetEntity = Pessoa.class, cascade = {CascadeType.PERSIST})
+    @ManyToOne(targetEntity = Pessoa.class, cascade = { CascadeType.MERGE})
     @JoinColumn(
             name = "empresa_id",
             nullable = false,

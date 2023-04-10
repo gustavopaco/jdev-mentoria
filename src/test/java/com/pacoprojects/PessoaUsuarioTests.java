@@ -2,16 +2,22 @@ package com.pacoprojects;
 
 import com.pacoprojects.controller.PessoaController;
 import com.pacoprojects.dto.EnderecoDto;
+import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.dto.TelefoneDto;
 import com.pacoprojects.enums.TipoEndereco;
-import com.pacoprojects.mapper.PessoaJuridicaMapper;
+import com.pacoprojects.model.PessoaJuridica;
+import com.pacoprojects.repository.PessoaJuridicaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,12 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PessoaUsuarioTests {
 
     private final PessoaController controllerPessoa;
-    private final PessoaJuridicaMapper mapper;
+    private final PessoaJuridicaRepository repositoryJuridica;
+
 
     @Autowired
-    public PessoaUsuarioTests(PessoaController controllerPessoa, PessoaJuridicaMapper mapper) {
+    public PessoaUsuarioTests(PessoaController controllerPessoa, PessoaJuridicaRepository repositoryJuridica) {
         this.controllerPessoa = controllerPessoa;
-        this.mapper = mapper;
+        this.repositoryJuridica = repositoryJuridica;
+
     }
 
     @Test
@@ -56,18 +64,18 @@ public class PessoaUsuarioTests {
 
         TelefoneDto telefoneDto = TelefoneDto
                 .builder()
-                .numero("987650241")
+                .numero("445621574")
                 .build();
 
         RegisterPessoaJuridicaDto juridicaDto = RegisterPessoaJuridicaDto
                 .builder()
-                .cnpj("65.080.136/0001-02")
-                .nome("Joao")
-                .nomeFantasia("Supermercado do Joao")
-                .email("joao@gmail.com")
-                .inscricaoEstadual("re4t56er4t2f1gdf24g1df")
-                .inscricaoMunicipal("ghg4jmgh4j5k4hgj5k4hj5k")
-                .razaoSocial("Supermercado do Joao S/A")
+                .cnpj("04.820.438/0001-77")
+                .nome("Marlon")
+                .nomeFantasia("Supermercado do marlon")
+                .email("marlon@gmail.com")
+                .inscricaoEstadual("ggghghg")
+                .inscricaoMunicipal("ggghghg")
+                .razaoSocial("Supermercado da marlon S/A")
                 .telefones(Set.of(telefoneDto))
                 .enderecos(Set.of(enderecoDto, enderecoDto2))
                 .build();
@@ -83,27 +91,66 @@ public class PessoaUsuarioTests {
         responseEntityBody.telefones().forEach(telefoneDto1 -> assertNotNull(telefoneDto1.id()));
         responseEntityBody.enderecos().forEach(enderecoDto1 -> assertNotNull(enderecoDto1.id()));
 
+    }
 
+    @Test
+    void addPessoaFisica() {
 
-//        PessoaFisica pessoaFisica = new PessoaFisica();
-//        pessoaFisica.setCpf("107.775.376-48");
-//        pessoaFisica.setNome("Gustavo");
-//        pessoaFisica.setEmail("gustavopaco@gmail.com");
-//
-//        Usuario usuario = new Usuario();
-//        Pessoa pessoa = new PessoaFisica();
-//        usuario.setPessoa(pessoa);
-//        if (usuario.getPessoa() instanceof PessoaFisica) {
-//           usuario.getPessoa().setNome("Gustavo");
-//            ((PessoaFisica) usuario.getPessoa()).setCpf("107.775.376-48");
-//            ((PessoaFisica) usuario.getPessoa()).setDataNascimento(LocalDate.of(1989,9,24));
-//            usuario.getPessoa().setEmail("gustavopaco@gmail.com");
-//            usuario.setUsername("gustavopaco@gmail.com");
-//            usuario.setPassword(applicationConfig.passwordEncoder().encode("12345678"));
-//            usuario.getAuthorities().add(repositoryRole.findById(1L).orElseThrow(() -> new RuntimeException("Nao existe")));
-//            usuario.setDateLastPasswordChange(LocalDateTime.now());
-//            System.out.println(usuario);
-//            repositoryUsuario.save(usuario);
-//        }
+        EnderecoDto enderecoDto = EnderecoDto
+                .builder()
+                .rua("Rua Sargento Johnny da Silva")
+                .cep("30590-253")
+                .numero("200, Bloco 1 - Apt 201")
+                .bairro("Betânia")
+                .cidade("Belo Horizonte")
+                .estado("MG")
+                .tipoEndereco(TipoEndereco.COBRANCA)
+                .build();
+
+        EnderecoDto enderecoDto2 = EnderecoDto
+                .builder()
+                .rua("Rua Sargento Johnny da Silva")
+                .cep("30590-253")
+                .numero("200, Bloco 1 - Apt 201")
+                .bairro("Betânia")
+                .cidade("Belo Horizonte")
+                .estado("MG")
+                .tipoEndereco(TipoEndereco.ENTREGA)
+                .build();
+
+        TelefoneDto telefoneDto = TelefoneDto
+                .builder()
+                .numero("993039064")
+                .build();
+
+        TelefoneDto telefoneDto2 = TelefoneDto
+                .builder()
+                .numero("926451587")
+                .build();
+
+        Optional<PessoaJuridica> optionalPessoaJuridica = repositoryJuridica.findPessoaJuridicaByCnpj("78.643.209/0001-60");
+
+        RegisterPessoaFisicaDto pessoaFisicaDto = RegisterPessoaFisicaDto
+                .builder()
+                .nome("Gustavo")
+                .cpf("107.775.376-48")
+                .email("gustavopaco@gmail.com")
+                .dataNascimento(LocalDate.of(1989,9,24))
+                .telefones(Set.of(telefoneDto, telefoneDto2))
+                .enderecos(Set.of(enderecoDto, enderecoDto2))
+                .empresa(optionalPessoaJuridica
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe pessoa com esse ID")))
+                .build();
+
+        ResponseEntity<RegisterPessoaFisicaDto> dtoResponseEntity = controllerPessoa.addPessoaFisica(pessoaFisicaDto);
+
+        assertNotNull(dtoResponseEntity.getBody());
+
+        RegisterPessoaFisicaDto responseEntityBody = dtoResponseEntity.getBody();
+
+        assertNotNull(responseEntityBody.id());
+        responseEntityBody.telefones().forEach(telefoneDto1 -> assertNotNull(telefoneDto1.id()));
+        responseEntityBody.enderecos().forEach(enderecoDto1 -> assertNotNull(enderecoDto1.id()));
+
     }
 }

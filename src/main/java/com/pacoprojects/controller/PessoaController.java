@@ -1,5 +1,6 @@
 package com.pacoprojects.controller;
 
+import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.service.PessoaUserService;
 import jakarta.validation.Valid;
@@ -20,5 +21,10 @@ public class PessoaController {
     @PostMapping(path = "addJuridica")
     public ResponseEntity<RegisterPessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody RegisterPessoaJuridicaDto pessoaJuridica) {
         return ResponseEntity.ok(pessoaUserService.addPessoaJuridica(pessoaJuridica));
+    }
+
+    @PostMapping(path = "addFisica")
+    public ResponseEntity<RegisterPessoaFisicaDto> addPessoaFisica(@Valid @RequestBody RegisterPessoaFisicaDto pessoaFisica) {
+        return ResponseEntity.ok(pessoaUserService.addPessoaFisica(pessoaFisica));
     }
 }

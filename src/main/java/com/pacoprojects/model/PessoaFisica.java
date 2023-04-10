@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,7 +20,8 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "pessoa_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "pessoa_fisica_fk", value = ConstraintMode.CONSTRAINT))
 public class PessoaFisica extends Pessoa{
 
-    @CPF(message = "CPF obrigatório.")
+    @CPF(message = "CPF inválido.")
+    @NotBlank(message = "CPF obrigatório.")
     @Column(name = "cpf", nullable = false)
     private String cpf;
 
