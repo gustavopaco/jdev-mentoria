@@ -42,23 +42,23 @@ public class PessoaUsuarioTests {
 
         EnderecoDto enderecoDto = EnderecoDto
                 .builder()
-                .rua("Rua do Indio")
-                .cep("36985124")
+//                .rua("Rua do Indio")
+                .cep("30590-253")
                 .numero("950")
-                .bairro("CENTRO")
-                .cidade("Belo Horizonte")
-                .estado("MG")
+//                .bairro("CENTRO")
+//                .cidade("Belo Horizonte")
+//                .estado("MG")
                 .tipoEndereco(TipoEndereco.COBRANCA)
                 .build();
 
         EnderecoDto enderecoDto2 = EnderecoDto
                 .builder()
-                .rua("Rua as trincheiras")
-                .cep("95462741")
+//                .rua("Rua as trincheiras")
+                .cep("64053-390")
                 .numero("50")
-                .bairro("Jardim America")
-                .cidade("Belo Horizonte")
-                .estado("MG")
+//                .bairro("Jardim America")
+//                .cidade("Belo Horizonte")
+//                .estado("MG")
                 .tipoEndereco(TipoEndereco.ENTREGA)
                 .build();
 
@@ -69,13 +69,13 @@ public class PessoaUsuarioTests {
 
         RegisterPessoaJuridicaDto juridicaDto = RegisterPessoaJuridicaDto
                 .builder()
-                .cnpj("04.820.438/0001-77")
-                .nome("Marlon")
+                .cnpj("08.235.782/0001-50")
+                .nome("Marlon1")
                 .nomeFantasia("Supermercado do marlon")
-                .email("marlon@gmail.com")
-                .inscricaoEstadual("ggghghg")
-                .inscricaoMunicipal("ggghghg")
-                .razaoSocial("Supermercado da marlon S/A")
+                .email("marlon1@gmail.com")
+                .inscricaoEstadual("ggghxcvxvcxvghg")
+                .inscricaoMunicipal("ggghxcvxvcxvghg")
+                .razaoSocial("Supermercado da marlon1 S/A")
                 .telefones(Set.of(telefoneDto))
                 .enderecos(Set.of(enderecoDto, enderecoDto2))
                 .build();
@@ -98,23 +98,23 @@ public class PessoaUsuarioTests {
 
         EnderecoDto enderecoDto = EnderecoDto
                 .builder()
-                .rua("Rua Sargento Johnny da Silva")
-                .cep("30590-253")
-                .numero("200, Bloco 1 - Apt 201")
-                .bairro("Betânia")
-                .cidade("Belo Horizonte")
-                .estado("MG")
+//                .rua("Rua Sargento Johnny da Silva")
+                .cep("64053-390")
+//                .numero("200, Bloco 1 - Apt 201")
+//                .bairro("Betânia")
+//                .cidade("Belo Horizonte")
+//                .estado("MG")
                 .tipoEndereco(TipoEndereco.COBRANCA)
                 .build();
 
         EnderecoDto enderecoDto2 = EnderecoDto
                 .builder()
-                .rua("Rua Sargento Johnny da Silva")
+//                .rua("Rua Sargento Johnny da Silva")
                 .cep("30590-253")
-                .numero("200, Bloco 1 - Apt 201")
-                .bairro("Betânia")
-                .cidade("Belo Horizonte")
-                .estado("MG")
+//                .numero("200, Bloco 1 - Apt 201")
+//                .bairro("Betânia")
+//                .cidade("Belo Horizonte")
+//                .estado("MG")
                 .tipoEndereco(TipoEndereco.ENTREGA)
                 .build();
 

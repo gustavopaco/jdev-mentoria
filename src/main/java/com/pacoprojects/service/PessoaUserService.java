@@ -1,11 +1,14 @@
 package com.pacoprojects.service;
 
+import com.pacoprojects.api.ApiConsultaCep;
+import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.email.EmailMessage;
 import com.pacoprojects.email.EmailObject;
 import com.pacoprojects.email.EmailService;
 import com.pacoprojects.enums.TipoPessoa;
+import com.pacoprojects.mapper.EnderecoMapper;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
 import com.pacoprojects.mapper.PessoaJuridicaMapper;
 import com.pacoprojects.model.*;
@@ -21,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +32,23 @@ public class PessoaUserService {
 
     private final PessoaJuridicaRepository repositoryJuridica;
     private final PessoaFisicaRepository repositoryFisica;
-    private final PessoaRepository repositoryPessoa;
     private final UsuarioRepository repositoryUsuario;
     private final RoleRepository repositoryRole;
+    private final EnderecoRepository repositoryEndereco;
     private final ApplicationConfig applicationConfig;
     private final PessoaJuridicaMapper mapperJuridica;
     private final PessoaFisicaMapper mapperFisica;
+    private final EnderecoMapper mapperEndereco;
     private final EmailService serviceEmail;
+    private final ApiConsultaCep apiConsultaCep;
 
     public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridica) {
 
         validatePessoaJurdicia(pessoaJuridica);
 
         PessoaJuridica juridicaEntity = mapperJuridica.toEntity(pessoaJuridica);
+
+        consultAndPopulateAddress(juridicaEntity);
 
         saveNewUsuario(juridicaEntity, TipoPessoa.JURIDICA);
 
@@ -53,13 +61,15 @@ public class PessoaUserService {
 
         PessoaFisica fisicaEntity = mapperFisica.toEntity(pessoaFisicaDto);
 
+        consultAndPopulateAddress(fisicaEntity);
+
         saveNewUsuario(fisicaEntity, TipoPessoa.FISICA);
 
         return mapperFisica.toDto(fisicaEntity);
     }
 
 
-    public Usuario saveNewUsuario(Pessoa pessoa, TipoPessoa tipoPessoa) {
+    public void saveNewUsuario(Pessoa pessoa, TipoPessoa tipoPessoa) {
         Usuario usuario = new Usuario();
         String password = generateRandomPassword();
 
@@ -76,10 +86,9 @@ public class PessoaUserService {
             usuario.setEmpresa(pessoa.getEmpresa());
         }
 
-        usuario = repositoryUsuario.save(usuario);
+        repositoryUsuario.save(usuario);
 
         enviarEmail(usuario.getUsername(), password);
-        return usuario;
     }
 
     private void validatePessoaJurdicia(RegisterPessoaJuridicaDto pessoaJuridica) {
@@ -118,6 +127,25 @@ public class PessoaUserService {
         }
 
         validateEmailInUse(pessoaFisica.email());
+    }
+
+    private void consultAndPopulateAddress(Pessoa pessoa) {
+        if (pessoa.getId() == null) {
+            pessoa.setEnderecos(pessoa.getEnderecos().stream().peek(endereco -> {
+                EnderecoDto enderecoDto = apiConsultaCep.getAdress(endereco.getCep());
+                mapperEndereco.partialUpdate(enderecoDto, endereco);
+            }).collect(Collectors.toSet()));
+        } else {
+            pessoa.setEnderecos(pessoa.getEnderecos().stream().peek(endereco -> {
+                Optional<Endereco> optionalEndereco = repositoryEndereco.findById(endereco.getId());
+                if (optionalEndereco.isPresent()
+                        && (!optionalEndereco.get().getCep().equals(endereco.getCep())
+                                || !optionalEndereco.get().getNumero().equals(endereco.getNumero()))) {
+                    EnderecoDto enderecoDto = apiConsultaCep.getAdress(endereco.getCep());
+                    mapperEndereco.partialUpdate(enderecoDto, endereco);
+                }
+            }).collect(Collectors.toSet()));
+        }
     }
 
     private void validateEmailInUse(String username) {
