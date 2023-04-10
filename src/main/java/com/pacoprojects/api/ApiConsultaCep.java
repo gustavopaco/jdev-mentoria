@@ -16,7 +16,7 @@ public class ApiConsultaCep {
     private final ApplicationConfig applicationConfig;
     private static final String URL = "https://viacep.com.br/ws/";
 
-    public EnderecoDto getAdress(String cep) {
+    public EnderecoDto consultViaCepApi(String cep) {
         cep = cep.replaceAll("-", "");
         ResponseEntity<ViaCepDto> dtoResponseEntity = applicationConfig.getRestTemplateInstance().getForEntity((URL + cep + "/json"), ViaCepDto.class);
 

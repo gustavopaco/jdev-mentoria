@@ -5,11 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum TipoPessoa {
+public enum TipoRole {
 
-    FISICA("FISICA"),
-    JURIDICA("JURIDICA"),
-    JURIDICA_FORNECEDOR("FORNECEDOR");
+    FISICA("ROLE_FISICA"),
+    JURIDICA("ROLE_JURIDICA"),
+    FORNECEDOR("ROLE_FORNECEDOR"),
+    ADMIN("ROLE_ADMIN");
 
     private final String descricao;
 

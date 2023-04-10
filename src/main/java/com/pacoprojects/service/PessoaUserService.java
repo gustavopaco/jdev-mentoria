@@ -10,6 +10,7 @@ import com.pacoprojects.email.EmailMessage;
 import com.pacoprojects.email.EmailObject;
 import com.pacoprojects.email.EmailService;
 import com.pacoprojects.enums.TipoPessoa;
+import com.pacoprojects.enums.TipoRole;
 import com.pacoprojects.mapper.EnderecoMapper;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
 import com.pacoprojects.mapper.PessoaJuridicaMapper;
@@ -25,8 +26,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,15 +48,15 @@ public class PessoaUserService {
     private final EmailService serviceEmail;
     private final ApiConsultaCep apiConsultaCep;
 
-    public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridica) {
+    public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridicaDto) {
 
-        validatePessoaJurdicia(pessoaJuridica);
+        validatePessoaJurdicia(pessoaJuridicaDto);
 
-        PessoaJuridica juridicaEntity = mapperJuridica.toEntity(pessoaJuridica);
+        PessoaJuridica juridicaEntity = mapperJuridica.toEntity(pessoaJuridicaDto);
 
         consultAndPopulateAddress(juridicaEntity);
 
-        saveNewUsuario(juridicaEntity, TipoPessoa.JURIDICA);
+        saveNewUsuario(juridicaEntity);
 
         return mapperJuridica.toDto(juridicaEntity);
     }
@@ -63,29 +66,29 @@ public class PessoaUserService {
         validatePessoaFisica(pessoaFisicaDto);
 
         PessoaFisica fisicaEntity = mapperFisica.toEntity(pessoaFisicaDto);
+        fisicaEntity.setTipoPessoa(TipoPessoa.FISICA);
 
         consultAndPopulateAddress(fisicaEntity);
 
-        saveNewUsuario(fisicaEntity, TipoPessoa.FISICA);
+        saveNewUsuario(fisicaEntity);
 
         return mapperFisica.toDto(fisicaEntity);
     }
 
 
-    public void saveNewUsuario(Pessoa pessoa, TipoPessoa tipoPessoa) {
+    public void saveNewUsuario(Pessoa pessoa) {
         Usuario usuario = new Usuario();
         String password = generateRandomPassword();
 
         usuario.setUsername(pessoa.getEmail());
         usuario.setPassword(applicationConfig.passwordEncoder().encode(password));
         usuario.setDateLastPasswordChange(LocalDateTime.now());
-        usuario.getAuthorities().add(getRole(tipoPessoa));
+        usuario.setAuthorities(getRoles(pessoa.getTipoPessoa()));
         usuario.setPessoa(pessoa);
 
-        if (tipoPessoa.equals(TipoPessoa.JURIDICA)) {
-            usuario.getAuthorities().add(getRole(TipoPessoa.ADMIN));
+        if (pessoa.getTipoPessoa().equals(TipoPessoa.JURIDICA)) {
             usuario.setEmpresa(pessoa);
-        } else if (tipoPessoa.equals(TipoPessoa.FISICA)) {
+        } else if (pessoa.getTipoPessoa().equals(TipoPessoa.FISICA)) {
             usuario.setEmpresa(pessoa.getEmpresa());
         }
 
@@ -98,6 +101,10 @@ public class PessoaUserService {
 
         if (pessoaJuridica == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empresa não pode ser nula");
+        }
+
+        if (pessoaJuridica.tipoPessoa() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Por favor selecione um tipo de Pessoa Jurídica.");
         }
 
         if (!ValidadorCnpj.isCNPJ(pessoaJuridica.cnpj())) {
@@ -135,7 +142,7 @@ public class PessoaUserService {
     private void consultAndPopulateAddress(Pessoa pessoa) {
         if (pessoa.getId() == null) {
             pessoa.setEnderecos(pessoa.getEnderecos().stream().peek(endereco -> {
-                EnderecoDto enderecoDto = apiConsultaCep.getAdress(endereco.getCep());
+                EnderecoDto enderecoDto = apiConsultaCep.consultViaCepApi(endereco.getCep());
                 mapperEndereco.partialUpdate(enderecoDto, endereco);
             }).collect(Collectors.toSet()));
         } else {
@@ -144,7 +151,7 @@ public class PessoaUserService {
                 if (optionalEndereco.isPresent()
                         && (!optionalEndereco.get().getCep().equals(endereco.getCep())
                                 || !optionalEndereco.get().getNumero().equals(endereco.getNumero()))) {
-                    EnderecoDto enderecoDto = apiConsultaCep.getAdress(endereco.getCep());
+                    EnderecoDto enderecoDto = apiConsultaCep.consultViaCepApi(endereco.getCep());
                     mapperEndereco.partialUpdate(enderecoDto, endereco);
                 }
             }).collect(Collectors.toSet()));
@@ -159,17 +166,22 @@ public class PessoaUserService {
         }
     }
 
-    private Role getRole(TipoPessoa tipoPessoa) {
+    private Set<Role> getRoles(TipoPessoa tipoPessoa) {
+        Set<Role> authorities = new LinkedHashSet<>();
         if (tipoPessoa.equals(TipoPessoa.JURIDICA)) {
-            Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase(TipoPessoa.JURIDICA.toString());
-            return optionalRole.orElseGet(() -> repositoryRole.save(Role.builder().authority(TipoPessoa.JURIDICA.toString()).build()));
-        } else if (tipoPessoa.equals(TipoPessoa.ADMIN)) {
-            Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase(TipoPessoa.ADMIN.toString());
-            return optionalRole.orElseGet(() -> repositoryRole.save(Role.builder().authority(TipoPessoa.ADMIN.toString()).build()));
-        } else {
-            Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase(TipoPessoa.FISICA.toString());
-            return optionalRole.orElseGet(() -> repositoryRole.save(Role.builder().authority(TipoPessoa.FISICA.toString()).build()));
+            authorities.add(verifyAndAddRole(TipoRole.JURIDICA));
+            authorities.add(verifyAndAddRole(TipoRole.ADMIN));
+        } else if (tipoPessoa.equals(TipoPessoa.JURIDICA_FORNECEDOR)) {
+            authorities.add(verifyAndAddRole(TipoRole.FORNECEDOR));
+        } else if (tipoPessoa.equals(TipoPessoa.FISICA)){
+            authorities.add(verifyAndAddRole(TipoRole.FISICA));
         }
+        return authorities;
+    }
+
+    private Role verifyAndAddRole(TipoRole tipoRole) {
+        Optional<Role> optionalRole = repositoryRole.findRoleByAuthorityContainsIgnoreCase(tipoRole.toString());
+        return optionalRole.orElseGet(() -> repositoryRole.save(Role.builder().authority(tipoRole.toString()).build()));
     }
 
     private String generateRandomPassword() {
@@ -201,4 +213,6 @@ public class PessoaUserService {
     public PessoaJuridicaProjection findPessoaJuridicaByCnpj(String cnpj) {
         return repositoryJuridica.findByCnpj(cnpj).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe empresa com esse Cnpj: " + cnpj));
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.pacoprojects.model;
 
+import com.pacoprojects.enums.TipoPessoa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,6 +36,10 @@ public abstract class Pessoa {
     @NotBlank(message = "E-mail obrigatório.")
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "tipo_pessoa")
+    private TipoPessoa tipoPessoa;
 
     @OneToMany(targetEntity = Telefone.class, mappedBy = "pessoa", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @ToString.Exclude

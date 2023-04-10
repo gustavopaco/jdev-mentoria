@@ -1,11 +1,14 @@
 package com.pacoprojects.controller;
 
 import com.pacoprojects.api.ApiConsultaCep;
+import com.pacoprojects.api.ApiConsultaCnpj;
+import com.pacoprojects.dto.ConsultaReceitaAwsDto;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.RegisterPessoaFisicaDto;
 import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
 import com.pacoprojects.dto.projections.PessoaFisicaProjection;
 import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
+import com.pacoprojects.service.EndPointService;
 import com.pacoprojects.service.PessoaUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ public class PessoaController {
 
     private final PessoaUserService pessoaUserService;
     private final ApiConsultaCep apiConsultaCep;
+    private final EndPointService endPointService;
+    private final ApiConsultaCnpj apiConsultaCnpj;
 
     @PostMapping(path = "addJuridica")
     public ResponseEntity<RegisterPessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody RegisterPessoaJuridicaDto pessoaJuridica) {
@@ -32,13 +37,19 @@ public class PessoaController {
         return ResponseEntity.ok(pessoaUserService.addPessoaFisica(pessoaFisica));
     }
 
-    @GetMapping(path = "consultAddress/{cep}")
-    public ResponseEntity<EnderecoDto> consultAddress(@PathVariable(name = "cep") String cep) {
-        return ResponseEntity.ok(apiConsultaCep.getAdress(cep));
+    @GetMapping(path = "consultViaCepApi/{cep}")
+    public ResponseEntity<EnderecoDto> consultViaCepApi(@PathVariable(name = "cep") String cep) {
+        return ResponseEntity.ok(apiConsultaCep.consultViaCepApi(cep));
+    }
+
+    @GetMapping(path = "consultReceitaAwsApi")
+    public ResponseEntity<ConsultaReceitaAwsDto> consultReceitaAwsApi(@RequestParam(name = "cnpj") String cnpj) {
+        return ResponseEntity.ok(apiConsultaCnpj.consultReceitaAwsApi(cnpj));
     }
 
     @GetMapping(path = "findFisicaByName")
     public ResponseEntity<List<PessoaFisicaProjection>> findPessoaFisicaByName(@RequestParam(name = "nome") String nome) {
+        endPointService.updateEndPoint("findFisicaByName");
         return ResponseEntity.ok(pessoaUserService.findPessoaFisicaByName(nome));
     }
 

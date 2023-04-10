@@ -1,5 +1,6 @@
 package com.pacoprojects.dto;
 
+import com.pacoprojects.enums.TipoPessoa;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import org.hibernate.validator.constraints.br.CNPJ;
@@ -40,7 +41,10 @@ public record RegisterPessoaJuridicaDto(
         @NotBlank(message = "Razão Social obrigatório.")
         String razaoSocial,
 
-        String categoria
+        String categoria,
+
+
+        TipoPessoa tipoPessoa
 
 ) implements Serializable {
 }
