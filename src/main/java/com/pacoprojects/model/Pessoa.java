@@ -1,6 +1,7 @@
 package com.pacoprojects.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public abstract class Pessoa {
     @Column(name = "nome", nullable = false)
     private String nome;
 
+    @Email(message = "Formato do E-mail inválido.")
     @NotBlank(message = "E-mail obrigatório.")
     @Column(name = "email", nullable = false)
     private String email;
