@@ -2,7 +2,6 @@ package com.pacoprojects.service;
 
 import com.pacoprojects.model.AcessoEndpoint;
 import com.pacoprojects.repository.AcessoEndpointRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ public class EndPointService {
 
     private final AcessoEndpointRepository repository;
 
-    @Transactional
     public void updateEndPoint(String endPointName) {
 
         if (repository.existsByNome(endPointName)) {

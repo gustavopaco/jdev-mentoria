@@ -1,7 +1,6 @@
 package com.pacoprojects.controller;
 
 import com.pacoprojects.dto.ContaPagarDto;
-import com.pacoprojects.dto.ResponseContaPagarDto;
 import com.pacoprojects.dto.projections.ContaPagarProjections;
 import com.pacoprojects.service.ContaPagarService;
 import jakarta.validation.Valid;
@@ -24,7 +23,7 @@ public class ContaPagarController {
     }
 
     @GetMapping(path = "{id}")
-    public ResponseEntity<ResponseContaPagarDto> getContaPagarById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<ContaPagarProjections> getContaPagarById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(serviceContaPagar.getContaPagarById(id));
     }
 

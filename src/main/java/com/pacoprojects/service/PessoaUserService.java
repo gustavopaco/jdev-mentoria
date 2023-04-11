@@ -19,7 +19,6 @@ import com.pacoprojects.repository.*;
 import com.pacoprojects.security.ApplicationConfig;
 import com.pacoprojects.util.ValidadorCnpj;
 import com.pacoprojects.util.ValidadorCpf;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -78,8 +77,6 @@ public class PessoaUserService {
         return mapperFisica.toDto(fisicaEntity);
     }
 
-
-    @Transactional  //Comentar depois que o projeto estiver pronto para testar
     public void saveNewUsuario(Pessoa pessoa) {
         Usuario usuario = new Usuario();
         String password = generateRandomPassword();

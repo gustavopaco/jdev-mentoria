@@ -2,6 +2,7 @@ package com.pacoprojects.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -40,8 +41,9 @@ public class NotaFiscalCompra {
     @Column(name = "descricao")
     private String descricao;
 
-    @NotNull(message = "Valor total obrigatório.")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @NotNull(message = "Valor total obrigatório.")
+    @Min(value = 1, message = "Valor deve ser no mínimo de R$1,00.")
     @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
@@ -49,8 +51,9 @@ public class NotaFiscalCompra {
     @Column(name = "valor_desconto")
     private BigDecimal valorDesconto;
 
-    @NotNull(message = "Valor de ICMS obrigatório.")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @Min(value = 1, message = "Valor do ICMS deve ser no mínimo de R$1,00.")
+    @NotNull(message = "Valor de ICMS obrigatório.")
     @Column(name = "valor_icms", nullable = false)
     private BigDecimal valorIcms;
 
@@ -64,7 +67,7 @@ public class NotaFiscalCompra {
             name = "pessoa_id", nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa pessoa;
+    private PessoaJuridica pessoa;
 
     @OneToOne(targetEntity = ContaPagar.class)
     @JoinColumn(
@@ -79,7 +82,7 @@ public class NotaFiscalCompra {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {

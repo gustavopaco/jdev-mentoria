@@ -1,7 +1,7 @@
 package com.pacoprojects.mapper;
 
 import com.pacoprojects.dto.ContaPagarDto;
-import com.pacoprojects.dto.ResponseContaPagarDto;
+import com.pacoprojects.dto.ContaPagarDtoBasicId;
 import com.pacoprojects.model.ContaPagar;
 import org.mapstruct.*;
 
@@ -14,10 +14,10 @@ public interface ContaPagarMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ContaPagar partialUpdate(ContaPagarDto contaPagarDto, @MappingTarget ContaPagar contaPagar);
 
-    ContaPagar toEntity1(ResponseContaPagarDto responseContaPagarDto);
+    ContaPagar toEntity1(ContaPagarDtoBasicId contaPagarDtoBasicId);
 
-    ResponseContaPagarDto toDto1(ContaPagar contaPagar);
+    ContaPagarDtoBasicId toDto1(ContaPagar contaPagar);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    ContaPagar partialUpdate1(ResponseContaPagarDto responseContaPagarDto, @MappingTarget ContaPagar contaPagar);
+    ContaPagar partialUpdate1(ContaPagarDtoBasicId contaPagarDtoBasicId, @MappingTarget ContaPagar contaPagar);
 }

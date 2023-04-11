@@ -1,11 +1,10 @@
 package com.pacoprojects.service;
 
 import com.pacoprojects.dto.ContaPagarDto;
-import com.pacoprojects.dto.ResponseContaPagarDto;
 import com.pacoprojects.dto.projections.ContaPagarProjections;
 import com.pacoprojects.mapper.ContaPagarMapper;
-import com.pacoprojects.mapper.ContaPagarRepository;
 import com.pacoprojects.model.ContaPagar;
+import com.pacoprojects.repository.ContaPagarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,8 @@ public class ContaPagarService {
         return repositoryContaPagar.findAllByEmpresa_Id(idEmpresa);
     }
 
-    public ResponseContaPagarDto getContaPagarById(Long id) {
-        return mapperContaPagar.toDto1(repositoryContaPagar.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma conta a pagar.")));
+    public ContaPagarProjections getContaPagarById(Long id) {
+        return repositoryContaPagar.findContaPagarById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma conta a pagar."));
     }
 
     public ContaPagarDto addContaPagar(ContaPagarDto contaPagarDto) {
@@ -71,7 +70,7 @@ public class ContaPagarService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data de vencimento deve ser a partir do dia atual.");
         }
 
-        if (repositoryContaPagar.existsByDescricaoContainsIgnoreCaseAndPessoa_Id(contaPagarDto.descricao().trim(), contaPagarDto.pessoa().id())) {
+        if (repositoryContaPagar.existsByDescricaoIgnoreCaseAndPessoa_Id(contaPagarDto.descricao().trim(), contaPagarDto.pessoa().id())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe conta pagar, com essa descrição.");
         }
     }
