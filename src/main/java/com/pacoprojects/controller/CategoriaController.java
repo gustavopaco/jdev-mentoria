@@ -21,13 +21,13 @@ public class CategoriaController {
         return ResponseEntity.ok(serviceCategoria.getAllCategorias(idEmpresa));
     }
 
-    @GetMapping(path = "getAllCategoriasByName")
+    @GetMapping(path = "byName")
     public ResponseEntity<List<CategoriaDto>> getAllCategoriasByName(@RequestParam(name = "name") String name,
                                                                      @RequestParam(name = "idEmpresa") Long idEmpresa) {
         return ResponseEntity.ok(serviceCategoria.getAllCategoriasByName(name, idEmpresa));
     }
 
-    @PostMapping(path = "addCategoria")
+    @PostMapping
     public ResponseEntity<CategoriaDto> addCategoria(@Valid @RequestBody CategoriaDto categoria) {
         return ResponseEntity.ok(serviceCategoria.addCategoria(categoria));
     }

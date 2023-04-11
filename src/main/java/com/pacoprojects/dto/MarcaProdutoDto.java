@@ -1,19 +1,18 @@
 package com.pacoprojects.dto;
 
-import com.pacoprojects.model.Categoria;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
 /**
- * A DTO for the {@link Categoria} entity
+ * A DTO for the {@link com.pacoprojects.model.MarcaProduto} entity
  */
-public record CategoriaDto(
+public record MarcaProdutoDto(
 
         Long id,
 
-        @NotBlank(message = "Nome da Categoria obrigatório")
+        @NotBlank(message = "Nome da marca é obrigatório.")
         String nome,
 
         @NotNull(message = "Empresa deve ser informada.")
