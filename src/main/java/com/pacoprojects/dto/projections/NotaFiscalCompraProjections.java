@@ -1,11 +1,15 @@
 package com.pacoprojects.dto.projections;
 
+import com.pacoprojects.model.NotaFiscalCompra;
+import org.springframework.data.rest.core.config.Projection;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * A Projection for the {@link com.pacoprojects.model.NotaFiscalCompra} entity
  */
+@Projection(name = "notaFiscalcompraProjections", types = NotaFiscalCompra.class)
 public interface NotaFiscalCompraProjections {
     Long getId();
 

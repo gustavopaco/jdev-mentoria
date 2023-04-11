@@ -1,6 +1,7 @@
 package com.pacoprojects.controller;
 
 import com.pacoprojects.dto.CategoriaDto;
+import com.pacoprojects.dto.projections.CategoriaProjections;
 import com.pacoprojects.service.CategoriaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,17 +18,17 @@ public class CategoriaController {
     private final CategoriaService serviceCategoria;
 
     @GetMapping
-    public ResponseEntity<List<CategoriaDto>> getAllCategorias( @RequestParam(name = "idEmpresa") Long idEmpresa) {
+    public ResponseEntity<List<CategoriaProjections>> getAllCategorias(@RequestParam(name = "idEmpresa") Long idEmpresa) {
         return ResponseEntity.ok(serviceCategoria.getAllCategorias(idEmpresa));
     }
 
     @GetMapping(path = "{id}")
-    public ResponseEntity<CategoriaDto> getCategoriaById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CategoriaProjections> getCategoriaById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(serviceCategoria.getCategoriaById(id));
     }
 
     @GetMapping(path = "byName")
-    public ResponseEntity<List<CategoriaDto>> getAllCategoriasByName(@RequestParam(name = "name") String name,
+    public ResponseEntity<List<CategoriaProjections>> getAllCategoriasByName(@RequestParam(name = "name") String name,
                                                                      @RequestParam(name = "idEmpresa") Long idEmpresa) {
         return ResponseEntity.ok(serviceCategoria.getAllCategoriasByName(name, idEmpresa));
     }

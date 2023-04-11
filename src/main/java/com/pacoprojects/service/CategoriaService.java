@@ -1,6 +1,7 @@
 package com.pacoprojects.service;
 
 import com.pacoprojects.dto.CategoriaDto;
+import com.pacoprojects.dto.projections.CategoriaProjections;
 import com.pacoprojects.mapper.CategoriaMapper;
 import com.pacoprojects.model.Categoria;
 import com.pacoprojects.repository.CategoriaRepository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,19 +19,16 @@ public class CategoriaService {
     private final CategoriaRepository repositoryCategoria;
     private final CategoriaMapper mapperCategoria;
 
-    public List<CategoriaDto> getAllCategorias(Long idEmpresa) {
-        return repositoryCategoria.findAllByEmpresa_Id(idEmpresa)
-                .stream().map(mapperCategoria::toDto).collect(Collectors.toList());
+    public List<CategoriaProjections> getAllCategorias(Long idEmpresa) {
+        return repositoryCategoria.findAllByEmpresa_Id(idEmpresa);
     }
 
-    public CategoriaDto getCategoriaById(Long id) {
-        Categoria entity = repositoryCategoria.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não foi encontrada."));
-        return mapperCategoria.toDto(entity);
+    public CategoriaProjections getCategoriaById(Long id) {
+        return repositoryCategoria.findCategoriaById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não foi encontrada."));
     }
 
-    public List<CategoriaDto> getAllCategoriasByName(String name, Long idEmpresa) {
-        return repositoryCategoria.findAllByNomeContainsIgnoreCaseAndEmpresa_Id(name.trim(), idEmpresa)
-                .stream().map(mapperCategoria::toDto).collect(Collectors.toList());
+    public List<CategoriaProjections> getAllCategoriasByName(String name, Long idEmpresa) {
+        return repositoryCategoria.findAllByNomeContainsIgnoreCaseAndEmpresa_Id(name.trim(), idEmpresa);
     }
 
     public CategoriaDto addCategoria(CategoriaDto categoriaDto) {

@@ -1,6 +1,8 @@
 package com.pacoprojects.dto.projections;
 
 import com.pacoprojects.enums.StatusContaPagar;
+import com.pacoprojects.model.ContaPagar;
+import org.springframework.data.rest.core.config.Projection;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -8,6 +10,7 @@ import java.time.LocalDate;
 /**
  * A Projection for the {@link com.pacoprojects.model.ContaPagar} entity
  */
+@Projection(name = "contaPagarProjections", types = ContaPagar.class)
 public interface ContaPagarProjections {
     Long getId();
 

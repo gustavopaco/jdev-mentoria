@@ -2,11 +2,9 @@ package com.pacoprojects.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
@@ -14,7 +12,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "item_nota_produto")
 @Entity
 public class ItemNotaProduto {
@@ -27,6 +26,7 @@ public class ItemNotaProduto {
     private Long id;
 
     @NotNull(message = "Quantidade de items obrigatório.")
+    @Min(value = 1, message = "Quantidade deve ser pelo menos 1 unidade.")
     @Column(name = "quantidade", nullable = false)
     private Double quantidade;
 
@@ -50,7 +50,7 @@ public class ItemNotaProduto {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {
