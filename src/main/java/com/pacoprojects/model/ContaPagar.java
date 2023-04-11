@@ -3,12 +3,10 @@ package com.pacoprojects.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pacoprojects.enums.StatusContaPagar;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,7 +17,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "conta_pagar")
 @Entity
 public class ContaPagar {
@@ -40,6 +39,7 @@ public class ContaPagar {
     private StatusContaPagar status;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+    @Future(message = "Data de vencimento deve ser a partir do dia atual.")
     @NotNull(message = "Data de vencimento obrigatório.")
     @Column(name = "data_vencimento", nullable = false)
     private LocalDate dataVencimento;
@@ -57,29 +57,32 @@ public class ContaPagar {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private BigDecimal valorDesconto;
 
+    @NotNull(message = "Pessoa deve ser informada.")
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "pessoa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa pessoa;
+    private PessoaJuridica pessoa;
 
+    @NotNull(message = "Fornecedor responsável deve ser informado.")
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "pessoa_fornecedor_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_fornecedor_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa pessoaFornecedor;
+    private PessoaJuridica pessoaFornecedor;
 
+    @NotNull(message = "Empresa deve ser informado.")
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {

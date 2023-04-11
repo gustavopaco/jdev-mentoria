@@ -9,7 +9,7 @@ public enum StatusContaPagar {
 
     COBRANCA("Pagar"),
     VENCIDA("Vencida"),
-    ACERTA("Aberta"),
+    ABERTA("Aberta"),
     QUITADA("Quitada"),
     ALUGUEL("Aluguel"),
     FUNCIONARIO("Funcionário"),

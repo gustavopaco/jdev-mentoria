@@ -21,6 +21,11 @@ public class CategoriaController {
         return ResponseEntity.ok(serviceCategoria.getAllCategorias(idEmpresa));
     }
 
+    @GetMapping(path = "{id}")
+    public ResponseEntity<CategoriaDto> getCategoriaById(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(serviceCategoria.getCategoriaById(id));
+    }
+
     @GetMapping(path = "byName")
     public ResponseEntity<List<CategoriaDto>> getAllCategoriasByName(@RequestParam(name = "name") String name,
                                                                      @RequestParam(name = "idEmpresa") Long idEmpresa) {

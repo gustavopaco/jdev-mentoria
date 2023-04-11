@@ -21,6 +21,11 @@ public class MarcaProdutoController {
         return ResponseEntity.ok(serviceMarcaProduto.getAllMarcasProdutos(idEmpresa));
     }
 
+    @GetMapping(path = "{id}")
+    public ResponseEntity<MarcaProdutoDto> getMarcaProdutoById(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(serviceMarcaProduto.getMarcaProdutoById(id));
+    }
+
     @GetMapping(path = "byName")
     public ResponseEntity<List<MarcaProdutoDto>> getAllMarcasProdutosByName(@RequestParam(name = "name") String name,
                                                                             @RequestParam(name = "idEmpresa") Long idEmpresa) {

@@ -24,6 +24,11 @@ public class CategoriaService {
                 .stream().map(mapperCategoria::toDto).collect(Collectors.toList());
     }
 
+    public CategoriaDto getCategoriaById(Long id) {
+        Categoria entity = repositoryCategoria.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não foi encontrada."));
+        return mapperCategoria.toDto(entity);
+    }
+
     public List<CategoriaDto> getAllCategoriasByName(String name, Long idEmpresa) {
         return repositoryCategoria.findAllByNomeContainsIgnoreCaseAndEmpresa_Id(name.trim(), idEmpresa)
                 .stream().map(mapperCategoria::toDto).collect(Collectors.toList());
@@ -41,8 +46,9 @@ public class CategoriaService {
 
         if (repositoryCategoria.existsById(id)) {
             repositoryCategoria.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não foi encontrada.");
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Categoria não foi encontrada.");
     }
 
     private void validateCategoria(CategoriaDto categoria) {

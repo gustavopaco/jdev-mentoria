@@ -24,6 +24,11 @@ public class MarcaProdutoService {
                 .stream().map(mapperMarcaProduto::toDto).collect(Collectors.toList());
     }
 
+    public MarcaProdutoDto getMarcaProdutoById(Long id) {
+        MarcaProduto entity = repositoryMarcaProduto.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Marca do produto não foi encontrado."));
+        return mapperMarcaProduto.toDto(entity);
+    }
+
     public List<MarcaProdutoDto> getAllMarcasProdutosByName(String name, Long idEmpresa) {
         return repositoryMarcaProduto.findAllByNomeContainsIgnoreCaseAndEmpresa_Id(name, idEmpresa)
                 .stream().map(mapperMarcaProduto::toDto).collect(Collectors.toList());
@@ -41,8 +46,9 @@ public class MarcaProdutoService {
     public void deleteMarcaProduto(Long id) {
         if (repositoryMarcaProduto.existsById(id)) {
             repositoryMarcaProduto.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Marca de produto não foi encontrada.");
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Marca de produto não foi encontrada.");
     }
 
     private void validateMarcaProduto(MarcaProdutoDto marcaProdutoDto) {
