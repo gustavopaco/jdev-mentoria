@@ -5,10 +5,9 @@ import com.pacoprojects.service.CategoriaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "categorias")
@@ -17,8 +16,24 @@ public class CategoriaController {
 
     private final CategoriaService serviceCategoria;
 
+    @GetMapping
+    public ResponseEntity<List<CategoriaDto>> getAllCategorias( @RequestParam(name = "idEmpresa") Long idEmpresa) {
+        return ResponseEntity.ok(serviceCategoria.getAllCategorias(idEmpresa));
+    }
+
+    @GetMapping(path = "getAllCategoriasByName")
+    public ResponseEntity<List<CategoriaDto>> getAllCategoriasByName(@RequestParam(name = "name") String name,
+                                                                     @RequestParam(name = "idEmpresa") Long idEmpresa) {
+        return ResponseEntity.ok(serviceCategoria.getAllCategoriasByName(name, idEmpresa));
+    }
+
     @PostMapping(path = "addCategoria")
     public ResponseEntity<CategoriaDto> addCategoria(@Valid @RequestBody CategoriaDto categoria) {
         return ResponseEntity.ok(serviceCategoria.addCategoria(categoria));
+    }
+
+    @DeleteMapping(path = "{id}")
+    public void deleteCategoria(@PathVariable(name = "id") Long id) {
+        serviceCategoria.deleteCategoria(id);
     }
 }

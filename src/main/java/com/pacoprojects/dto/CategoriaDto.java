@@ -15,7 +15,7 @@ public record CategoriaDto(
         @NotBlank(message = "Nome da Categoria obrigatório")
         String nome,
 
-        PessoaJuridicaDto empresa
+        PessoaJuridicaDtoBasicId empresa
 
 ) implements Serializable {
 }
