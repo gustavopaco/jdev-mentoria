@@ -1,5 +1,6 @@
 package com.pacoprojects.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class ImagemProduto {
     @Column(name = "imagem_miniatura", columnDefinition = "TEXT", nullable = false)
     private String imagemMiniatura;
 
+    @JsonIgnore
     @ManyToOne(targetEntity = Produto.class)
     @JoinColumn(
             name = "produto_id", nullable = false,
@@ -39,13 +41,14 @@ public class ImagemProduto {
             foreignKey = @ForeignKey(name = "produto_id_fk", value = ConstraintMode.CONSTRAINT))
     private Produto produto;
 
+    @JsonIgnore
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {

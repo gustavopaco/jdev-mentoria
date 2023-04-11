@@ -32,4 +32,17 @@ public class EmailMessage {
         builder.append(message);
         return builder.toString();
     }
+
+    public static String getLowStockMessage(String nomeEmpresa, String nomeProduto, Integer qtdeProduto) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<h2>Olá, ").append(nomeEmpresa).append("</h2>").append("<br/>").append("<br/>");
+        builder.append("<p>O produto ").append(nomeProduto).append(" está com estoque baixo.").append("<br/>");
+        builder.append(" restam apenas ").append(qtdeProduto);
+        if (qtdeProduto > 1) {
+            builder.append(" produtos").append("</p>");
+        } else {
+            builder.append(" produto").append("</p>");
+        }
+        return builder.toString();
+    }
 }

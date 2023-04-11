@@ -2,23 +2,18 @@ package com.pacoprojects.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "produto")
 @Entity
 public class Produto {
@@ -34,6 +29,7 @@ public class Produto {
     private String tipoUnidade;
 
     @NotBlank(message = "Nome do produto obrigatório.")
+    @Size(min = 10, message = "Nome do produto deve ter no mínimo de 10 caracteres.")
     @Column(name = "nome", nullable = false)
     private String nome;
 
@@ -63,6 +59,7 @@ public class Produto {
     private BigDecimal valorVenda = BigDecimal.ZERO;
 
     @NotNull(message = "Quantidade de estoque do produto obrigatório.")
+    @Min(value = 1, message = "Quantidade de estoque deve ser no mínimo 1.")
     @Column(name = "quantidade_estoque", nullable = false)
     private Integer quantidadeEstoque = 0;
 
@@ -81,8 +78,7 @@ public class Produto {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = Boolean.TRUE;
 
-    // TODO NotaItemProduto Associonar
-
+    @NotNull(message = "Marca deve ser informado.")
     @ManyToOne(targetEntity = MarcaProduto.class)
     @JoinColumn(
             name = "marca_id",
@@ -91,17 +87,24 @@ public class Produto {
             foreignKey = @ForeignKey(name = "marca_id_fk", value = ConstraintMode.CONSTRAINT))
     private MarcaProduto marcaProduto;
 
+    @NotEmpty(message = "Categoria de Produto deve ser informada.")
     @ManyToMany(targetEntity = Categoria.class, mappedBy = "produtos")
     @ToString.Exclude
     private Set<Categoria> categorias = new LinkedHashSet<>();
 
+    @NotNull(message = "Empresa deve ser informado.")
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
+
+    @Size(min = 3, max = 6, message = "Produto de ter pelo menos 3 imagem e no máximo 6 associado a ele.")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "produto", orphanRemoval = true, cascade = {CascadeType.ALL})
+    private List<ImagemProduto> imagemProdutos = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
