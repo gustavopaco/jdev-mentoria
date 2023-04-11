@@ -2,8 +2,8 @@ package com.pacoprojects.service;
 
 import com.pacoprojects.api.ApiConsultaCep;
 import com.pacoprojects.dto.EnderecoDto;
-import com.pacoprojects.dto.RegisterPessoaFisicaDto;
-import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.PessoaFisicaDto;
+import com.pacoprojects.dto.PessoaJuridicaDto;
 import com.pacoprojects.dto.projections.PessoaFisicaProjection;
 import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.email.EmailMessage;
@@ -19,6 +19,7 @@ import com.pacoprojects.repository.*;
 import com.pacoprojects.security.ApplicationConfig;
 import com.pacoprojects.util.ValidadorCnpj;
 import com.pacoprojects.util.ValidadorCpf;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -48,12 +49,13 @@ public class PessoaUserService {
     private final EmailService serviceEmail;
     private final ApiConsultaCep apiConsultaCep;
 
-    public RegisterPessoaJuridicaDto addPessoaJuridica(RegisterPessoaJuridicaDto pessoaJuridicaDto) {
+    public PessoaJuridicaDto addPessoaJuridica(PessoaJuridicaDto pessoaJuridicaDto) {
 
         validatePessoaJurdicia(pessoaJuridicaDto);
 
         PessoaJuridica juridicaEntity = mapperJuridica.toEntity(pessoaJuridicaDto);
 
+        validateAddress(juridicaEntity);
         consultAndPopulateAddress(juridicaEntity);
 
         saveNewUsuario(juridicaEntity);
@@ -61,13 +63,14 @@ public class PessoaUserService {
         return mapperJuridica.toDto(juridicaEntity);
     }
 
-    public RegisterPessoaFisicaDto addPessoaFisica(RegisterPessoaFisicaDto pessoaFisicaDto) {
+    public PessoaFisicaDto addPessoaFisica(PessoaFisicaDto pessoaFisicaDto) {
 
         validatePessoaFisica(pessoaFisicaDto);
 
         PessoaFisica fisicaEntity = mapperFisica.toEntity(pessoaFisicaDto);
         fisicaEntity.setTipoPessoa(TipoPessoa.FISICA);
 
+        validateAddress(fisicaEntity);
         consultAndPopulateAddress(fisicaEntity);
 
         saveNewUsuario(fisicaEntity);
@@ -76,6 +79,7 @@ public class PessoaUserService {
     }
 
 
+    @Transactional  //Comentar depois que o projeto estiver pronto para testar
     public void saveNewUsuario(Pessoa pessoa) {
         Usuario usuario = new Usuario();
         String password = generateRandomPassword();
@@ -97,7 +101,7 @@ public class PessoaUserService {
         enviarEmail(usuario.getUsername(), password);
     }
 
-    private void validatePessoaJurdicia(RegisterPessoaJuridicaDto pessoaJuridica) {
+    private void validatePessoaJurdicia(PessoaJuridicaDto pessoaJuridica) {
 
         if (pessoaJuridica == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empresa não pode ser nula");
@@ -122,7 +126,7 @@ public class PessoaUserService {
         validateEmailInUse(pessoaJuridica.email());
     }
 
-    private void validatePessoaFisica(RegisterPessoaFisicaDto pessoaFisica) {
+    private void validatePessoaFisica(PessoaFisicaDto pessoaFisica) {
 
         if (pessoaFisica == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pessoa Física não pode ser nula");
@@ -139,6 +143,18 @@ public class PessoaUserService {
         validateEmailInUse(pessoaFisica.email());
     }
 
+    private void validateAddress(Pessoa pessoa) {
+        pessoa.getEnderecos().forEach(endereco -> {
+            if (endereco.getNumero() == null || endereco.getNumero().isBlank()){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Número do endereço deve ser informado.");
+            } else if (endereco.getCep() == null || endereco.getCep().isBlank()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cep do endereço deve ser informado.");
+            } else if (endereco.getTipoEndereco() == null || endereco.getTipoEndereco().toString().isBlank()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de Endereço deve ser informado.");
+            }
+        });
+    }
+
     private void consultAndPopulateAddress(Pessoa pessoa) {
         if (pessoa.getId() == null) {
             pessoa.setEnderecos(pessoa.getEnderecos().stream().peek(endereco -> {
@@ -150,7 +166,7 @@ public class PessoaUserService {
                 Optional<Endereco> optionalEndereco = repositoryEndereco.findById(endereco.getId());
                 if (optionalEndereco.isPresent()
                         && (!optionalEndereco.get().getCep().equals(endereco.getCep())
-                                || !optionalEndereco.get().getNumero().equals(endereco.getNumero()))) {
+                        || !optionalEndereco.get().getNumero().equals(endereco.getNumero()))) {
                     EnderecoDto enderecoDto = apiConsultaCep.consultViaCepApi(endereco.getCep());
                     mapperEndereco.partialUpdate(enderecoDto, endereco);
                 }
@@ -173,7 +189,7 @@ public class PessoaUserService {
             authorities.add(verifyAndAddRole(TipoRole.ADMIN));
         } else if (tipoPessoa.equals(TipoPessoa.JURIDICA_FORNECEDOR)) {
             authorities.add(verifyAndAddRole(TipoRole.FORNECEDOR));
-        } else if (tipoPessoa.equals(TipoPessoa.FISICA)){
+        } else if (tipoPessoa.equals(TipoPessoa.FISICA)) {
             authorities.add(verifyAndAddRole(TipoRole.FISICA));
         }
         return authorities;

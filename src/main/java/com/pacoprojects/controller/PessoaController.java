@@ -4,8 +4,8 @@ import com.pacoprojects.api.ApiConsultaCep;
 import com.pacoprojects.api.ApiConsultaCnpj;
 import com.pacoprojects.dto.ConsultaReceitaAwsDto;
 import com.pacoprojects.dto.EnderecoDto;
-import com.pacoprojects.dto.RegisterPessoaFisicaDto;
-import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.PessoaFisicaDto;
+import com.pacoprojects.dto.PessoaJuridicaDto;
 import com.pacoprojects.dto.projections.PessoaFisicaProjection;
 import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.service.EndPointService;
@@ -28,12 +28,12 @@ public class PessoaController {
     private final ApiConsultaCnpj apiConsultaCnpj;
 
     @PostMapping(path = "addJuridica")
-    public ResponseEntity<RegisterPessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody RegisterPessoaJuridicaDto pessoaJuridica) {
+    public ResponseEntity<PessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody PessoaJuridicaDto pessoaJuridica) {
         return ResponseEntity.ok(pessoaUserService.addPessoaJuridica(pessoaJuridica));
     }
 
     @PostMapping(path = "addFisica")
-    public ResponseEntity<RegisterPessoaFisicaDto> addPessoaFisica(@Valid @RequestBody RegisterPessoaFisicaDto pessoaFisica) {
+    public ResponseEntity<PessoaFisicaDto> addPessoaFisica(@Valid @RequestBody PessoaFisicaDto pessoaFisica) {
         return ResponseEntity.ok(pessoaUserService.addPessoaFisica(pessoaFisica));
     }
 

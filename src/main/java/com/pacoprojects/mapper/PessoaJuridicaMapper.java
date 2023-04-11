@@ -1,6 +1,6 @@
 package com.pacoprojects.mapper;
 
-import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.PessoaJuridicaDto;
 import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.model.PessoaJuridica;
 import org.mapstruct.*;
@@ -8,17 +8,17 @@ import org.mapstruct.*;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PessoaJuridicaMapper {
 
-    PessoaJuridica toEntity(RegisterPessoaJuridicaDto registerPessoaJuridicaDto);
+    PessoaJuridica toEntity(PessoaJuridicaDto pessoaJuridicaDto);
 
-    PessoaJuridica toEntity(PessoaJuridicaProjection pessoaJuridicaProjection);
+    PessoaJuridica toEntityFromProjection(PessoaJuridicaProjection pessoaJuridicaProjection);
 
-    RegisterPessoaJuridicaDto toDto(PessoaJuridica pessoaJuridica);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    PessoaJuridica partialUpdate(RegisterPessoaJuridicaDto registerPessoaJuridicaDto, @MappingTarget PessoaJuridica pessoaJuridica);
+    PessoaJuridicaDto toDto(PessoaJuridica pessoaJuridica);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    PessoaJuridica partialUpdate(PessoaJuridicaProjection pessoaJuridicaProjection, @MappingTarget PessoaJuridica pessoaJuridica);
+    PessoaJuridica partialUpdate(PessoaJuridicaDto pessoaJuridicaDto, @MappingTarget PessoaJuridica pessoaJuridica);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    PessoaJuridica partialUpdate1(PessoaJuridicaProjection pessoaJuridicaProjection, @MappingTarget PessoaJuridica pessoaJuridica);
 
     @AfterMapping
     default void linkTelefones(@MappingTarget PessoaJuridica pessoaJuridica) {

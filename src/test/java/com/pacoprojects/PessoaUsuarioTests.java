@@ -2,8 +2,8 @@ package com.pacoprojects;
 
 import com.pacoprojects.controller.PessoaController;
 import com.pacoprojects.dto.EnderecoDto;
-import com.pacoprojects.dto.RegisterPessoaFisicaDto;
-import com.pacoprojects.dto.RegisterPessoaJuridicaDto;
+import com.pacoprojects.dto.PessoaFisicaDto;
+import com.pacoprojects.dto.PessoaJuridicaDto;
 import com.pacoprojects.dto.TelefoneDto;
 import com.pacoprojects.dto.projections.PessoaJuridicaProjection;
 import com.pacoprojects.enums.TipoEndereco;
@@ -46,23 +46,15 @@ public class PessoaUsuarioTests {
 
         EnderecoDto enderecoDto = EnderecoDto
                 .builder()
-//                .rua("Rua do Indio")
                 .cep("30590-253")
                 .numero("950")
-//                .bairro("CENTRO")
-//                .cidade("Belo Horizonte")
-//                .estado("MG")
                 .tipoEndereco(TipoEndereco.COBRANCA)
                 .build();
 
         EnderecoDto enderecoDto2 = EnderecoDto
                 .builder()
-//                .rua("Rua as trincheiras")
                 .cep("64053-390")
                 .numero("50")
-//                .bairro("Jardim America")
-//                .cidade("Belo Horizonte")
-//                .estado("MG")
                 .tipoEndereco(TipoEndereco.ENTREGA)
                 .build();
 
@@ -71,7 +63,7 @@ public class PessoaUsuarioTests {
                 .numero("445621574")
                 .build();
 
-        RegisterPessoaJuridicaDto juridicaDto = RegisterPessoaJuridicaDto
+        PessoaJuridicaDto juridicaDto = PessoaJuridicaDto
                 .builder()
                 .cnpj("08.235.782/0001-50")
                 .nome("Marlon1")
@@ -85,11 +77,11 @@ public class PessoaUsuarioTests {
                 .build();
 
 
-        ResponseEntity<RegisterPessoaJuridicaDto> dtoResponseEntity = controllerPessoa.addPessoaJuridica(juridicaDto);
+        ResponseEntity<PessoaJuridicaDto> dtoResponseEntity = controllerPessoa.addPessoaJuridica(juridicaDto);
 
         assertNotNull(dtoResponseEntity.getBody());
 
-        RegisterPessoaJuridicaDto responseEntityBody = dtoResponseEntity.getBody();
+        PessoaJuridicaDto responseEntityBody = dtoResponseEntity.getBody();
 
         assertNotNull(responseEntityBody.id());
         responseEntityBody.telefones().forEach(telefoneDto1 -> assertNotNull(telefoneDto1.id()));
@@ -102,23 +94,13 @@ public class PessoaUsuarioTests {
 
         EnderecoDto enderecoDto = EnderecoDto
                 .builder()
-//                .rua("Rua Sargento Johnny da Silva")
                 .cep("64053-390")
-//                .numero("200, Bloco 1 - Apt 201")
-//                .bairro("Betânia")
-//                .cidade("Belo Horizonte")
-//                .estado("MG")
                 .tipoEndereco(TipoEndereco.COBRANCA)
                 .build();
 
         EnderecoDto enderecoDto2 = EnderecoDto
                 .builder()
-//                .rua("Rua Sargento Johnny da Silva")
                 .cep("30590-253")
-//                .numero("200, Bloco 1 - Apt 201")
-//                .bairro("Betânia")
-//                .cidade("Belo Horizonte")
-//                .estado("MG")
                 .tipoEndereco(TipoEndereco.ENTREGA)
                 .build();
 
@@ -133,9 +115,9 @@ public class PessoaUsuarioTests {
                 .build();
 
         Optional<PessoaJuridicaProjection> optionalPessoaJuridica = repositoryJuridica.findByCnpj("78.643.209/0001-60");
-        PessoaJuridica juridica = mapperJuridica.toEntity(optionalPessoaJuridica
+        PessoaJuridica juridica = mapperJuridica.toEntityFromProjection(optionalPessoaJuridica
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe pessoa com esse ID")));
-        RegisterPessoaFisicaDto pessoaFisicaDto = RegisterPessoaFisicaDto
+        PessoaFisicaDto pessoaFisicaDto = PessoaFisicaDto
                 .builder()
                 .nome("Gustavo")
                 .cpf("107.775.376-48")
@@ -146,11 +128,11 @@ public class PessoaUsuarioTests {
                 .empresa(juridica)
                 .build();
 
-        ResponseEntity<RegisterPessoaFisicaDto> dtoResponseEntity = controllerPessoa.addPessoaFisica(pessoaFisicaDto);
+        ResponseEntity<PessoaFisicaDto> dtoResponseEntity = controllerPessoa.addPessoaFisica(pessoaFisicaDto);
 
         assertNotNull(dtoResponseEntity.getBody());
 
-        RegisterPessoaFisicaDto responseEntityBody = dtoResponseEntity.getBody();
+        PessoaFisicaDto responseEntityBody = dtoResponseEntity.getBody();
 
         assertNotNull(responseEntityBody.id());
         responseEntityBody.telefones().forEach(telefoneDto1 -> assertNotNull(telefoneDto1.id()));

@@ -1,6 +1,7 @@
 package com.pacoprojects.dto;
 
 import com.pacoprojects.enums.TipoPessoa;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import org.hibernate.validator.constraints.br.CNPJ;
@@ -12,7 +13,7 @@ import java.util.Set;
  * A DTO for the {@link com.pacoprojects.model.PessoaJuridica} entity
  */
 @Builder
-public record RegisterPessoaJuridicaDto(
+public record PessoaJuridicaDto(
 
         Long id,
 
@@ -22,6 +23,7 @@ public record RegisterPessoaJuridicaDto(
         @NotBlank(message = "E-mail obrigatório.")
         String email,
 
+        @Valid
         Set<TelefoneDto> telefones,
 
         Set<EnderecoDto> enderecos,

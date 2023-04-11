@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -113,6 +114,30 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
                 .body(ExceptionObject
                         .builder()
                         .message(message.toString())
+                        .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .build());
+    }
+
+    @ExceptionHandler(TransactionSystemException.class)
+    protected ResponseEntity<Object> handleTransactionSystemException(TransactionSystemException exception) {
+        StringBuilder builder = new StringBuilder();
+        Throwable cause = exception.getCause().getCause();
+        if (cause instanceof ConstraintViolationException constraintViolationException) {
+            constraintViolationException
+                    .getConstraintViolations()
+                    .forEach(constraintViolation -> builder.append(constraintViolation.getMessage()).append("\n"));
+            String messsage = builder.substring(0, builder.length() -1);
+            builder.delete(0, builder.length());
+            builder.append(messsage);
+        } else {
+            builder.append(exception.getMessage());
+        }
+
+        return ResponseEntity
+                .internalServerError()
+                .body(ExceptionObject
+                        .builder()
+                        .message(builder.toString())
                         .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .build());
     }

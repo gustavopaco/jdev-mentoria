@@ -2,17 +2,14 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.br.CNPJ;
-
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "pessoa_juridica",
         uniqueConstraints = {
                 @UniqueConstraint(name = "unique_cnpj", columnNames = "cnpj"),
@@ -43,4 +40,5 @@ public class PessoaJuridica extends Pessoa {
 
     @Column(name = "categoria")
     private String categoria;
+
 }
