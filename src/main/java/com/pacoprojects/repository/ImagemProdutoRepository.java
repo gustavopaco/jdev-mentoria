@@ -14,12 +14,5 @@ public interface ImagemProdutoRepository extends JpaRepository<ImagemProduto, Lo
 
     List<ImagemProdutoProjections> findAllByProduto_Id(Long id);
 
-
-
-
-
-
-
-
     void deleteAllByProduto_Id(Long id);
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class AvaliacaoProduto {
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
-    @NotBlank(message = "Nota obrigatório.")
+    @Range(min = 1, max = 10, message = "Nota deve ser no mínimo 1 e no máximo 10.")
     @Column(name = "nota", nullable = false)
     private Integer nota;
 
@@ -46,7 +47,7 @@ public class AvaliacaoProduto {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa pessoa;
+    private PessoaFisica pessoa;
 
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
@@ -54,7 +55,7 @@ public class AvaliacaoProduto {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,7 @@
 package com.pacoprojects.mapper;
 
 import com.pacoprojects.dto.PessoaFisicaDto;
+import com.pacoprojects.dto.PessoaFisicaDtoBasicId;
 import com.pacoprojects.model.PessoaFisica;
 import org.mapstruct.*;
 
@@ -8,10 +9,17 @@ import org.mapstruct.*;
 public interface PessoaFisicaMapper {
     PessoaFisica toEntity(PessoaFisicaDto pessoaFisicaDto);
 
+    PessoaFisica toEntity1(PessoaFisicaDtoBasicId pessoaFisicaDtoBasicId);
+
     PessoaFisicaDto toDto(PessoaFisica pessoaFisica);
+
+    PessoaFisicaDtoBasicId toDto1(PessoaFisica pessoaFisica);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PessoaFisica partialUpdate(PessoaFisicaDto pessoaFisicaDto, @MappingTarget PessoaFisica pessoaFisica);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    PessoaFisica partialUpdate1(PessoaFisicaDtoBasicId pessoaFisicaDtoBasicId, @MappingTarget PessoaFisica pessoaFisica);
 
     @AfterMapping
     default void linkTelefones(@MappingTarget PessoaFisica pessoaFisica) {

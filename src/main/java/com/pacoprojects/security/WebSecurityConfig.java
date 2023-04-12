@@ -36,7 +36,8 @@ public class WebSecurityConfig {
                         "/contasPagar/**",
                         "/notaFiscalCompra/**",
                         "/itemNotaProduto/**",
-                        "/imagensProduto/**").permitAll()
+                        "/imagensProduto/**",
+                        "/avaliacaoProdutos/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
