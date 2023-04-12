@@ -53,7 +53,7 @@ public class ProdutoService {
 
         repositoryProduto.findById(entity.getId()).ifPresent(this::verifyStock);
 
-       return mapperProduto.toDto(entity);
+        return mapperProduto.toDto(entity);
     }
 
     public void deleteProduto(Long id) {
@@ -81,14 +81,11 @@ public class ProdutoService {
     }
 
     private void generateMiniatureFromProductImageBase64(Produto produto) {
-
-        produto.setImagemProdutos(produto.getImagemProdutos().stream().peek(imagemProduto -> {
-            if (imagemProduto.getImagemOriginal().contains("data:image/") || imagemProduto.getImagemOriginal().contains(";base64,")) {
-                imagemProduto.setImagemOriginal(imagemProduto.getImagemOriginal().split(",")[1]);
-                imagemProduto.setImagemMiniatura(generateMiniatureImage.getMiniature(imagemProduto.getImagemOriginal()));
-            }
-        }).collect(Collectors.toList()));
-
+        produto.setImagemProdutos(produto.getImagemProdutos()
+                .stream().peek(imagemProduto ->
+                        imagemProduto.setImagemMiniatura(
+                                generateMiniatureImage.getMiniature(imagemProduto.getImagemOriginal()))
+                ).collect(Collectors.toList()));
     }
 
     private void validateProduto(ProdutoDto produtoDto) {

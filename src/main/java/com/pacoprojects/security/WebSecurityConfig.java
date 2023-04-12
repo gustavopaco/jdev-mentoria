@@ -29,7 +29,14 @@ public class WebSecurityConfig {
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/error", "/health", "/auth/**").permitAll()
-                .requestMatchers("/pessoas/**", "/categorias/**", "/produtos/**", "/marcasProdutos/**", "/contasPagar/**", "/notaFiscalCompra/**", "/itemNotaProduto/**").permitAll()
+                .requestMatchers("/pessoas/**",
+                        "/categorias/**",
+                        "/produtos/**",
+                        "/marcasProdutos/**",
+                        "/contasPagar/**",
+                        "/notaFiscalCompra/**",
+                        "/itemNotaProduto/**",
+                        "/imagensProduto/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

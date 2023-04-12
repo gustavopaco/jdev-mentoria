@@ -17,45 +17,68 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class GenerateMiniatureImage {
 
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 515;
+    private static final int HEIGHT = 290;
 
 
     public String getMiniature(String image64) {
 
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(image64));
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            BufferedImage bufferedImage = ImageIO.read(bais);
+            int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+            BufferedImage resizedImage = resizeImage(bufferedImage, WIDTH, HEIGHT, type);
+
+            ImageIO.write(resizedImage, "png", baos);
+
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(baos.toByteArray());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falha ao converter imagem no servidor, por favor entre em contato com o Administrador");
+        }
+    }
+
+    private BufferedImage resizeImage(BufferedImage originalImage, int width, int height, int type) {
+        BufferedImage resizedImage = new BufferedImage(width, height, type);
+
+        Graphics2D graphics2D = resizedImage.createGraphics();
+        graphics2D.drawImage(originalImage, 0, 0, width, height, null);
+        graphics2D.dispose();
+
+        return resizedImage;
+    }
+
+    private String getMiniatureOld(String image64) {
+
+        if (image64.contains("data:image/") || image64.contains(";base64,")) {
+            image64 = image64.split(",")[1];
+        }
 
         try {
-            // Convertendo Base64 para byte[]
+
             byte[] imageByteArray = Base64.getDecoder().decode(image64);
 
-            // Gerando um InputStream de Imagem
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageByteArray));
 
-            // Verificando o tipo da imagem
             int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+            BufferedImage resizedImage = new BufferedImage(WIDTH, HEIGHT, type);
 
-            // Configurando a imagem em um Buffer com "LARGURA", "ALTURA" e "Tipo" da Imagem
-            BufferedImage scaledImage = new BufferedImage(WIDTH, HEIGHT, type);
-
-            // Gerando Imagem a partir das configuracoes
-            Graphics2D graphics2D = scaledImage.createGraphics();
-            graphics2D.drawImage(bufferedImage, 0 ,0, WIDTH, HEIGHT, null);
+            Graphics2D graphics2D = resizedImage.createGraphics();
+            graphics2D.drawImage(bufferedImage, 0, 0, WIDTH, HEIGHT, null);
             graphics2D.dispose();
 
-            // Imprimindo a imagem no formato png
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(scaledImage, "png", byteArrayOutputStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "png", baos);
 
-            // Formatando a imagem para Base64
-            String miniatureImg = "data:image/png;base64," + Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            String miniImageBase64 = "data:image/png;base64," + Base64.getEncoder().encodeToString(baos.toByteArray());
 
-            byteArrayOutputStream.flush();
-            byteArrayOutputStream.close();
             bufferedImage.flush();
-            scaledImage.flush();
-            return miniatureImg;
+            resizedImage.flush();
+            baos.flush();
+            baos.close();
+            return miniImageBase64;
 
-        } catch (IOException e) {
+        } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Falha ao converter imagem no servidor, por favor entre em contato com o Administrador");
         }
     }
