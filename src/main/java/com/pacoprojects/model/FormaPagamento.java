@@ -2,6 +2,7 @@ package com.pacoprojects.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -27,13 +28,14 @@ public class FormaPagamento {
     @Column(name = "descricao", nullable = false)
     private String descricao;
 
+    @NotNull(message = "Empresa deve ser informada.")
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {

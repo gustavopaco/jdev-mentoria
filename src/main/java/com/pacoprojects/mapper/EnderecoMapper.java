@@ -1,6 +1,7 @@
 package com.pacoprojects.mapper;
 
 import com.pacoprojects.dto.EnderecoDto;
+import com.pacoprojects.dto.EnderecoDtoBasicId;
 import com.pacoprojects.model.Endereco;
 import org.mapstruct.*;
 
@@ -13,4 +14,11 @@ public interface EnderecoMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(EnderecoDto enderecoDto, @MappingTarget Endereco endereco);
+
+    Endereco toEntity1(EnderecoDtoBasicId enderecoDtoBasicId);
+
+    EnderecoDtoBasicId toDto1(Endereco endereco);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Endereco partialUpdate1(EnderecoDtoBasicId enderecoDtoBasicId, @MappingTarget Endereco endereco);
 }

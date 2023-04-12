@@ -2,6 +2,7 @@ package com.pacoprojects.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class VendaCompra {
     private Long id;
 
     @NotNull(message = "Valor total obrigatório.")
+    @Min(value = 1, message = "Valor total inválido")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @Column(name = "valor_total",  nullable = false)
     private BigDecimal valorTotal;
@@ -42,9 +44,11 @@ public class VendaCompra {
     @Column(name = "valor_frete",  nullable = false)
     private BigDecimal valorFrete;
 
+    @Min(value = 1, message = "Quantidade de dias para entrega inválido")
     @Column(name = "dia_entrega",  nullable = false)
     private Integer diasParaEntrega;
 
+    @NotNull(message = "Data de venda obrigatório.")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
     @Column(name = "data_venda", nullable = false)
     private LocalDate dataVenda;
@@ -59,7 +63,7 @@ public class VendaCompra {
             referencedColumnName = "id",
             nullable = false,
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa pessoa;
+    private PessoaFisica pessoa;
 
     @ManyToOne(targetEntity = Endereco.class)
     @JoinColumn(
@@ -85,13 +89,14 @@ public class VendaCompra {
             foreignKey = @ForeignKey(name = "forma_pagamento_id_fk", value = ConstraintMode.CONSTRAINT))
     private FormaPagamento formaPagamento;
 
-    @OneToOne(targetEntity = NotaFiscalVenda.class)
+    @ToString.Exclude
+    @OneToOne(targetEntity = NotaFiscalVenda.class, cascade = {CascadeType.PERSIST})
     @JoinColumn(
             name = "nota_fiscal_venda_id",
             referencedColumnName = "id",
-            nullable = false,
             foreignKey = @ForeignKey(name = "nota_fiscal_venda_id_fk", value = ConstraintMode.CONSTRAINT))
     private NotaFiscalVenda notaFiscalVenda;
+
 
     @ManyToOne(targetEntity = CupomDesconto.class)
     @JoinColumn(
@@ -106,7 +111,7 @@ public class VendaCompra {
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
-    private Pessoa empresa;
+    private PessoaJuridica empresa;
 
     @Override
     public boolean equals(Object o) {
