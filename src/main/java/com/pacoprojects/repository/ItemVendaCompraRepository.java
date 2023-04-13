@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -16,6 +17,7 @@ public interface ItemVendaCompraRepository extends JpaRepository<ItemVendaCompra
 
     @Query(value = "select i from  ItemVendaCompra i where i.produto.id = ?1 and i.vendaCompra.enabled = true")
     List<ItemVendaCompraSelected> queryFindAllVendaCompraByProduto_Id(Long idProduto);
+
     List<ItemVendaCompraSelected> findAllByProduto_IdAndVendaCompra_Enabled(Long idProduto, boolean enabled);
 
 
@@ -33,6 +35,7 @@ public interface ItemVendaCompraRepository extends JpaRepository<ItemVendaCompra
     List<ItemVendaCompraSelected> findAllByVendaCompra_Pessoa_NomeContainsIgnoreCaseAndVendaCompra_Enabled(String nomeCliente, boolean enabled);
 
 
+
     @Query(value = "select i from ItemVendaCompra i where i.vendaCompra.enderecoCobranca.rua ilike %:endCobranca% and i.vendaCompra.enabled = true")
     List<ItemVendaCompraSelected> queryEnderecoCobrancaByRuaAndVendaCompraEnabled(@Param("endCobranca") String endCobranca);
 
@@ -44,4 +47,11 @@ public interface ItemVendaCompraRepository extends JpaRepository<ItemVendaCompra
     List<ItemVendaCompraSelected> queryEnderecoEntregaByRuaAndVendaCompraEnabled(@Param("endEntrega") String endEntrega);
 
     List<ItemVendaCompraSelected> findAllByVendaCompra_EnderecoEntrega_RuaContainsIgnoreCaseAndVendaCompra_Enabled(String endEntrega, boolean enabled);
+
+
+
+    @Query(value = "select i from ItemVendaCompra i where i.vendaCompra.dataVenda between :dataInicial and :dataFinal and i.vendaCompra.enabled ")
+    List<ItemVendaCompraSelected> findAllByVendaCompraDataVendaBetween_DataInicial_And_DataFinal(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal);
+
+    List<ItemVendaCompraSelected> findAllByVendaCompra_DataVendaBetweenAndVendaCompra_Enabled(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal, boolean enabled);
 }

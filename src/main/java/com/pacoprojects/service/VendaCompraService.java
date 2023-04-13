@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -54,6 +55,10 @@ public class VendaCompraService {
             return repositoryItemVendaCompra.findAllByVendaCompra_EnderecoEntrega_RuaContainsIgnoreCaseAndVendaCompra_Enabled(endEntrega, true);
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Por favor envie algum parametro para pesquisa.");
+    }
+
+    public List<ItemVendaCompraSelected> getAllVendaCompraByIntervalDates(LocalDate dataInicial, LocalDate dataFinal) {
+        return repositoryItemVendaCompra.findAllByVendaCompra_DataVendaBetweenAndVendaCompra_Enabled(dataInicial, dataFinal, true);
     }
 
     public VendaCompraDto addVendaCompra(VendaCompraDto vendaCompraDto) {

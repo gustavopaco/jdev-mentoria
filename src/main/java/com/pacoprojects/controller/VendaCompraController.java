@@ -1,14 +1,17 @@
 package com.pacoprojects.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.service.VendaCompraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,12 +27,30 @@ public class VendaCompraController {
     }
 
     @GetMapping(path = "consultaVenda")
-    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByParam(@RequestParam(name = "idProduto", required = false) Long idProduto,
-                                                                                  @RequestParam(name = "nomeProduto", required = false) String nomeProduto,
-                                                                                  @RequestParam(name = "nomeCliente", required = false) String nomeCliente,
-                                                                                  @RequestParam(name = "endCobranca", required = false) String endCobranca,
-                                                                                  @RequestParam(name = "endEntrega", required = false) String endEntrega) {
+    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByParam(@RequestParam(name = "idProduto", required = false)
+                                                                                  Long idProduto,
+                                                                                  @RequestParam(name = "nomeProduto", required = false)
+                                                                                  String nomeProduto,
+                                                                                  @RequestParam(name = "nomeCliente", required = false)
+                                                                                  String nomeCliente,
+                                                                                  @RequestParam(name = "endCobranca", required = false)
+                                                                                  String endCobranca,
+                                                                                  @RequestParam(name = "endEntrega", required = false)
+                                                                                  String endEntrega) {
         return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByParam(idProduto, nomeProduto, nomeCliente, endCobranca, endEntrega));
+    }
+
+    @GetMapping(path = "consultaVendaFaixaDatas")
+    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByIntervalDates(@RequestParam(name = "dataInicial")
+                                                                                          @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+                                                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+                                                                                          LocalDate dataInicial,
+
+                                                                                          @RequestParam(name = "dataFinal")
+                                                                                          @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+                                                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
+                                                                                          LocalDate dataFinal) {
+        return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByIntervalDates(dataInicial, dataFinal));
     }
 
     @GetMapping(path = "{id}")
