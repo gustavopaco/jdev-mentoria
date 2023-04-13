@@ -2,6 +2,7 @@ package com.pacoprojects.controller;
 
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.VendaCompraProjection;
+import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.service.VendaCompraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class VendaCompraController {
     }
 
     @GetMapping(path = "{id}")
-    public ResponseEntity<VendaCompraProjection> getVendaCompraById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<VendaCompraProjectionSelected> getVendaCompraById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(serviceVendaCompra.getVendaCompraById(id));
     }
 

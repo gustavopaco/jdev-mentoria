@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * A DTO for the {@link com.pacoprojects.model.VendaCompra} entity
@@ -48,7 +49,9 @@ public record VendaCompraDto(
         CupomDescontoDtoBasicId cupomDesconto,
 
         @NotNull(message = "Empresa deve ser informada.")
-        PessoaJuridicaDtoBasicId empresa
+        PessoaJuridicaDtoBasicId empresa,
+
+        Set<ItemVendaCompraDto> itemVendaCompras
 
 ) implements Serializable {
 }

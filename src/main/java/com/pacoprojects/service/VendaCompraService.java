@@ -3,6 +3,7 @@ package com.pacoprojects.service;
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.VendaCompraProjection;
+import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
 import com.pacoprojects.mapper.VendaCompraMapper;
@@ -28,8 +29,19 @@ public class VendaCompraService {
     private final VendaCompraMapper mapperVendaCompra;
     private final PessoaUserService servicePessoaUser;
     private final PessoaFisicaMapper mapperFisica;
-    private final NotaFiscalVendaRepository repositoryNotaFiscalVenda;
 
+
+    public List<VendaCompraProjection> getAllVendaCompra(Long idEmpresa) {
+        return null;
+    }
+
+    public VendaCompraProjectionSelected getVendaCompraById(Long id) {
+        return repositoryVendaCompra.findVendaCompraById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código"));
+    }
+
+    public List<VendaCompraProjection> getAllVendaCompraByName(String name, Long idEmpresa) {
+        return null;
+    }
 
     public VendaCompraDto addVendaCompra(VendaCompraDto vendaCompraDto) {
 
@@ -108,17 +120,5 @@ public class VendaCompraService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Forma de pagamento deve ser informado.");
         }
 
-    }
-
-    public List<VendaCompraProjection> getAllVendaCompra(Long idEmpresa) {
-        return null;
-    }
-
-    public VendaCompraProjection getVendaCompraById(Long id) {
-        return null;
-    }
-
-    public List<VendaCompraProjection> getAllVendaCompraByName(String name, Long idEmpresa) {
-        return null;
     }
 }

@@ -20,4 +20,14 @@ public interface VendaCompraMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     VendaCompra partialUpdate1(VendaCompraDtoBasicId vendaCompraDtoBasicId, @MappingTarget VendaCompra vendaCompra);
+
+    @AfterMapping
+    default void linkItemVendaCompras(@MappingTarget VendaCompra vendaCompra) {
+        if (vendaCompra.getItemVendaCompras() != null) {
+            vendaCompra.getItemVendaCompras().forEach(itemVendaCompra -> {
+                itemVendaCompra.setVendaCompra(vendaCompra);
+                itemVendaCompra.setEmpresa(vendaCompra.getEmpresa());
+            });
+        }
+    }
 }

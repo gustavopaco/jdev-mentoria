@@ -13,7 +13,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -112,6 +114,10 @@ public class VendaCompra {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
     private PessoaJuridica empresa;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "vendaCompra", orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Set<ItemVendaCompra> itemVendaCompras = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {
