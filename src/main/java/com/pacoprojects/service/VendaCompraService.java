@@ -2,7 +2,6 @@ package com.pacoprojects.service;
 
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.VendaCompraDto;
-import com.pacoprojects.dto.projections.VendaCompraProjection;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
@@ -27,20 +26,17 @@ public class VendaCompraService {
     private final EnderecoRepository repositoryEndereco;
     private final FormaPagamentoRepository repositoryFormaPagamento;
     private final VendaCompraMapper mapperVendaCompra;
-    private final PessoaUserService servicePessoaUser;
     private final PessoaFisicaMapper mapperFisica;
+    private final PessoaUserService servicePessoaUser;
+    private final StatusRastreioService serviceStatusRastreio;
 
 
-    public List<VendaCompraProjection> getAllVendaCompra(Long idEmpresa) {
-        return null;
+    public List<VendaCompraProjectionSelected> getAllVendaCompra(Long idEmpresa) {
+        return repositoryVendaCompra.findAllByEmpresa_Id(idEmpresa);
     }
 
     public VendaCompraProjectionSelected getVendaCompraById(Long id) {
         return repositoryVendaCompra.findVendaCompraById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código"));
-    }
-
-    public List<VendaCompraProjection> getAllVendaCompraByName(String name, Long idEmpresa) {
-        return null;
     }
 
     public VendaCompraDto addVendaCompra(VendaCompraDto vendaCompraDto) {
@@ -55,12 +51,18 @@ public class VendaCompraService {
             entity = mapperVendaCompra.toEntity(vendaCompraDto);
         }
 
+            // Anexando a vinda do Frontend a Nota a Venda, nao eh o processo muito normalmente correto pois uma nota so eh emitida apos a venda. Fiz desse jeito pra testar o Relacionamento @OneToOne com insersao em cascata
             entity.getNotaFiscalVenda().setEmpresa(entity.getEmpresa());
             entity.getNotaFiscalVenda().setVendaCompra(entity);
+
+            // Salvando venda e uma Nota ao mesmo tempo em cascata
             entity = repositoryVendaCompra.save(entity);
+
+            serviceStatusRastreio.addStatusRastreioAfterVendaCompraDone(entity);
 
         return mapperVendaCompra.toDto(entity);
     }
+
 
     private VendaCompra registerNewUserBeforePurchase(VendaCompraDto vendaCompraDto) {
 
@@ -86,7 +88,12 @@ public class VendaCompraService {
     public void deleteVendaCompra(Long id) {
 
         if (repositoryVendaCompra.existsById(id)) {
-            repositoryVendaCompra.deleteById(id);
+            try {
+//                repositoryVendaCompra.deleteVendaCompraByIdNative(id);
+                repositoryVendaCompra.deleteVendaCompraAndAssociatedEntities(id);
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não conseguimos apagar o resgistro, entre em contato com o administrador");
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código");
         }
