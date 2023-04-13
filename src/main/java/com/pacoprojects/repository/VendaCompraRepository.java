@@ -16,9 +16,20 @@ import java.util.Optional;
 @Transactional
 public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> {
 
+
+
     Optional<VendaCompraProjectionSelected> findVendaCompraById(Long id);
 
     List<VendaCompraProjectionSelected> findAllByEmpresa_Id(Long idEmpresa);
+
+    @Modifying
+    @Query(value = "UPDATE VendaCompra set enabled = false where id = ?1")
+    void softDelete(Long id);
+
+    @Modifying
+    @Query(value = "UPDATE VendaCompra set enabled = true where id = ?1")
+    void enableVenda(Long id);
+
 
     @Modifying
     @Query(nativeQuery = true,

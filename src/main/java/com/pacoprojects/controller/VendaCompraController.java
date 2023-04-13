@@ -1,6 +1,7 @@
 package com.pacoprojects.controller;
 
 import com.pacoprojects.dto.VendaCompraDto;
+import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.service.VendaCompraService;
 import jakarta.validation.Valid;
@@ -22,6 +23,15 @@ public class VendaCompraController {
         return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompra(idEmpresa));
     }
 
+    @GetMapping(path = "consultaVenda")
+    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByParam(@RequestParam(name = "idProduto", required = false) Long idProduto,
+                                                                                  @RequestParam(name = "nomeProduto", required = false) String nomeProduto,
+                                                                                  @RequestParam(name = "nomeCliente", required = false) String nomeCliente,
+                                                                                  @RequestParam(name = "endCobranca", required = false) String endCobranca,
+                                                                                  @RequestParam(name = "endEntrega", required = false) String endEntrega) {
+        return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByParam(idProduto, nomeProduto, nomeCliente, endCobranca, endEntrega));
+    }
+
     @GetMapping(path = "{id}")
     public ResponseEntity<VendaCompraProjectionSelected> getVendaCompraById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(serviceVendaCompra.getVendaCompraById(id));
@@ -30,6 +40,11 @@ public class VendaCompraController {
     @PostMapping
     public ResponseEntity<VendaCompraDto> addVendaCompra(@Valid @RequestBody VendaCompraDto vendaCompraDto) {
         return ResponseEntity.ok(serviceVendaCompra.addVendaCompra(vendaCompraDto));
+    }
+
+    @PutMapping
+    public void enableVendaCompra(@RequestParam(name = "idVenda") Long idVenda) {
+        serviceVendaCompra.enableVendaCompra(idVenda);
     }
 
     @DeleteMapping(path = "{id}")

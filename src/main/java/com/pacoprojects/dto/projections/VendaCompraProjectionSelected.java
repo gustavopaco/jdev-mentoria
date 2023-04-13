@@ -2,7 +2,7 @@ package com.pacoprojects.dto.projections;
 
 import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.enums.TipoPessoa;
-import com.pacoprojects.model.ItemVendaCompra;
+import com.pacoprojects.model.VendaCompra;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.math.BigDecimal;
@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * A Projection for the {@link com.pacoprojects.model.VendaCompra} entity
  */
-@Projection(name = "vendaCompraProjectionSelected", types = ItemVendaCompra.class)
+@Projection(name = "vendaCompraProjectionSelected", types = VendaCompra.class)
 public interface VendaCompraProjectionSelected {
     Long getId();
 

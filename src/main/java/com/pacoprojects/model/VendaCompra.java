@@ -23,6 +23,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Table(name = "venda_compra")
 @Entity
+//@Where(clause = "enabled = true")
 public class VendaCompra {
 
     @Id
@@ -34,7 +35,7 @@ public class VendaCompra {
     @NotNull(message = "Valor total obrigatório.")
     @Min(value = 1, message = "Valor total inválido")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @Column(name = "valor_total",  nullable = false)
+    @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -43,11 +44,11 @@ public class VendaCompra {
 
     @NotNull(message = "Valor do frete obrigatório.")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @Column(name = "valor_frete",  nullable = false)
+    @Column(name = "valor_frete", nullable = false)
     private BigDecimal valorFrete;
 
     @Min(value = 1, message = "Quantidade de dias para entrega inválido")
-    @Column(name = "dia_entrega",  nullable = false)
+    @Column(name = "dia_entrega", nullable = false)
     private Integer diasParaEntrega;
 
     @NotNull(message = "Data de venda obrigatório.")
@@ -58,6 +59,9 @@ public class VendaCompra {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
     @Column(name = "data_entrega", nullable = false)
     private LocalDate dataEntrega;
+
+    @Column(name = "enabled")
+    private boolean enabled = true;
 
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(
@@ -118,6 +122,7 @@ public class VendaCompra {
     @ToString.Exclude
     @OneToMany(mappedBy = "vendaCompra", orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<ItemVendaCompra> itemVendaCompras = new LinkedHashSet<>();
+
 
     @Override
     public boolean equals(Object o) {

@@ -2,6 +2,7 @@ package com.pacoprojects.service;
 
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.VendaCompraDto;
+import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
 import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
@@ -29,6 +30,7 @@ public class VendaCompraService {
     private final PessoaFisicaMapper mapperFisica;
     private final PessoaUserService servicePessoaUser;
     private final StatusRastreioService serviceStatusRastreio;
+    private final ItemVendaCompraRepository repositoryItemVendaCompra;
 
 
     public List<VendaCompraProjectionSelected> getAllVendaCompra(Long idEmpresa) {
@@ -37,6 +39,21 @@ public class VendaCompraService {
 
     public VendaCompraProjectionSelected getVendaCompraById(Long id) {
         return repositoryVendaCompra.findVendaCompraById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código"));
+    }
+
+    public List<ItemVendaCompraSelected> getAllVendaCompraByParam(Long idProduto, String nomeProduto, String nomeCliente, String endCobranca, String endEntrega) {
+        if (idProduto != null) {
+            return repositoryItemVendaCompra.findAllByProduto_IdAndVendaCompra_Enabled(idProduto, true);
+        } else if (nomeProduto != null) {
+            return repositoryItemVendaCompra.findByProdutoNomeContainingIgnoreCaseAndVendaCompraEnabled(nomeProduto, true);
+        } else if (nomeCliente != null) {
+            return repositoryItemVendaCompra.queryPessoaByNomeAndVendaCompraEnabled(nomeCliente);
+        } else if (endCobranca != null) {
+            return repositoryItemVendaCompra.findAllByVendaCompra_EnderecoCobranca_RuaContainsIgnoreCaseAndVendaCompra_Enabled(endCobranca, true);
+        } else if (endEntrega != null) {
+            return repositoryItemVendaCompra.findAllByVendaCompra_EnderecoEntrega_RuaContainsIgnoreCaseAndVendaCompra_Enabled(endEntrega, true);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Por favor envie algum parametro para pesquisa.");
     }
 
     public VendaCompraDto addVendaCompra(VendaCompraDto vendaCompraDto) {
@@ -51,14 +68,14 @@ public class VendaCompraService {
             entity = mapperVendaCompra.toEntity(vendaCompraDto);
         }
 
-            // Anexando a vinda do Frontend a Nota a Venda, nao eh o processo muito normalmente correto pois uma nota so eh emitida apos a venda. Fiz desse jeito pra testar o Relacionamento @OneToOne com insersao em cascata
-            entity.getNotaFiscalVenda().setEmpresa(entity.getEmpresa());
-            entity.getNotaFiscalVenda().setVendaCompra(entity);
+        // Anexando a vinda do Frontend a Nota a Venda, nao eh o processo muito normalmente correto pois uma nota so eh emitida apos a venda. Fiz desse jeito pra testar o Relacionamento @OneToOne com insersao em cascata
+        entity.getNotaFiscalVenda().setEmpresa(entity.getEmpresa());
+        entity.getNotaFiscalVenda().setVendaCompra(entity);
 
-            // Salvando venda e uma Nota ao mesmo tempo em cascata
-            entity = repositoryVendaCompra.save(entity);
+        // Salvando venda e uma Nota ao mesmo tempo em cascata
+        entity = repositoryVendaCompra.save(entity);
 
-            serviceStatusRastreio.addStatusRastreioAfterVendaCompraDone(entity);
+        serviceStatusRastreio.addStatusRastreioAfterVendaCompraDone(entity);
 
         return mapperVendaCompra.toDto(entity);
     }
@@ -90,10 +107,20 @@ public class VendaCompraService {
         if (repositoryVendaCompra.existsById(id)) {
             try {
 //                repositoryVendaCompra.deleteVendaCompraByIdNative(id);
-                repositoryVendaCompra.deleteVendaCompraAndAssociatedEntities(id);
+//                repositoryVendaCompra.deleteVendaCompraAndAssociatedEntities(id);
+                repositoryVendaCompra.softDelete(id);
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não conseguimos apagar o resgistro, entre em contato com o administrador");
             }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código");
+        }
+    }
+
+
+    public void enableVendaCompra(Long idVenda) {
+        if (repositoryVendaCompra.existsById(idVenda)) {
+            repositoryVendaCompra.enableVenda(idVenda);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código");
         }
