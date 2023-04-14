@@ -42,18 +42,25 @@ public class VendaCompraService {
         return repositoryVendaCompra.findVendaCompraById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhuma venda com esse código"));
     }
 
-    public List<ItemVendaCompraSelected> getAllVendaCompraByParam(Long idProduto, String nomeProduto, String nomeCliente, String endCobranca, String endEntrega) {
-        if (idProduto != null) {
+    public List<ItemVendaCompraSelected> getAllVendaCompraByParam(Long idCliente, Long idProduto, String nomeProduto, String nomeCliente, String endCobranca, String endEntrega, String cpf) {
+        if (idCliente != null) {
+            return repositoryItemVendaCompra.findAllByVendaCompra_Pessoa_IdAndVendaCompra_Enabled(idCliente, true);
+        } else if (idProduto != null) {
             return repositoryItemVendaCompra.findAllByProduto_IdAndVendaCompra_Enabled(idProduto, true);
         } else if (nomeProduto != null) {
             return repositoryItemVendaCompra.findByProdutoNomeContainingIgnoreCaseAndVendaCompraEnabled(nomeProduto, true);
+        } else if (nomeCliente != null && cpf != null) {
+            return repositoryItemVendaCompra.findAllByVendaCompra_Pessoa_NomeContainsIgnoreCaseAndVendaCompra_Pessoa_CpfAndVendaCompra_Enabled(nomeCliente, cpf, true);
         } else if (nomeCliente != null) {
             return repositoryItemVendaCompra.queryPessoaByNomeAndVendaCompraEnabled(nomeCliente);
         } else if (endCobranca != null) {
             return repositoryItemVendaCompra.findAllByVendaCompra_EnderecoCobranca_RuaContainsIgnoreCaseAndVendaCompra_Enabled(endCobranca, true);
         } else if (endEntrega != null) {
             return repositoryItemVendaCompra.findAllByVendaCompra_EnderecoEntrega_RuaContainsIgnoreCaseAndVendaCompra_Enabled(endEntrega, true);
+        } else if (cpf != null) {
+            return repositoryItemVendaCompra.findAllByVendaCompra_Pessoa_CpfAndVendaCompra_Enabled(cpf, true);
         }
+
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Por favor envie algum parametro para pesquisa.");
     }
 
@@ -73,7 +80,7 @@ public class VendaCompraService {
             entity = mapperVendaCompra.toEntity(vendaCompraDto);
         }
 
-        // Anexando a vinda do Frontend a Nota a Venda, nao eh o processo muito normalmente correto pois uma nota so eh emitida apos a venda. Fiz desse jeito pra testar o Relacionamento @OneToOne com insersao em cascata
+        // Associando os dados da Venda vinda do Frontend a Nota a Venda, nao eh o processo muito correto pois, uma nota so eh emitida apos a venda. Fiz desse jeito pra testar o Relacionamento @OneToOne com insersao em cascata
         entity.getNotaFiscalVenda().setEmpresa(entity.getEmpresa());
         entity.getNotaFiscalVenda().setVendaCompra(entity);
 
@@ -111,8 +118,10 @@ public class VendaCompraService {
 
         if (repositoryVendaCompra.existsById(id)) {
             try {
+                // Full Delete
 //                repositoryVendaCompra.deleteVendaCompraByIdNative(id);
 //                repositoryVendaCompra.deleteVendaCompraAndAssociatedEntities(id);
+                // Soft Delete
                 repositoryVendaCompra.softDelete(id);
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não conseguimos apagar o resgistro, entre em contato com o administrador");

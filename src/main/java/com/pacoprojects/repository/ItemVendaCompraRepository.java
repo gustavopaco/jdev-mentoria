@@ -15,6 +15,11 @@ import java.util.List;
 @Transactional
 public interface ItemVendaCompraRepository extends JpaRepository<ItemVendaCompra, Long> {
 
+
+    @Query(value = "select i from ItemVendaCompra i where i.vendaCompra.pessoa.id =:idCliente and i.vendaCompra.enabled =:enabled ")
+    List<ItemVendaCompraSelected> queryPessoaByIdAndVendaCompraEnabled(@Param("idCliente") Long id, @Param("enabled") boolean enabled);
+    List<ItemVendaCompraSelected> findAllByVendaCompra_Pessoa_IdAndVendaCompra_Enabled(Long idCliente, boolean enabled);
+
     @Query(value = "select i from  ItemVendaCompra i where i.produto.id = ?1 and i.vendaCompra.enabled = true")
     List<ItemVendaCompraSelected> queryFindAllVendaCompraByProduto_Id(Long idProduto);
 
@@ -54,4 +59,18 @@ public interface ItemVendaCompraRepository extends JpaRepository<ItemVendaCompra
     List<ItemVendaCompraSelected> findAllByVendaCompraDataVendaBetween_DataInicial_And_DataFinal(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal);
 
     List<ItemVendaCompraSelected> findAllByVendaCompra_DataVendaBetweenAndVendaCompra_Enabled(@Param("dataInicial") LocalDate dataInicial, @Param("dataFinal") LocalDate dataFinal, boolean enabled);
+
+
+
+
+    @Query(value = "select i from ItemVendaCompra i where i.vendaCompra.pessoa.cpf =:cpf and i.vendaCompra.enabled = true")
+    List<ItemVendaCompraSelected> queryAllVendaCompraByCpf(@Param("cpf") String cpf);
+
+    List<ItemVendaCompraSelected> findAllByVendaCompra_Pessoa_CpfAndVendaCompra_Enabled(String cpf, boolean enabled);
+
+
+    @Query(value = "select i from ItemVendaCompra i where i.vendaCompra.pessoa.nome ilike %:nome% and i.vendaCompra.pessoa.cpf =:cpf and i.vendaCompra.enabled = true")
+    List<ItemVendaCompraSelected> queryAllVendaCompraByCpfAndNome(@Param("nome") String nome, @Param("cpf") String cpf);
+
+    List<ItemVendaCompraSelected> findAllByVendaCompra_Pessoa_NomeContainsIgnoreCaseAndVendaCompra_Pessoa_CpfAndVendaCompra_Enabled(String nome, String cpf, boolean enabled);
 }

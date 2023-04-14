@@ -1,10 +1,14 @@
 package com.pacoprojects.service;
 
+import com.pacoprojects.dto.projections.StatusRastreioProjection;
 import com.pacoprojects.model.StatusRastreio;
 import com.pacoprojects.model.VendaCompra;
 import com.pacoprojects.repository.StatusRastreioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,5 +28,9 @@ public class StatusRastreioService {
         statusRastreio.setVendaCompra(vendaCompra);
 
         repositoryStatusRastreio.save(statusRastreio);
+    }
+
+    public List<StatusRastreioProjection> getAllStatusRastreioByIdVenda(Long idVenda) {
+        return repositoryStatusRastreio.findAllByVendaCompra_IdAndVendaCompra_Enabled(idVenda, true, Sort.by("id"));
     }
 }

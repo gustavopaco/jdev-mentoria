@@ -22,15 +22,15 @@ public class FormaPagamentoService {
     private final FormaPagamentoMapper mapperFormaPagamento;
 
     public List<FormaPagamentoProjection> getAllFormaPagamento(Long idEmpresa) {
-        return null;
+        return repositoryFormaPagamento.findAllByEmpresa_Id(idEmpresa);
     }
 
     public FormaPagamentoProjection getFormaPagamentoById(Long id) {
         return repositoryFormaPagamento.findFormaPagamentoById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Forma de pagamento não foi encontrado."));
     }
 
-    public List<FormaPagamentoProjection> getAllFormaPagamentoByName(String name, Long idEmpresa) {
-        return null;
+    public List<FormaPagamentoProjection> getAllFormaPagamento() {
+        return repositoryFormaPagamento.findAllFormaPagamentos();
     }
 
     public FormaPagamentoDto addFormaPagamento(FormaPagamentoDto formaPagamentoDto) {

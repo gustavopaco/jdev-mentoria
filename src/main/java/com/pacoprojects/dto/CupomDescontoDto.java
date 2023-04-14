@@ -24,7 +24,6 @@ public record CupomDescontoDto(
         LocalDate validadeCupom,
 
         @NotNull(message = "Empresa deve ser informado.")
-
         PessoaJuridicaDtoBasicId empresa
 
 ) implements Serializable {

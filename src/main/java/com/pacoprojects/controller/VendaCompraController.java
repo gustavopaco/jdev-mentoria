@@ -27,7 +27,9 @@ public class VendaCompraController {
     }
 
     @GetMapping(path = "consultaVenda")
-    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByParam(@RequestParam(name = "idProduto", required = false)
+    public ResponseEntity<List<ItemVendaCompraSelected>> getAllVendaCompraByParam(@RequestParam(name = "idCliente", required = false)
+                                                                                  Long idCliente,
+                                                                                  @RequestParam(name = "idProduto", required = false)
                                                                                   Long idProduto,
                                                                                   @RequestParam(name = "nomeProduto", required = false)
                                                                                   String nomeProduto,
@@ -36,8 +38,9 @@ public class VendaCompraController {
                                                                                   @RequestParam(name = "endCobranca", required = false)
                                                                                   String endCobranca,
                                                                                   @RequestParam(name = "endEntrega", required = false)
-                                                                                  String endEntrega) {
-        return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByParam(idProduto, nomeProduto, nomeCliente, endCobranca, endEntrega));
+                                                                                  String endEntrega,
+                                                                                  @RequestParam(name = "cpf", required = false) String cpf) {
+        return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByParam(idCliente, idProduto, nomeProduto, nomeCliente, endCobranca, endEntrega, cpf));
     }
 
     @GetMapping(path = "consultaVendaFaixaDatas")

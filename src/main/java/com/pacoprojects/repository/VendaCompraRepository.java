@@ -17,6 +17,7 @@ import java.util.Optional;
 public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> {
 
 
+    boolean findByIdAndEnabledTrue(Long idVenda);
 
     Optional<VendaCompraProjectionSelected> findVendaCompraById(Long id);
 

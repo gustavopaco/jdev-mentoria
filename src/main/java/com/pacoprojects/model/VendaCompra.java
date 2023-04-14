@@ -63,7 +63,7 @@ public class VendaCompra {
     @Column(name = "enabled")
     private boolean enabled = true;
 
-    @ManyToOne(targetEntity = Pessoa.class)
+    @ManyToOne(targetEntity = PessoaFisica.class)
     @JoinColumn(
             name = "pessoa_id",
             referencedColumnName = "id",

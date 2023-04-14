@@ -39,7 +39,9 @@ public class WebSecurityConfig {
                         "/imagensProduto/**",
                         "/avaliacaoProdutos/**",
                         "/formaPagamento/**",
-                        "/vendaCompra/**").permitAll()
+                        "/vendaCompra/**",
+                        "/statusRastreio/**",
+                        "/cupomDesconto/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

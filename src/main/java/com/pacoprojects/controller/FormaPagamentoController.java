@@ -28,9 +28,8 @@ public class FormaPagamentoController {
     }
 
     @GetMapping(path = "byName")
-    public ResponseEntity<List<FormaPagamentoProjection>> getAllFormaPagamentoByName(@RequestParam(name = "name") String name,
-                                                                                     @RequestParam(name = "idEmpresa") Long idEmpresa) {
-        return ResponseEntity.ok(serviceFormaPagamento.getAllFormaPagamentoByName(name, idEmpresa));
+    public ResponseEntity<List<FormaPagamentoProjection>> getAllFormaPagamento() {
+        return ResponseEntity.ok(serviceFormaPagamento.getAllFormaPagamento());
     }
 
     @PostMapping
