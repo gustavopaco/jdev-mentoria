@@ -66,7 +66,6 @@ public class VendaCompra {
     @ManyToOne(targetEntity = PessoaFisica.class)
     @JoinColumn(
             name = "pessoa_id",
-            referencedColumnName = "id",
             nullable = false,
             foreignKey = @ForeignKey(name = "pessoa_id_fk", value = ConstraintMode.CONSTRAINT))
     private PessoaFisica pessoa;
