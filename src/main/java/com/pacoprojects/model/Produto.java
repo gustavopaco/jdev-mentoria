@@ -93,11 +93,10 @@ public class Produto {
     private Set<Categoria> categorias = new LinkedHashSet<>();
 
     @NotNull(message = "Empresa deve ser informado.")
-    @ManyToOne(targetEntity = Pessoa.class)
+    @ManyToOne(targetEntity = PessoaJuridica.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
-            referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
     private PessoaJuridica empresa;
 

@@ -3,10 +3,7 @@ package com.pacoprojects.report;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,8 +14,13 @@ public class ReportController {
 
     private final ReportService serviceReport;
 
-    @PostMapping
+    @PostMapping(path = "relatorioProdutosPorNotaFiscalCompra")
     public ResponseEntity<List<ReportNotaFiscalProjection>> relatorioProdutoPorNotaFiscal(@Valid @RequestBody ReportNotaFiscalDto notaFiscalDto) {
-       return ResponseEntity.ok( serviceReport.relatorioProdutoPorNotaFiscal(notaFiscalDto));
+       return ResponseEntity.ok(serviceReport.relatorioProdutoPorNotaFiscal(notaFiscalDto));
+    }
+
+    @GetMapping(path = "relatorioProdutoEstoqueBaixo")
+    public ResponseEntity<List<ReportProdutoLowStockProjection>> relatorioProdutoEstoqueBaixo(@RequestParam(name = "idEmpresa", required = false) Long idEmpresa) {
+        return ResponseEntity.ok(serviceReport.relatorioProdutoEstoqueBaixo(idEmpresa));
     }
 }
