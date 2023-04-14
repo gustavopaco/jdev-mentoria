@@ -41,7 +41,8 @@ public class WebSecurityConfig {
                         "/formaPagamento/**",
                         "/vendaCompra/**",
                         "/statusRastreio/**",
-                        "/cupomDesconto/**").permitAll()
+                        "/cupomDesconto/**",
+                        "/report/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

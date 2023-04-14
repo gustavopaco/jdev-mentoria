@@ -21,8 +21,8 @@ public class CupomDescontoController {
         return ResponseEntity.ok(serviceCupomDesconto.getAllCupomDescontoByEmpresaId(idEmpresa));
     }
 
-    @GetMapping(path = "{id}")
-    public ResponseEntity<CupomDescontoDto> getCupomDescontoById(@RequestParam(name = "idCupom")
+    @GetMapping(path = "{idCupom}")
+    public ResponseEntity<CupomDescontoDto> getCupomDescontoById(@PathVariable(name = "idCupom")
                                                                     Long idCupom) {
         return ResponseEntity.ok(serviceCupomDesconto.getCupomDescontoById(idCupom));
     }
