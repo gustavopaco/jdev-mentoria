@@ -29,20 +29,32 @@ public interface NotaFiscalCompraRepository extends JpaRepository<NotaFiscalComp
 
     Optional<NotaFiscalCompraProjections> findNotaFiscalCompraById(Long id);
 
-    @Query(value = "SELECT fornecedor.id AS codigo_fornecedor, " +
-            "       fornecedor.nome AS nome_fornecedor, " +
-            "       notaFiscal.id AS codigo_nota_fiscal, " +
-            "       notaFiscal.dataCompra AS data_compra, " +
-            "       inp.quantidade AS quantidade, " +
-            "       produto.id AS codigo_produto, " +
-            "       produto.nome AS nome_produto, " +
-            "       produto.valorVenda AS valor_venda " +
-            "FROM NotaFiscalCompra notaFiscal " +
-            "JOIN notaFiscal.pessoa fornecedor " +
-            "JOIN ItemNotaProduto inp on inp.notaFiscalCompra.id = notaFiscal.id " +
-            "JOIN inp.produto produto " +
-            "WHERE notaFiscal.id = 3")
-    List<NotaFiscalCompra> findAllByItemNotaProdutos(Long idEmpresa);
+    @Query(value =
+            " SELECT fornecedor.id AS codigoFornecedor, " +
+            "       fornecedor.nome AS nomeFornecedor, " +
+            "       notaFiscal.id AS codigoNotaFiscal, " +
+            "       notaFiscal.dataCompra AS dataCompra, " +
+            "       inp.quantidade AS quantidadeComprado, " +
+            "       produto.id AS codigoProduto, " +
+            "       produto.nome AS nomeProduto, " +
+            "       produto.valorVenda AS valorVendaProduto " +
+            " FROM NotaFiscalCompra notaFiscal " +
+            " JOIN notaFiscal.pessoa fornecedor " +
+            " JOIN ItemNotaProduto inp on inp.notaFiscalCompra.id = notaFiscal.id " +
+            " JOIN inp.produto produto " +
+            " WHERE notaFiscal.dataCompra between :dataInicial and :dataFinal " +
+            " and ( :codigoProduto IS NULL OR produto.id =:codigoProduto ) " +
+            " and ( :nomeProduto IS NULL OR produto.nome ilike %:nomeProduto%) " +
+            " and ( :codigoFornecedor IS NULL OR fornecedor.id =:codigoFornecedor ) " +
+            " and ( :codigoNota IS NULL OR notaFiscal.id =:codigoNota) " )
+    List<ReportNotaFiscalProjection> relatorioProdutoPorNotaFiscalJPQL(
+            @Param("dataInicial") LocalDate dataInicial,
+            @Param("dataFinal") LocalDate dataFinal,
+            @Param("codigoProduto") Long codigoProduto,
+            @Param("nomeProduto") String nomeProduto,
+            @Param("codigoFornecedor") Long codigoFornecedor,
+            @Param("codigoNota") Long codigoNota
+    );
 
 
     @Query(
@@ -65,7 +77,7 @@ public interface NotaFiscalCompraRepository extends JpaRepository<NotaFiscalComp
                              and ( :codigoFornecedor IS NULL OR fornecedor.id =:codigoFornecedor )
                              and ( :codigoNota IS NULL OR notaFiscal.id =:codigoNota )""")
     List<ReportNotaFiscalProjection> relatorioProdutoPorNotaFiscal(
-            @Param("dataInicial")LocalDate dataInicial,
+            @Param("dataInicial") LocalDate dataInicial,
             @Param("dataFinal") LocalDate dataFinal,
             @Param("codigoProduto") Long codigoProduto,
             @Param("nomeProduto") String nomeProduto,
