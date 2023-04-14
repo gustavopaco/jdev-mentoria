@@ -4,6 +4,9 @@ import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
+import com.pacoprojects.email.EmailMessage;
+import com.pacoprojects.email.EmailObject;
+import com.pacoprojects.email.EmailService;
 import com.pacoprojects.enums.TipoEndereco;
 import com.pacoprojects.mapper.PessoaFisicaMapper;
 import com.pacoprojects.mapper.VendaCompraMapper;
@@ -32,6 +35,8 @@ public class VendaCompraService {
     private final PessoaUserService servicePessoaUser;
     private final StatusRastreioService serviceStatusRastreio;
     private final ItemVendaCompraRepository repositoryItemVendaCompra;
+    private final ContaReceberService serviceContaReceber;
+    private final EmailService emailService;
 
 
     public List<VendaCompraProjectionSelected> getAllVendaCompra(Long idEmpresa) {
@@ -87,9 +92,35 @@ public class VendaCompraService {
         // Salvando venda e uma Nota ao mesmo tempo em cascata
         entity = repositoryVendaCompra.save(entity);
 
+        // Gerando uma nova conta a receber
+        serviceContaReceber.addContaReceberAfterVendaCompraDone(entity);
+        // Gerando um status de rastreio para a venda
         serviceStatusRastreio.addStatusRastreioAfterVendaCompraDone(entity);
 
+        // Envio de E-mail para o cliente que fez a compra
+        sendMailToClienteAfterVendaCompraDone(entity);
+        // Envio de E-mail para a empresa que fez a venda
+        sendMailToEmpresaAfterVendaCompraDone(entity);
+
         return mapperVendaCompra.toDto(entity);
+    }
+
+    private void sendMailToClienteAfterVendaCompraDone(VendaCompra entity) {
+        emailService.sendMailWithAttachment(EmailObject
+                .builder()
+                .destinatario(entity.getPessoa().getEmail())
+                .assunto("Compra realizada")
+                .menssagem(EmailMessage.getClienteMessageVendaCompraDone(entity.getPessoa().getNome(), entity.getId(), entity.getEmpresa().getNomeFantasia()))
+                .build());
+    }
+
+    private void sendMailToEmpresaAfterVendaCompraDone(VendaCompra entity) {
+        emailService.sendMailWithAttachment(EmailObject
+                .builder()
+                .destinatario(entity.getEmpresa().getEmail())
+                .assunto("Venda realizada")
+                .menssagem(EmailMessage.getEmpresaMessageVendaCompraDone(entity.getId(), entity.getEmpresa().getNomeFantasia()))
+                .build());
     }
 
 

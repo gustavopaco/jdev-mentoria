@@ -45,4 +45,19 @@ public class EmailMessage {
         }
         return builder.toString();
     }
+
+    public static String getClienteMessageVendaCompraDone(String nomeCliente, Long idVendaCompra, String nomeEmpresa) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Olá ").append(nomeCliente).append("<br/>");
+        builder.append("Você realizou a compra de número: ").append(idVendaCompra).append("<br/>");
+        builder.append("Na loja ").append(nomeEmpresa);
+        return builder.toString();
+    }
+
+    public static String getEmpresaMessageVendaCompraDone(Long idVendaCompra, String nomeEmpresa) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Olá ").append(nomeEmpresa).append("<br/>");
+        builder.append("Você realizou a venda de número: ").append(idVendaCompra).append("<br/>");
+        return builder.toString();
+    }
 }
