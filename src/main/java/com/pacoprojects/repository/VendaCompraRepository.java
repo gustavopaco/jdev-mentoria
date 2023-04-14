@@ -19,7 +19,7 @@ public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> 
 
     boolean findByIdAndEnabledTrue(Long idVenda);
 
-    Optional<VendaCompraProjectionSelected> findVendaCompraById(Long id);
+    Optional<VendaCompraProjectionSelected> findVendaCompraById(@Param("id") Long id);
 
     List<VendaCompraProjectionSelected> findAllByEmpresa_Id(Long idEmpresa);
 

@@ -110,11 +110,10 @@ public class VendaCompra {
             foreignKey = @ForeignKey(name = "cupom_desconto_id_fk", value = ConstraintMode.CONSTRAINT))
     private CupomDesconto cupomDesconto;
 
-    @ManyToOne(targetEntity = Pessoa.class)
+    @ManyToOne(targetEntity = PessoaJuridica.class)
     @JoinColumn(
             name = "empresa_id",
             nullable = false,
-            referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "empresa_id_fk", value = ConstraintMode.CONSTRAINT))
     private PessoaJuridica empresa;
 
