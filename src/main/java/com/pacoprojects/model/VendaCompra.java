@@ -1,8 +1,10 @@
 package com.pacoprojects.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.pacoprojects.enums.StatusVendaCompra;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +64,11 @@ public class VendaCompra {
 
     @Column(name = "enabled")
     private boolean enabled = true;
+
+    @Enumerated(EnumType.STRING)
+    @NotBlank(message = "Status da venda deve ser informado.")
+    @Column(name = "status_venda_compra", nullable = false)
+    private StatusVendaCompra statusVendaCompra;
 
     @ManyToOne(targetEntity = PessoaFisica.class)
     @JoinColumn(
