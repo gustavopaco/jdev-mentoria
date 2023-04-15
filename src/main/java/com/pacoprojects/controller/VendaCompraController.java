@@ -1,6 +1,9 @@
 package com.pacoprojects.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.pacoprojects.api.ApiConsultaMelhorEnvio;
+import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioDto;
+import com.pacoprojects.api.integration.melhor.envio.request.MelhorEnvioDtoRequest;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
@@ -20,6 +23,7 @@ import java.util.List;
 public class VendaCompraController {
 
     private final VendaCompraService serviceVendaCompra;
+    private final ApiConsultaMelhorEnvio apiConsultaMelhorEnvio;
 
     @GetMapping
     public ResponseEntity<List<VendaCompraProjectionSelected>> getAllVendaCompra(@RequestParam(name = "idEmpresa") Long idEmpresa) {
@@ -54,6 +58,11 @@ public class VendaCompraController {
                                                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd")
                                                                                           LocalDate dataFinal) {
         return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByIntervalDates(dataInicial, dataFinal));
+    }
+
+    @PostMapping(path = "consultaMelhorEnvioFrete")
+    public ResponseEntity<List<MelhorEnvioDto>> getMelhorEnvioFrete(@RequestBody MelhorEnvioDtoRequest melhorEnvioDtoRequest) {
+        return ResponseEntity.ok(apiConsultaMelhorEnvio.consultMelhorEnvioFrete(melhorEnvioDtoRequest));
     }
 
     @GetMapping(path = "{id}")
