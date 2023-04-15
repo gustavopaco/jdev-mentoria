@@ -15,12 +15,17 @@ public class ReportController {
     private final ReportService serviceReport;
 
     @PostMapping(path = "relatorioProdutosPorNotaFiscalCompra")
-    public ResponseEntity<List<ReportNotaFiscalProjection>> relatorioProdutoPorNotaFiscal(@Valid @RequestBody ReportNotaFiscalDto notaFiscalDto) {
-       return ResponseEntity.ok(serviceReport.relatorioProdutoPorNotaFiscal(notaFiscalDto));
+    public ResponseEntity<List<ReportNotaFiscalProjection>> relatorioProdutoPorNotaFiscal(@Valid @RequestBody ReportParamDto reportParamDto) {
+        return ResponseEntity.ok(serviceReport.relatorioProdutoPorNotaFiscal(reportParamDto));
     }
 
     @GetMapping(path = "relatorioProdutoEstoqueBaixo")
     public ResponseEntity<List<ReportProdutoLowStockProjection>> relatorioProdutoEstoqueBaixo(@RequestParam(name = "idEmpresa", required = false) Long idEmpresa) {
         return ResponseEntity.ok(serviceReport.relatorioProdutoEstoqueBaixo(idEmpresa));
+    }
+
+    @PostMapping(path = "relatorioVendaCancelada")
+    public ResponseEntity<List<ReportVendaCanceladaProjection>> relatorioVendaCancelada(@Valid @RequestBody ReportParamDto reportParamDto) {
+        return ResponseEntity.ok(serviceReport.relatorioVendaCancelada(reportParamDto));
     }
 }
