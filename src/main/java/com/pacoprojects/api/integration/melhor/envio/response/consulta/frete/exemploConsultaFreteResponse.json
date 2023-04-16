@@ -1,0 +1,200 @@
+[
+  {
+    "id": 1,
+    "name": "PAC",
+    "price": "30.75",
+    "custom_price": "30.75",
+    "discount": "6.35",
+    "currency": "R$",
+    "delivery_time": 10,
+    "delivery_range": {
+      "min": 9,
+      "max": 10
+    },
+    "custom_delivery_time": 10,
+    "custom_delivery_range": {
+      "min": 9,
+      "max": 10
+    },
+    "packages": [
+      {
+        "price": "30.75",
+        "discount": "6.35",
+        "format": "box",
+        "dimensions": {
+          "height": 11,
+          "width": 11,
+          "length": 17
+        },
+        "weight": "0.30",
+        "insurance_value": "10.10",
+        "products": [
+          {
+            "id": "x",
+            "quantity": 1
+          }
+        ]
+      }
+    ],
+    "additional_services": {
+      "receipt": false,
+      "own_hand": false,
+      "collect": false
+    },
+    "company": {
+      "id": 1,
+      "name": "Correios",
+      "picture": "http:\/\/sandbox.melhorenvio.com.br\/images\/shipping-companies\/correios.png"
+    }
+  },
+  {
+    "id": 2,
+    "name": "SEDEX",
+    "price": "60.73",
+    "custom_price": "60.73",
+    "discount": "12.77",
+    "currency": "R$",
+    "delivery_time": 6,
+    "delivery_range": {
+      "min": 5,
+      "max": 6
+    },
+    "custom_delivery_time": 6,
+    "custom_delivery_range": {
+      "min": 5,
+      "max": 6
+    },
+    "packages": [
+      {
+        "price": "60.73",
+        "discount": "12.77",
+        "format": "box",
+        "dimensions": {
+          "height": 11,
+          "width": 11,
+          "length": 17
+        },
+        "weight": "0.30",
+        "insurance_value": "10.10",
+        "products": [
+          {
+            "id": "x",
+            "quantity": 1
+          }
+        ]
+      }
+    ],
+    "additional_services": {
+      "receipt": false,
+      "own_hand": false,
+      "collect": false
+    },
+    "company": {
+      "id": 1,
+      "name": "Correios",
+      "picture": "http:\/\/sandbox.melhorenvio.com.br\/images\/shipping-companies\/correios.png"
+    }
+  },
+  {
+    "id": 3,
+    "name": ".Package",
+    "price": "27.33",
+    "custom_price": "27.33",
+    "discount": "13.95",
+    "currency": "R$",
+    "delivery_time": 13,
+    "delivery_range": {
+      "min": 12,
+      "max": 14
+    },
+    "custom_delivery_time": 13,
+    "custom_delivery_range": {
+      "min": 12,
+      "max": 14
+    },
+    "packages": [
+      {
+        "format": "box",
+        "dimensions": {
+          "height": 11,
+          "width": 11,
+          "length": 17
+        },
+        "weight": "0.30",
+        "insurance_value": "10.10",
+        "products": [
+          {
+            "id": "x",
+            "quantity": 1
+          }
+        ]
+      }
+    ],
+    "additional_services": {
+      "receipt": false,
+      "own_hand": false,
+      "collect": false
+    },
+    "company": {
+      "id": 2,
+      "name": "Jadlog",
+      "picture": "http:\/\/sandbox.melhorenvio.com.br\/images\/shipping-companies\/jadlog.png"
+    }
+  },
+  {
+    "id": 4,
+    "name": ".Com",
+    "price": "54.48",
+    "custom_price": "54.48",
+    "discount": "0.00",
+    "currency": "R$",
+    "delivery_time": 11,
+    "delivery_range": {
+      "min": 10,
+      "max": 12
+    },
+    "custom_delivery_time": 11,
+    "custom_delivery_range": {
+      "min": 10,
+      "max": 12
+    },
+    "packages": [
+      {
+        "format": "box",
+        "dimensions": {
+          "height": 11,
+          "width": 11,
+          "length": 17
+        },
+        "weight": "0.30",
+        "insurance_value": "10.10",
+        "products": [
+          {
+            "id": "x",
+            "quantity": 1
+          }
+        ]
+      }
+    ],
+    "additional_services": {
+      "receipt": false,
+      "own_hand": false,
+      "collect": false
+    },
+    "company": {
+      "id": 2,
+      "name": "Jadlog",
+      "picture": "http:\/\/sandbox.melhorenvio.com.br\/images\/shipping-companies\/jadlog.png"
+    }
+  },
+  {
+    "id": 17,
+    "name": "Mini Envios",
+    "error": "Dimens\u00f5es do objeto ultrapassam o limite da transportadora.",
+    "company": {
+      "id": 1,
+      "name": "Correios",
+      "picture": "http:\/\/sandbox.melhorenvio.com.br\/images\/shipping-companies\/correios.png"
+    }
+  }
+]

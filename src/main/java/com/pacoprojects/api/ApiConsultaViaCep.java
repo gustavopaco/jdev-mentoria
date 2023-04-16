@@ -1,7 +1,7 @@
 package com.pacoprojects.api;
 
+import com.pacoprojects.api.integration.viacep.ViaCepDto;
 import com.pacoprojects.dto.EnderecoDto;
-import com.pacoprojects.dto.ViaCepDto;
 import com.pacoprojects.security.ApplicationConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,14 +11,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class ApiConsultaCep {
+public class ApiConsultaViaCep {
 
     private final ApplicationConfig applicationConfig;
-    private static final String URL = "https://viacep.com.br/ws/";
 
     public EnderecoDto consultViaCepApi(String cep) {
         cep = cep.replaceAll("-", "");
-        ResponseEntity<ViaCepDto> dtoResponseEntity = applicationConfig.getRestTemplateInstance().getForEntity((URL + cep + "/json"), ViaCepDto.class);
+        ResponseEntity<ViaCepDto> dtoResponseEntity = applicationConfig
+                .getRestTemplateInstance()
+                .getForEntity((ApiConstantes.URL_VIA_CEP_CONSULTA + cep + "/json"), ViaCepDto.class);
 
         if (dtoResponseEntity.getStatusCode().value() == 200) {
             ViaCepDto viaCepDto = dtoResponseEntity.getBody();

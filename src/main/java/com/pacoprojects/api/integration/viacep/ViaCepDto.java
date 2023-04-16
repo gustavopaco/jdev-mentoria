@@ -1,4 +1,4 @@
-package com.pacoprojects.dto;
+package com.pacoprojects.api.integration.viacep;
 
 import lombok.Builder;
 

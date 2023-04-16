@@ -2,8 +2,8 @@ package com.pacoprojects.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pacoprojects.api.ApiConsultaMelhorEnvio;
-import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioDto;
-import com.pacoprojects.api.integration.melhor.envio.request.MelhorEnvioDtoRequest;
+import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.MelhorEnvioConsultaFreteRequestDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
@@ -61,8 +61,8 @@ public class VendaCompraController {
     }
 
     @PostMapping(path = "consultaMelhorEnvioFrete")
-    public ResponseEntity<List<MelhorEnvioDto>> getMelhorEnvioFrete(@RequestBody MelhorEnvioDtoRequest melhorEnvioDtoRequest) {
-        return ResponseEntity.ok(apiConsultaMelhorEnvio.consultMelhorEnvioFrete(melhorEnvioDtoRequest));
+    public ResponseEntity<List<MelhorEnvioConsultaFreteDto>> getMelhorEnvioFrete(@RequestBody MelhorEnvioConsultaFreteRequestDto melhorEnvioConsultaFreteRequestDto) {
+        return ResponseEntity.ok(apiConsultaMelhorEnvio.consultMelhorEnvioFrete(melhorEnvioConsultaFreteRequestDto));
     }
 
     @GetMapping(path = "{id}")

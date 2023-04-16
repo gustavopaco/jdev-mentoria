@@ -1,0 +1,6 @@
+{
+  "mode": "private",
+  "orders": [
+    "{{order_id}}"
+  ]
+}

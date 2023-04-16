@@ -1,6 +1,6 @@
 
 
-package com.pacoprojects.dto;
+package com.pacoprojects.api.integration.receitaaws;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

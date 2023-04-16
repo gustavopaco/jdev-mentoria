@@ -1,6 +1,6 @@
 package com.pacoprojects.api.integration.melhor.envio;
 
-import com.pacoprojects.api.integration.melhor.envio.response.MelhorEnvioDtoResponse;
+import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.MelhorEnvioConsultaFreteResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,5 +12,5 @@ public interface MelhorEnvioMapper {
     @Mapping(target = "nome", source = "name")
     @Mapping(target = "valor", source = "price")
     @Mapping(target = "empresa", source = "company")
-    MelhorEnvioDto toEntity(MelhorEnvioDtoResponse melhorEnvioDtoResponse);
+    MelhorEnvioConsultaFreteDto toEntity(MelhorEnvioConsultaFreteResponseDto melhorEnvioConsultaFreteResponseDto);
 }
