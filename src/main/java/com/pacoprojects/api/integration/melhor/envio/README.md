@@ -1,7 +1,8 @@
 # ORDEM PARA IMPLEMENTACAO DE INTERGRACAO COM MELHOR ENVIO TRANSPORTADORA
 
-
-# Fazer a consulta do preco dos produtos
+Resumo de ordem: CONSULTA / INSERIR / CHECKOUT / GERAR / IMPRIMIR
+__________________________
+# Fazer a CONSULTA do preco dos produtos
 1) Passo 1
     1) REQUEST
         1) Exemplo json | Pasta REQUEST/consulta/frete/exemploConsultaFreteRequest.json
@@ -12,8 +13,9 @@
         2) Dto de Recebimento: | Pasta RESPONSE/consulta/frete/MelhorEnvioConsultaFreteResponseDto
         3) Implementacao: | Classe ApiConsultaMelhorEnvio metodo consultMelhorEnvioFrete
 
+__________________________
 
-# Inserir frete no carrinho
+# INSERIR frete no carrinho
 1) Passo 2
     1) REQUEST
         1) Exemplo json | Pasta REQUEST/inserir/frete/carrinho/exemploInserirFreteRequest.json
@@ -24,8 +26,9 @@
         2) Dto de Recebimento: | Pasta RESPONSE/frete/frete/carrinho/MelhorEnvioInserirFreteCarrinhoResponseDto
         3) Implementacao: | Classe ApiConsultaMelhorEnvio metodo ESCREVER NOME METODO
 
+__________________________
 
-# Fazer checkout do carrinho com os fretes
+# Fazer CHECKOUT do carrinho com os fretes
 1) Passo 3
    1) REQUEST
       1) Exemplo json | Pasta REQUEST/checkout/frete/exemploCheckoutRequest.json
@@ -36,8 +39,9 @@
        2) Dto de Recebimento: | Pasta RESPONSE/checkout/frete/MelhorEnvioCheckoutFreteResponseDto
        3) Implementacao: | Classe ApiConsultaMelhorEnvio metodo ESCREVER NOME METODO
 
+__________________________
 
-# Gerar codigo de rasteio(etiqueta)
+# GERAR codigo de rasteio(etiqueta)
 1) Passo 4
     1) REQUEST
        1) Exemplo json | Pasta REQUEST/gerar/etiqueta/exemploGerarEtiquetaRequest.json
@@ -48,8 +52,9 @@
        2) Dto de Recebimento: | Nao existe Dto para recebe-lo pois ele ta retornando o numero do Pedido como nom do objeto
        3) Implementacao: | Classe ApiConsultaMelhorEnvio metodo ESCREVER NOME METODO
 
+__________________________
 
-# Imprimir etiqueta rasteio(etiqueta)
+# IMPRIMIR etiqueta rasteio(etiqueta)
 1) Passo 4
     1) REQUEST
         1) Exemplo json | Pasta REQUEST/imprimir/etiqueta/ImprimirEtiquetaRequest.json

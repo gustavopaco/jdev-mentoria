@@ -70,6 +70,18 @@ public class VendaCompra {
     @Column(name = "status_venda_compra", nullable = false)
     private StatusVendaCompra statusVendaCompra;
 
+    // Melhor Envio atributo
+    @Column(name = "codigo_etiqueta")
+    private String codigoEtiqueta;
+
+    // Melhor Envio atributo
+    @Column(name = "url_etiqueta")
+    private String urlEtiqueta;
+
+    // Melhor Envio atributo
+    @Column(name = "servico_transportadora")
+    private Integer servicoTransportadora;
+
     @ManyToOne(targetEntity = PessoaFisica.class)
     @JoinColumn(
             name = "pessoa_id",

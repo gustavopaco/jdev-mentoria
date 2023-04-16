@@ -1,9 +1,10 @@
 package com.pacoprojects.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pacoprojects.api.ApiConsultaMelhorEnvio;
+import com.pacoprojects.api.ApiMelhorEnvio;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
-import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.MelhorEnvioConsultaFreteRequestDto;
+import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.response.imprimir.etiqueta.ResponseMelhorEnvioImprimirEtiquetaDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
@@ -23,7 +24,7 @@ import java.util.List;
 public class VendaCompraController {
 
     private final VendaCompraService serviceVendaCompra;
-    private final ApiConsultaMelhorEnvio apiConsultaMelhorEnvio;
+    private final ApiMelhorEnvio apiMelhorEnvio;
 
     @GetMapping
     public ResponseEntity<List<VendaCompraProjectionSelected>> getAllVendaCompra(@RequestParam(name = "idEmpresa") Long idEmpresa) {
@@ -60,14 +61,19 @@ public class VendaCompraController {
         return ResponseEntity.ok(serviceVendaCompra.getAllVendaCompraByIntervalDates(dataInicial, dataFinal));
     }
 
-    @PostMapping(path = "consultaMelhorEnvioFrete")
-    public ResponseEntity<List<MelhorEnvioConsultaFreteDto>> getMelhorEnvioFrete(@RequestBody MelhorEnvioConsultaFreteRequestDto melhorEnvioConsultaFreteRequestDto) {
-        return ResponseEntity.ok(apiConsultaMelhorEnvio.consultMelhorEnvioFrete(melhorEnvioConsultaFreteRequestDto));
-    }
-
     @GetMapping(path = "{id}")
     public ResponseEntity<VendaCompraProjectionSelected> getVendaCompraById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(serviceVendaCompra.getVendaCompraById(id));
+    }
+
+    @GetMapping(path = "imprimeMelhorEnvioEtiqueta")
+    public ResponseEntity<ResponseMelhorEnvioImprimirEtiquetaDto> imprimeMelhorEnvioEtiqueta(@RequestParam(name = "idVenda") Long idVenda) {
+        return ResponseEntity.ok(apiMelhorEnvio.imprimeMelhorEnvioEtiqueta(idVenda));
+    }
+
+    @PostMapping(path = "consultaMelhorEnvioFrete")
+    public ResponseEntity<List<MelhorEnvioConsultaFreteDto>> consultaMelhorEnvioFrete(@RequestBody RequestMelhorEnvioConsultaFreteDto requestMelhorEnvioConsultaFreteDto) {
+        return ResponseEntity.ok(apiMelhorEnvio.consultaFreteMelhorEnvio(requestMelhorEnvioConsultaFreteDto));
     }
 
     @PostMapping

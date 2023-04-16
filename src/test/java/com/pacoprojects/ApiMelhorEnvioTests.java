@@ -1,13 +1,13 @@
 package com.pacoprojects;
 
-import com.pacoprojects.api.ApiConstantes;
+import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConfig;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioMapper;
-import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.FromToMeDto;
-import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.MelhorEnvioConsultaFreteRequestDto;
-import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.ProdutosMeDto;
-import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.MelhorEnvioConsultaFreteResponseDto;
-import com.pacoprojects.api.integration.melhor.envio.response.inserir.frete.carrinho.MelhorEnvioInserirFreteCarrinhoResponseDto;
+import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestConsultaFreteFromToDto;
+import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestConsultaFreteProdutosDto;
+import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.ResponseMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.response.inserir.frete.carrinho.ResponseMelhorEnvioInserirFreteCarrinhoDto;
 import com.pacoprojects.security.ApplicationConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,13 @@ import java.util.Objects;
 @ActiveProfiles("dev")
 public class ApiMelhorEnvioTests {
     private final ApplicationConfig applicationConfig;
-
+    private final MelhorEnvioConfig melhorEnvioConfig;
     private final MelhorEnvioMapper mapperMelhorEnvio;
 
     @Autowired
-    public ApiMelhorEnvioTests(ApplicationConfig applicationConfig, MelhorEnvioMapper mapperMelhorEnvio) {
+    public ApiMelhorEnvioTests(ApplicationConfig applicationConfig, MelhorEnvioConfig melhorEnvioConfig, MelhorEnvioMapper mapperMelhorEnvio) {
         this.applicationConfig = applicationConfig;
+        this.melhorEnvioConfig = melhorEnvioConfig;
         this.mapperMelhorEnvio = mapperMelhorEnvio;
     }
 
@@ -40,27 +41,27 @@ public class ApiMelhorEnvioTests {
 
         HttpHeaders headers = getHeaderConfiguration();
 
-        MelhorEnvioConsultaFreteRequestDto melhorEnvioConsultaFreteRequestDto = MelhorEnvioConsultaFreteRequestDto
+        RequestMelhorEnvioConsultaFreteDto requestMelhorEnvioConsultaFreteDto = RequestMelhorEnvioConsultaFreteDto
                 .builder()
-                .from(new FromToMeDto("30590-253"))
-                .to(new FromToMeDto("65068-097"))
+                .from(new RequestConsultaFreteFromToDto("30590-253"))
+                .to(new RequestConsultaFreteFromToDto("65068-097"))
                 .products(List.of(
-                        new ProdutosMeDto("x", 11, 17, 11, new BigDecimal("0.3"), new BigDecimal("10.1"), 1)
+                        new RequestConsultaFreteProdutosDto("x", 11, 17, 11, new BigDecimal("0.3"), new BigDecimal("10.1"), 1)
                 ))
                 .build();
 
         // Classe que junta o BODY do request com o Header para ser enviado ao
-        HttpEntity<MelhorEnvioConsultaFreteRequestDto> entity = new HttpEntity<>(melhorEnvioConsultaFreteRequestDto, headers);
+        HttpEntity<RequestMelhorEnvioConsultaFreteDto> entity = new HttpEntity<>(requestMelhorEnvioConsultaFreteDto, headers);
 
-        // Classe responsavel por definir a Response como List<MelhorEnvioConsultaFreteResponseDto>, sem ela so podemos retornar objetos
-        ParameterizedTypeReference<List<MelhorEnvioConsultaFreteResponseDto>> responseType = new ParameterizedTypeReference<>() {
+        // Classe responsavel por definir a Response como List<ResponseMelhorEnvioConsultaFreteDto>, sem ela so podemos retornar objetos
+        ParameterizedTypeReference<List<ResponseMelhorEnvioConsultaFreteDto>> responseType = new ParameterizedTypeReference<>() {
         };
 
-        ResponseEntity<List<MelhorEnvioConsultaFreteResponseDto>> response = applicationConfig
+        ResponseEntity<List<ResponseMelhorEnvioConsultaFreteDto>> response = applicationConfig
                 .getRestTemplateInstance()
-                .exchange(ApiConstantes.URL_SANDBOX_MELHOR_ENVIO_CONSULTAR_FRETE, HttpMethod.POST, entity, responseType);
+                .exchange(melhorEnvioConfig.urlConsultarFrete(), HttpMethod.POST, entity, responseType);
 
-        List<MelhorEnvioConsultaFreteResponseDto> body = response.getBody();
+        List<ResponseMelhorEnvioConsultaFreteDto> body = response.getBody();
         System.out.println(formatResponse(body));
     }
 
@@ -74,9 +75,9 @@ public class ApiMelhorEnvioTests {
         // Classe que junta o BODY do request com o Header para ser enviado ao
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
-        ResponseEntity<MelhorEnvioInserirFreteCarrinhoResponseDto> response = applicationConfig
+        ResponseEntity<ResponseMelhorEnvioInserirFreteCarrinhoDto> response = applicationConfig
                 .getRestTemplateInstance()
-                .exchange(ApiConstantes.URL_SANDBOX_MELHOR_ENVIO_INSERIR_FRETE_CARRINHO, HttpMethod.POST, entity, MelhorEnvioInserirFreteCarrinhoResponseDto.class);
+                .exchange(melhorEnvioConfig.urlInserirFreteCarrinho(), HttpMethod.POST, entity, ResponseMelhorEnvioInserirFreteCarrinhoDto.class);
 
         System.out.println(response.getBody());
 
@@ -94,7 +95,7 @@ public class ApiMelhorEnvioTests {
 
         ResponseEntity<String> response = applicationConfig
                 .getRestTemplateInstance()
-                .exchange(ApiConstantes.URL_SANDBOX_MELHOR_ENVIO_CHECKOUT_FRETE, HttpMethod.POST, entity, String.class);
+                .exchange(melhorEnvioConfig.urlCheckoutFrete(), HttpMethod.POST, entity, String.class);
 
         System.out.println(response.getBody());
     }
@@ -110,7 +111,7 @@ public class ApiMelhorEnvioTests {
 
         ResponseEntity<String> response = applicationConfig
                 .getRestTemplateInstance()
-                .exchange(ApiConstantes.URL_SANDBOX_MELHOR_ENVIO_GERAR_ETIQUETA, HttpMethod.POST, entity, String.class);
+                .exchange(melhorEnvioConfig.urlGerarEtiqueta(), HttpMethod.POST, entity, String.class);
 
         System.out.println(response.getBody());
     }
@@ -127,7 +128,7 @@ public class ApiMelhorEnvioTests {
 
         ResponseEntity<String> response = applicationConfig
                 .getRestTemplateInstance()
-                .exchange(ApiConstantes.URL_SANDBOX_MELHOR_ENVIO_IMPRIMIR_ETIQUETA, HttpMethod.POST, entity, String.class);
+                .exchange(melhorEnvioConfig.urlImprimirEtiqueta(), HttpMethod.POST, entity, String.class);
 
         System.out.println(response.getBody());
     }
@@ -136,17 +137,17 @@ public class ApiMelhorEnvioTests {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(ApiConstantes.TOKEN_SANDBOX_MELHOR_ENVIO);
-        headers.set("User-Agent", "gustavopaco@gmail.com");
+        headers.setBearerAuth(melhorEnvioConfig.getToken());
+        headers.set("User-Agent", melhorEnvioConfig.getEmailUserAgent());
         return headers;
     }
 
-    private List<MelhorEnvioConsultaFreteDto> formatResponse(List<MelhorEnvioConsultaFreteResponseDto> responseBody) {
+    private List<MelhorEnvioConsultaFreteDto> formatResponse(List<ResponseMelhorEnvioConsultaFreteDto> responseBody) {
         List<MelhorEnvioConsultaFreteDto> melhorEnvioConsultaFreteDtos = new ArrayList<>();
         if (responseBody != null) {
-            melhorEnvioConsultaFreteDtos = responseBody.stream().map(melhorEnvioConsultaFreteResponseDto -> {
-                if (melhorEnvioConsultaFreteResponseDto.error() == null) {
-                    return mapperMelhorEnvio.toEntity(melhorEnvioConsultaFreteResponseDto);
+            melhorEnvioConsultaFreteDtos = responseBody.stream().map(responseMelhorEnvioConsultaFreteDto -> {
+                if (responseMelhorEnvioConsultaFreteDto.error() == null) {
+                    return mapperMelhorEnvio.toDto(responseMelhorEnvioConsultaFreteDto);
                 }
                 return null;
             }).filter(Objects::nonNull).toList();

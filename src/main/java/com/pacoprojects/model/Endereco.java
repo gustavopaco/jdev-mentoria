@@ -58,6 +58,9 @@ public class Endereco {
     @Column(name = "tipo_endereco", nullable = false)
     private TipoEndereco tipoEndereco;
 
+    @Column(name = "pais")
+    private String pais = "BR";
+
     @JsonIgnore //Ignorar Propriedade no Json
     @ManyToOne(targetEntity = Pessoa.class)
     @JoinColumn(name = "pessoa_id", nullable = false,

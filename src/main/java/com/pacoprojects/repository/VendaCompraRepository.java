@@ -33,6 +33,13 @@ public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> 
     @Query(value = "UPDATE VendaCompra set enabled = true where id = ?1")
     void enableVenda(Long id);
 
+    @Modifying
+    @Query(value = "update VendaCompra v set v.codigoEtiqueta =:codigoEtiqueta where v.id =:idVenda ")
+    void updateCodigoEtiqueta(@Param("idVenda") Long idVenda, @Param("codigoEtiqueta") String codigoEtiqueta);
+
+    @Modifying
+    @Query(value = "update VendaCompra v set v.urlEtiqueta =:urlEtiqueta where v.id =:idVenda ")
+    void updateUrlEtiqueta(@Param("idVenda") Long idVenda, @Param("urlEtiqueta") String urlEtiqueta);
 
     @Modifying
     @Query(nativeQuery = true,
@@ -97,3 +104,5 @@ public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> 
             @Param("dataInicial") LocalDate dataInicial,
             @Param("dataFinal") LocalDate dataFinal);
 }
+
+

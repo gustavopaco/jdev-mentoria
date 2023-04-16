@@ -41,17 +41,17 @@ public class Produto {
     @Column(name = "peso", nullable = false)
     private Double peso;
 
-    @NotNull(message = "Largura do produto obrigatório.")
+    @NotNull(message = "Largura em Centímetros do produto obrigatório.")
     @Column(name = "largura", nullable = false)
-    private Double largura;
+    private Integer largura;
 
-    @NotNull(message = "Altura do produto obrigatório.")
+    @NotNull(message = "Altura em Centímetros do produto obrigatório.")
     @Column(name = "altura", nullable = false)
-    private Double altura;
+    private Integer altura;
 
-    @NotNull(message = "Profundidade do produto obrigatório.")
+    @NotNull(message = "Profundidade em Centímetros do produto obrigatório.")
     @Column(name = "profundidade", nullable = false)
-    private Double profundidade;
+    private Integer profundidade;
 
     @NotNull(message = "Valor de venda obrigatório.")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
