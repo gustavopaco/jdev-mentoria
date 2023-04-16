@@ -1,7 +1,7 @@
 package com.pacoprojects.controller;
 
-import com.pacoprojects.api.ApiConsultaReceitaAwsCnpj;
-import com.pacoprojects.api.ApiConsultaViaCep;
+import com.pacoprojects.api.ApiReceitaAwsCnpj;
+import com.pacoprojects.api.ApiViaCep;
 import com.pacoprojects.api.integration.receitaaws.ConsultaReceitaAwsDto;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.PessoaFisicaDto;
@@ -23,9 +23,9 @@ import java.util.List;
 public class PessoaController {
 
     private final PessoaUserService pessoaUserService;
-    private final ApiConsultaViaCep apiConsultaViaCep;
+    private final ApiViaCep apiViaCep;
     private final EndPointService endPointService;
-    private final ApiConsultaReceitaAwsCnpj apiConsultaReceitaAwsCnpj;
+    private final ApiReceitaAwsCnpj apiReceitaAwsCnpj;
 
     @PostMapping(path = "addJuridica")
     public ResponseEntity<PessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody PessoaJuridicaDto pessoaJuridica) {
@@ -39,12 +39,12 @@ public class PessoaController {
 
     @GetMapping(path = "consultViaCepApi/{cep}")
     public ResponseEntity<EnderecoDto> consultViaCepApi(@PathVariable(name = "cep") String cep) {
-        return ResponseEntity.ok(apiConsultaViaCep.consultViaCepApi(cep));
+        return ResponseEntity.ok(apiViaCep.consultViaCepApi(cep));
     }
 
     @GetMapping(path = "consultReceitaAwsApi")
     public ResponseEntity<ConsultaReceitaAwsDto> consultReceitaAwsApi(@RequestParam(name = "cnpj") String cnpj) {
-        return ResponseEntity.ok(apiConsultaReceitaAwsCnpj.consultReceitaAwsApi(cnpj));
+        return ResponseEntity.ok(apiReceitaAwsCnpj.consultReceitaAwsApi(cnpj));
     }
 
     @GetMapping(path = "findFisicaByName")

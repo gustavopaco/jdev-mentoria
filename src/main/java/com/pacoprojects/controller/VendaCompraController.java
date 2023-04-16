@@ -5,6 +5,7 @@ import com.pacoprojects.api.ApiMelhorEnvio;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.response.imprimir.etiqueta.ResponseMelhorEnvioImprimirEtiquetaDto;
+import com.pacoprojects.api.integration.melhor.envio.response.rastreio.pedido.ResponseMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
@@ -68,12 +69,22 @@ public class VendaCompraController {
 
     @GetMapping(path = "imprimeMelhorEnvioEtiqueta")
     public ResponseEntity<ResponseMelhorEnvioImprimirEtiquetaDto> imprimeMelhorEnvioEtiqueta(@RequestParam(name = "idVenda") Long idVenda) {
-        return ResponseEntity.ok(apiMelhorEnvio.imprimeMelhorEnvioEtiqueta(idVenda));
+        return ResponseEntity.ok(apiMelhorEnvio.apiImprimeEtiquetaMelhorEnvio(idVenda));
     }
 
     @PostMapping(path = "consultaMelhorEnvioFrete")
     public ResponseEntity<List<MelhorEnvioConsultaFreteDto>> consultaMelhorEnvioFrete(@RequestBody RequestMelhorEnvioConsultaFreteDto requestMelhorEnvioConsultaFreteDto) {
-        return ResponseEntity.ok(apiMelhorEnvio.consultaFreteMelhorEnvio(requestMelhorEnvioConsultaFreteDto));
+        return ResponseEntity.ok(apiMelhorEnvio.apiConsultaFreteMelhorEnvio(requestMelhorEnvioConsultaFreteDto));
+    }
+
+    @PostMapping(path = "cancelarEtiqueta")
+    public void cancelarEtiqueta(@RequestParam(name = "idVenda") Long idVenda) {
+        apiMelhorEnvio.apiCancelarEtiquetaMelhorEnvio(idVenda);
+    }
+
+    @PostMapping(path = "rastreioPedido")
+    public ResponseEntity<ResponseMelhorEnvioRastreioPedidoDto> rastreioPedido(@RequestParam(name = "idVenda") Long idVenda) {
+        return ResponseEntity.ok(apiMelhorEnvio.apiConsultaRastreioPedidoMelhorEnvio(idVenda));
     }
 
     @PostMapping

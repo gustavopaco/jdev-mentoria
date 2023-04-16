@@ -1,22 +1,30 @@
 package com.pacoprojects.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConfig;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioInserirFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioMapper;
+import com.pacoprojects.api.integration.melhor.envio.request.cancelamento.etiqueta.RequestCancelamentoEtiquetaOrderDto;
+import com.pacoprojects.api.integration.melhor.envio.request.cancelamento.etiqueta.RequestMelhorEnvioCancelamentoEtiquetaDto;
 import com.pacoprojects.api.integration.melhor.envio.request.checkout.frete.RequestMelhorEnvioCheckoutFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.request.gerar.etiqueta.RequestMelhorEnvioGerarEtiquetaDto;
 import com.pacoprojects.api.integration.melhor.envio.request.imprimir.etiqueta.RequestMelhorEnvioImprimirEtiquetaDto;
 import com.pacoprojects.api.integration.melhor.envio.request.inserir.frete.carrinho.*;
+import com.pacoprojects.api.integration.melhor.envio.request.rastreio.pedido.RequestMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.api.integration.melhor.envio.response.checkout.frete.ResponseMelhorEnvioCheckoutFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.ResponseMelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.response.imprimir.etiqueta.ResponseMelhorEnvioImprimirEtiquetaDto;
 import com.pacoprojects.api.integration.melhor.envio.response.inserir.frete.carrinho.ResponseMelhorEnvioInserirFreteCarrinhoDto;
+import com.pacoprojects.api.integration.melhor.envio.response.rastreio.pedido.ResponseMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.model.Endereco;
 import com.pacoprojects.model.VendaCompra;
 import com.pacoprojects.repository.VendaCompraRepository;
 import com.pacoprojects.security.ApplicationConfig;
+import com.pacoprojects.service.StatusRastreioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -34,6 +42,7 @@ public class ApiMelhorEnvio {
     private final MelhorEnvioMapper mapperMelhorEnvio;
     private final MelhorEnvioConfig melhorEnvioConfig;
     private final VendaCompraRepository repositoryVendaCompra;
+    private final StatusRastreioService serviceStatusRastreio;
 
 
     private HttpHeaders getHeaderConfiguration() {
@@ -45,7 +54,7 @@ public class ApiMelhorEnvio {
         return headers;
     }
 
-    public List<MelhorEnvioConsultaFreteDto> consultaFreteMelhorEnvio(RequestMelhorEnvioConsultaFreteDto requestMelhorEnvioConsultaFreteDto) {
+    public List<MelhorEnvioConsultaFreteDto> apiConsultaFreteMelhorEnvio(RequestMelhorEnvioConsultaFreteDto requestMelhorEnvioConsultaFreteDto) {
 
         HttpHeaders headers = getHeaderConfiguration();
 
@@ -77,7 +86,7 @@ public class ApiMelhorEnvio {
         }).filter(Objects::nonNull).toList();
     }
 
-    public ResponseMelhorEnvioImprimirEtiquetaDto imprimeMelhorEnvioEtiqueta(Long idVenda) {
+    public ResponseMelhorEnvioImprimirEtiquetaDto apiImprimeEtiquetaMelhorEnvio(Long idVenda) {
 
         Optional<VendaCompra> optionalVendaCompra = repositoryVendaCompra.findById(idVenda);
 
@@ -86,11 +95,11 @@ public class ApiMelhorEnvio {
         }
 
         // Inserindo frete no Carrinho - Chamando Api
-        MelhorEnvioInserirFreteDto inserirFreteDto = inserirFreteCarrinho(optionalVendaCompra.get());
+        MelhorEnvioInserirFreteDto inserirFreteDto = apiInserirFreteCarrinhoMelhorEnvio(optionalVendaCompra.get());
         // Fazendo Checkout frete - Chamando Api
-        checkoutFrete(inserirFreteDto.codigoEtiqueta(), idVenda);
+        apiCheckoutFreteMelhorEnvio(inserirFreteDto.codigoEtiqueta(), idVenda);
         // Gerando Etiquta - Chamando Api
-        gerarEtiqueta(inserirFreteDto.codigoEtiqueta(), idVenda);
+        apiGerarEtiquetaMelhorEnvio(inserirFreteDto.codigoEtiqueta(), idVenda);
 
         HttpHeaders headers = getHeaderConfiguration();
 
@@ -106,7 +115,11 @@ public class ApiMelhorEnvio {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro no processo de Imprimir Etiqueta, código da Venda: " + idVenda + " , código da Etiqueta: " + inserirFreteDto.codigoEtiqueta());
         }
 
+        // Salvando a Url da etiqueta no Banco de dados
         repositoryVendaCompra.updateUrlEtiqueta(idVenda, response.getBody().url());
+
+        apiGerarRastreioPedidoMelhorEnvio(optionalVendaCompra.get());
+
         return response.getBody();
     }
 
@@ -118,7 +131,7 @@ public class ApiMelhorEnvio {
                 .build();
     }
 
-    private MelhorEnvioInserirFreteDto inserirFreteCarrinho(VendaCompra vendaCompra) {
+    private MelhorEnvioInserirFreteDto apiInserirFreteCarrinhoMelhorEnvio(VendaCompra vendaCompra) {
 
         RequestMelhorEnvioInserirCarrinhoDtoDto requestDto = inserirFreteCarrinhoRequestDtoMapped(vendaCompra);
 
@@ -222,7 +235,7 @@ public class ApiMelhorEnvio {
                 .build();
     }
 
-    private void checkoutFrete(String codigoEtiqueta, Long idVendaCompra) {
+    private void apiCheckoutFreteMelhorEnvio(String codigoEtiqueta, Long idVendaCompra) {
 
         HttpHeaders headers = getHeaderConfiguration();
 
@@ -246,7 +259,7 @@ public class ApiMelhorEnvio {
                 .build();
     }
 
-    private void gerarEtiqueta(String codigoEtiqueta, Long idVendaCompra) {
+    private void apiGerarEtiquetaMelhorEnvio(String codigoEtiqueta, Long idVendaCompra) {
 
         HttpHeaders headers = getHeaderConfiguration();
 
@@ -268,5 +281,94 @@ public class ApiMelhorEnvio {
                 .builder()
                 .orders(List.of(codigoEtiqueta))
                 .build();
+    }
+
+    public void apiCancelarEtiquetaMelhorEnvio(Long idVenda) {
+        Optional<VendaCompra> optionalVendaCompra = repositoryVendaCompra.findById(idVenda);
+
+        if (optionalVendaCompra.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe venda com esse código.");
+        }
+
+        HttpHeaders headers = getHeaderConfiguration();
+
+        RequestMelhorEnvioCancelamentoEtiquetaDto requestDto = cancelarEtiquetaRequestDtoMapped(optionalVendaCompra.get().getCodigoEtiqueta());
+
+        HttpEntity<RequestMelhorEnvioCancelamentoEtiquetaDto> bodyHeaders = new HttpEntity<>(requestDto, headers);
+
+            ResponseEntity<String> response = applicationConfig
+                    .getRestTemplateInstance()
+                    .exchange(melhorEnvioConfig.urlCancelamentoEtiquetas(), HttpMethod.POST, bodyHeaders, String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar cancelamento de etiqueta");
+            }
+
+    }
+
+    private RequestMelhorEnvioCancelamentoEtiquetaDto cancelarEtiquetaRequestDtoMapped(String orderId) {
+        return RequestMelhorEnvioCancelamentoEtiquetaDto
+                .builder()
+                .order(RequestCancelamentoEtiquetaOrderDto
+                        .builder()
+                        .id(orderId)
+                        .description("Cancelamento de teste")
+                        .reason_id(2)
+                        .build())
+                .build();
+    }
+
+    public void apiGerarRastreioPedidoMelhorEnvio(VendaCompra vendaCompra) {
+
+        HttpHeaders headers = getHeaderConfiguration();
+
+        RequestMelhorEnvioRastreioPedidoDto requestDto = rastreioPedidoRequestDtoMapped(vendaCompra.getCodigoEtiqueta());
+
+        HttpEntity<RequestMelhorEnvioRastreioPedidoDto> bodyHeaders = new HttpEntity<>(requestDto, headers);
+
+        ResponseEntity<String> response = applicationConfig
+                .getRestTemplateInstance()
+                .exchange(melhorEnvioConfig.urlRastreioPedido(), HttpMethod.POST, bodyHeaders, String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar criação de rastreamento do pedido");
+        }
+
+        String urlRastreio = melhorEnvioConfig.getUrlRastreio() + rastreioPedidoResponseJsonMapped(response);
+
+        // Gerando Status de Rastreio para a venda
+        serviceStatusRastreio.saveNewStatusRastreio(vendaCompra, urlRastreio);
+    }
+
+    public ResponseMelhorEnvioRastreioPedidoDto apiConsultaRastreioPedidoMelhorEnvio(Long idVenda) {
+
+        Optional<VendaCompra> optionalVendaCompra = repositoryVendaCompra.findById(idVenda);
+
+        if (optionalVendaCompra.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe venda com esse código.");
+        }
+
+        return serviceStatusRastreio.rastrearVenda(idVenda);
+    }
+
+    private RequestMelhorEnvioRastreioPedidoDto rastreioPedidoRequestDtoMapped(String codigoEtiqueta) {
+        return RequestMelhorEnvioRastreioPedidoDto
+                .builder()
+                .orders(List.of(codigoEtiqueta))
+                .build();
+    }
+
+    private String rastreioPedidoResponseJsonMapped(ResponseEntity<String> response) {
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(response.getBody());
+            JsonNode trackingNode = rootNode.get(rootNode.fieldNames().next()).get("melhorenvio_tracking");
+            return trackingNode.asText();
+        } catch (JsonProcessingException exception) {
+            exception.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi possivel ler o rastreio do pedido.");
+        }
+
     }
 }

@@ -1,13 +1,21 @@
 package com.pacoprojects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConfig;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioMapper;
+import com.pacoprojects.api.integration.melhor.envio.request.cancelamento.etiqueta.RequestCancelamentoEtiquetaOrderDto;
+import com.pacoprojects.api.integration.melhor.envio.request.cancelamento.etiqueta.RequestMelhorEnvioCancelamentoEtiquetaDto;
 import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestConsultaFreteFromToDto;
 import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestConsultaFreteProdutosDto;
 import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.request.rastreio.pedido.RequestMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.ResponseMelhorEnvioConsultaFreteDto;
 import com.pacoprojects.api.integration.melhor.envio.response.inserir.frete.carrinho.ResponseMelhorEnvioInserirFreteCarrinhoDto;
+import com.pacoprojects.model.VendaCompra;
+import com.pacoprojects.repository.VendaCompraRepository;
 import com.pacoprojects.security.ApplicationConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +23,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -28,16 +34,18 @@ public class ApiMelhorEnvioTests {
     private final ApplicationConfig applicationConfig;
     private final MelhorEnvioConfig melhorEnvioConfig;
     private final MelhorEnvioMapper mapperMelhorEnvio;
+    private final VendaCompraRepository repositoryVendaCompra;
 
     @Autowired
-    public ApiMelhorEnvioTests(ApplicationConfig applicationConfig, MelhorEnvioConfig melhorEnvioConfig, MelhorEnvioMapper mapperMelhorEnvio) {
+    public ApiMelhorEnvioTests(ApplicationConfig applicationConfig, MelhorEnvioConfig melhorEnvioConfig, MelhorEnvioMapper mapperMelhorEnvio, VendaCompraRepository repositoryVendaCompra) {
         this.applicationConfig = applicationConfig;
         this.melhorEnvioConfig = melhorEnvioConfig;
         this.mapperMelhorEnvio = mapperMelhorEnvio;
+        this.repositoryVendaCompra = repositoryVendaCompra;
     }
 
     @Test
-    void ConsultaFreteMelhorEnvio() {
+    void consultaFreteMelhorEnvio() {
 
         HttpHeaders headers = getHeaderConfiguration();
 
@@ -133,11 +141,101 @@ public class ApiMelhorEnvioTests {
         System.out.println(response.getBody());
     }
 
+    @Test
+    void listarAgencias() {
+        HttpHeaders headers = getBasicHeaderConfiguration();
+
+        // Classe que junta o BODY do request com o Header para ser enviado ao
+        HttpEntity<String> entity = new HttpEntity<>("", headers);
+        
+        ResponseEntity<String> response = null;
+        
+            response = applicationConfig
+                    .getRestTemplateInstance()
+                    .exchange(melhorEnvioConfig.urlListarAgencias(), HttpMethod.GET, entity, String.class);
+
+        System.out.println(response.getBody());
+    }
+
+    @Test
+    void cancelamentoEtiquetas() {
+        HttpHeaders headers = getHeaderConfiguration();
+
+        RequestMelhorEnvioCancelamentoEtiquetaDto requestDto = RequestMelhorEnvioCancelamentoEtiquetaDto
+                .builder()
+                .order(RequestCancelamentoEtiquetaOrderDto
+                        .builder()
+                        .id("da848db1-d422-419d-afa2-876ffc440ccc")
+                        .description("Cancelamento de teste")
+                        .reason_id(2)
+                        .build())
+                .build();
+
+        // Classe que junta o BODY do request com o Header para ser enviado ao
+        HttpEntity<RequestMelhorEnvioCancelamentoEtiquetaDto> bodyHeaders = new HttpEntity<>(requestDto, headers);
+
+        ResponseEntity<String> response = applicationConfig
+                .getRestTemplateInstance()
+                .exchange(melhorEnvioConfig.urlCancelamentoEtiquetas(), HttpMethod.POST, bodyHeaders, String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar cancelamento de etiqueta");
+        }
+        System.out.println(response.getBody());
+    }
+
+    @Test
+    void rastreioPedido() throws JsonProcessingException {
+
+        Optional<VendaCompra> optionalVendaCompra = repositoryVendaCompra.findById(36L);
+
+        if (optionalVendaCompra.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe compra com esse código.");
+        }
+
+        HttpHeaders headers = getHeaderConfiguration();
+
+        RequestMelhorEnvioRastreioPedidoDto requestDto = rastreioPedidoRequestDtoMapped(optionalVendaCompra.get().getCodigoEtiqueta());
+
+        HttpEntity<RequestMelhorEnvioRastreioPedidoDto> bodyHeaders = new HttpEntity<>(requestDto, headers);
+
+        ResponseEntity<String> response = applicationConfig
+                .getRestTemplateInstance()
+                .exchange(melhorEnvioConfig.urlRastreioPedido(), HttpMethod.POST, bodyHeaders, String.class );
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar cancelamento de etiqueta");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(response.getBody());
+        JsonNode trackingNode = rootNode.get(rootNode.fieldNames().next()).get("melhorenvio_tracking");
+        String melhorenvioTracking = trackingNode.asText();
+
+        System.out.println(melhorEnvioConfig.urlRastreioPedido() + melhorenvioTracking);
+    }
+
+    private RequestMelhorEnvioRastreioPedidoDto rastreioPedidoRequestDtoMapped(String codigoEtiqueta) {
+        return RequestMelhorEnvioRastreioPedidoDto
+                .builder()
+                .orders(List.of(codigoEtiqueta))
+                .build();
+    }
+
     private HttpHeaders getHeaderConfiguration() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(melhorEnvioConfig.getToken());
+        headers.set("User-Agent", melhorEnvioConfig.getEmailUserAgent());
+        return headers;
+    }
+
+    private HttpHeaders getBasicHeaderConfiguration() {
+        HttpHeaders headers = new HttpHeaders();
+//        headers.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
+//        headers.setContentType(MediaType.TEXT_PLAIN);
+//        headers.setBearerAuth(melhorEnvioConfig.getToken());
         headers.set("User-Agent", melhorEnvioConfig.getEmailUserAgent());
         return headers;
     }

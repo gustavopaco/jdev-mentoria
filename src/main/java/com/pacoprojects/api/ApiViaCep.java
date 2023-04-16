@@ -11,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class ApiConsultaViaCep {
+public class ApiViaCep {
 
     private final ApplicationConfig applicationConfig;
 

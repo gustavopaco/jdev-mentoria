@@ -1,6 +1,6 @@
 package com.pacoprojects.service;
 
-import com.pacoprojects.api.ApiConsultaViaCep;
+import com.pacoprojects.api.ApiViaCep;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.PessoaJuridicaDto;
@@ -46,7 +46,7 @@ public class PessoaUserService {
     private final PessoaFisicaMapper mapperFisica;
     private final EnderecoMapper mapperEndereco;
     private final EmailService serviceEmail;
-    private final ApiConsultaViaCep apiConsultaViaCep;
+    private final ApiViaCep apiViaCep;
 
     public PessoaJuridicaDto addPessoaJuridica(PessoaJuridicaDto pessoaJuridicaDto) {
 
@@ -155,7 +155,7 @@ public class PessoaUserService {
     private void consultAndPopulateAddress(Pessoa pessoa) {
         if (pessoa.getId() == null) {
             pessoa.setEnderecos(pessoa.getEnderecos().stream().peek(endereco -> {
-                EnderecoDto enderecoDto = apiConsultaViaCep.consultViaCepApi(endereco.getCep());
+                EnderecoDto enderecoDto = apiViaCep.consultViaCepApi(endereco.getCep());
                 mapperEndereco.partialUpdate(enderecoDto, endereco);
             }).collect(Collectors.toSet()));
         } else {
@@ -164,7 +164,7 @@ public class PessoaUserService {
                 if (optionalEndereco.isPresent()
                         && (!optionalEndereco.get().getCep().equals(endereco.getCep())
                         || !optionalEndereco.get().getNumero().equals(endereco.getNumero()))) {
-                    EnderecoDto enderecoDto = apiConsultaViaCep.consultViaCepApi(endereco.getCep());
+                    EnderecoDto enderecoDto = apiViaCep.consultViaCepApi(endereco.getCep());
                     mapperEndereco.partialUpdate(enderecoDto, endereco);
                 }
             }).collect(Collectors.toSet()));

@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class ApiConsultaReceitaAwsCnpj {
+public class ApiReceitaAwsCnpj {
 
     private final ApplicationConfig applicationConfig;
 

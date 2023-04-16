@@ -94,8 +94,7 @@ public class VendaCompraService {
 
         // Gerando uma nova conta a receber
         serviceContaReceber.addContaReceberAfterVendaCompraDone(entity);
-        // Gerando um status de rastreio para a venda
-        serviceStatusRastreio.addStatusRastreioAfterVendaCompraDone(entity);
+        // Removido o processo Criar Rastreio e salvar no banco apos venda, pois agora o rastreio sera feito quando um funcionario da empresa clicar em gerarRastreio no Frontend
 
         // Envio de E-mail para o cliente que fez a compra
         sendMailToClienteAfterVendaCompraDone(entity);

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -19,4 +20,6 @@ public interface StatusRastreioRepository extends JpaRepository<StatusRastreio, 
     @Query(value = "select s from StatusRastreio s where s.vendaCompra.id =:idVenda and s.vendaCompra.enabled = true ")
     List<StatusRastreioProjection> queryAllVendaCompraById(@Param("idVenda") Long idVenda);
     List<StatusRastreioProjection> findAllByVendaCompra_IdAndVendaCompra_Enabled(Long idVenda, boolean enabled, Sort sort);
+
+    Optional<StatusRastreio> findByVendaCompra_Id(Long idVenda);
 }

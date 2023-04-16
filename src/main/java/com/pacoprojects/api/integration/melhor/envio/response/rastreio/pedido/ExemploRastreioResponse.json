@@ -1,0 +1,16 @@
+{
+  "8550254a-cec3-44d4-b4b8-a3bb54dbb52e": {
+    "id": "8550254a-cec3-44d4-b4b8-a3bb54dbb52e",
+    "protocol": "ORD-202304125655",
+    "status": "canceled",
+    "tracking": "ME23002OYF7BR",
+    "melhorenvio_tracking": "ME23002OYF7BR",
+    "created_at": "2023-04-16 19:57:51",
+    "paid_at": "2023-04-16 19:57:51",
+    "generated_at": "2023-04-16 19:57:51",
+    "posted_at": null,
+    "delivered_at": null,
+    "canceled_at": "2023-04-16 19:58:03",
+    "expired_at": null
+  }
+}

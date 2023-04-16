@@ -23,13 +23,8 @@ public class StatusRastreio {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    private String centroDistribuicao;
-
-    private String cidade;
-
-    private String estado;
-
-    private String status;
+    @Column(name = "url_rastreio")
+    private String urlRastreio;
 
     @ManyToOne(targetEntity = VendaCompra.class)
     @JoinColumn(

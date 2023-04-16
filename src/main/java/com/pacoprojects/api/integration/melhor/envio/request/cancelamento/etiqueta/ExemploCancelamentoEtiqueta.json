@@ -1,0 +1,7 @@
+{
+  "order": {
+    "id": "{{order_id}}",
+    "reason_id": "CODIGO SEMPRE SERA 2 INTEGER",
+    "description": "Descrição do cancelamento"
+  }
+}

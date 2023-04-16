@@ -9,30 +9,46 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "integration.melhor.envio")
 public class MelhorEnvioConfig {
 
-    private String url;
+    private String urlDefault;
 
     private String token;
 
     private String emailUserAgent;
 
+    private String urlRastreio;
+
+
 
     public String urlConsultarFrete() {
-        return getUrl() + "api/v2/me/shipment/calculate";
+        return getUrlDefault() + "api/v2/me/shipment/calculate";
     }
 
     public String urlInserirFreteCarrinho() {
-        return getUrl() + "api/v2/me/cart";
+        return getUrlDefault() + "api/v2/me/cart";
     }
 
     public String urlCheckoutFrete() {
-        return getUrl() + "api/v2/me/shipment/checkout";
+        return getUrlDefault() + "api/v2/me/shipment/checkout";
     }
 
     public String urlGerarEtiqueta() {
-        return getUrl() + "api/v2/me/shipment/generate";
+        return getUrlDefault() + "api/v2/me/shipment/generate";
     }
 
     public String urlImprimirEtiqueta() {
-        return getUrl() +  "api/v2/me/shipment/print";
+        return getUrlDefault() +  "api/v2/me/shipment/print";
     }
+
+    public String urlListarAgencias() {
+        return getUrlDefault() + "api/v2/me/shipment/agencies";
+    }
+
+    public String urlCancelamentoEtiquetas() {
+        return getUrlDefault() + "api/v2/me/shipment/cancel";
+    }
+
+    public String urlRastreioPedido() {
+        return getUrlDefault() + "api/v2/me/shipment/tracking";
+    }
+
 }

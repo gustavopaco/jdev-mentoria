@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -126,12 +127,28 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
             constraintViolationException
                     .getConstraintViolations()
                     .forEach(constraintViolation -> builder.append(constraintViolation.getMessage()).append("\n"));
-            String messsage = builder.substring(0, builder.length() -1);
+            String messsage = builder.substring(0, builder.length() - 1);
             builder.delete(0, builder.length());
             builder.append(messsage);
         } else {
             builder.append(exception.getMessage());
         }
+
+        return ResponseEntity
+                .internalServerError()
+                .body(ExceptionObject
+                        .builder()
+                        .message(builder.toString())
+                        .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .build());
+    }
+
+    @ExceptionHandler(value = {RestClientException.class})
+    protected ResponseEntity<Object> handleRestClienteException(RestClientException exception) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("Erro ao tentar conectar com a Api externa.");
+        exception.printStackTrace();
 
         return ResponseEntity
                 .internalServerError()
