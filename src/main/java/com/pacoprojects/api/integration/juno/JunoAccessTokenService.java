@@ -7,16 +7,17 @@ import com.pacoprojects.ssl.HostIgnoreClient;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +28,7 @@ public class JunoAccessTokenService {
     private final JunoConfig junoConfig;
 
     private AccessTokenJuno buscarTokenAtivo() {
-        Optional<AccessTokenJuno> accessTokenJuno = repositoryAccessTokenJuno.findAll().stream().findFirst();
-
-        if (accessTokenJuno.isPresent() && !accessTokenJuno.get().isTokenExpired()) {
-            return accessTokenJuno.get();
-        }
-        return null;
-
+        return repositoryAccessTokenJuno.findAll().stream().findFirst().orElse(null);
     }
 
     private String getTokenAutenticacao() {
@@ -50,8 +45,11 @@ public class JunoAccessTokenService {
     }
 
     public AccessTokenJuno apiGerarNovoToken() {
+        AccessTokenJuno tokenAtivo = buscarTokenAtivo();
 
-        if (buscarTokenAtivo() == null) {
+        if (tokenAtivo != null && !tokenAtivo.isTokenExpired()) {
+            return tokenAtivo;
+        }
 
             HttpHeaders headers = getHeadersConfiguration();
 
@@ -62,20 +60,20 @@ public class JunoAccessTokenService {
 
             ResponseEntity<AccessTokenJuno> responseEntity = applicationConfig
                     .getRestTemplateInstance()
-                    .exchange(junoConfig.getUrlDefault(), HttpMethod.POST, requestEntity, AccessTokenJuno.class);
+                    .exchange(junoConfig.urlAuthentication(), HttpMethod.POST, requestEntity, AccessTokenJuno.class);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                repositoryAccessTokenJuno.deleteAll();
 
-                AccessTokenJuno accessTokenJuno = responseEntity.getBody();
-                accessTokenJuno.setToken_autenticacao(getTokenAutenticacao());
+                AccessTokenJuno accessTokenResponse = responseEntity.getBody();
+                accessTokenResponse.setToken_autenticacao(getTokenAutenticacao());
 
-                return repositoryAccessTokenJuno.save(accessTokenJuno);
-            } else {
-                return null;
+                if (tokenAtivo != null) {
+                    BeanUtils.copyProperties(accessTokenResponse, tokenAtivo, "id", "pixKey");
+                    return repositoryAccessTokenJuno.save(tokenAtivo);
+                }
+                return repositoryAccessTokenJuno.save(accessTokenResponse);
             }
-        }
-        return buscarTokenAtivo();
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na Api Juno para geração de Token");
     }
 
     private AccessTokenJuno gerarNovoTokenAlex() throws NoSuchAlgorithmException, KeyManagementException {

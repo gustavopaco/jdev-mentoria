@@ -11,5 +11,28 @@ public class JunoConfig {
 
     private String clienteId;
     private String secretId;
+    private String xResourceToken;
     private String urlDefault;
+
+    private String authorization() {
+        return getUrlDefault() + "/authorization-server";
+    }
+
+    private String apiIntegration() {
+        return getUrlDefault() + "/api-integration";
+    }
+
+
+
+    public String urlAuthentication() {
+        return  authorization() + "/oauth/token";
+    }
+
+    public String urlCobranca() {
+        return apiIntegration() + "/charges";
+    }
+
+    public String urlPixKeys() {
+        return apiIntegration() + "/pix/keys";
+    }
 }
