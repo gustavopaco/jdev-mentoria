@@ -1,42 +1,29 @@
 package com.pacoprojects.api.integration.juno.criar.cobranca.request;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Builder
-public record RequestCriarCobrancaChargeDto(
+@Data
+public class RequestCriarCobrancaChargeDto {
+    private long maxOverdueDays;
+    private BigDecimal amount;
+    private long discountDays;
+    private List<String> references;
+    private String feeSchemaToken;
+    private String dueDate;
+    private boolean paymentAdvance;
+    private String description;
+    private String discountAmount;
+    private boolean pixIncludeImage;
+    private List<RequestCriarCobrancaSplitDto> split;
+    private long installments;
+    private BigDecimal fine;
+    private String interest;
+    private List<String> paymentTypes;
+    private String pixKey;
 
-        long maxOverdueDays,
-
-        BigDecimal amount,
-
-        long discountDays,
-
-        List<String> references,
-
-        String feeSchemaToken,
-
-        String dueDate,
-
-        boolean paymentAdvance,
-
-        String description,
-
-        String discountAmount,
-
-        boolean pixIncludeImage,
-
-        List<RequestCriarCobrancaSplitDto> split,
-
-        long installments,
-
-        BigDecimal fine,
-
-        String interest,
-
-        List<String> paymentTypes,
-
-        String pixKey) {
 }

@@ -22,13 +22,13 @@ public class JunoPixService {
     private final AccessTokenJunoRepository repositoryAccessToken;
 
 
-    private HttpHeaders getHeadersGeneratePixKey(String token) {
+    private HttpHeaders getHeadersGeneratePixKey(String bearerToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-API-Version", "2");
         headers.set("X-Resource-Token", junoConfig.getXResourceToken());
-        headers.setBearerAuth(token);
+        headers.setBearerAuth(bearerToken);
         headers.set("X-Idempotency-Key", UUID.randomUUID().toString());
         return headers;
     }

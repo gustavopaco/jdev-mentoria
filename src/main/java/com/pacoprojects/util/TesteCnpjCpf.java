@@ -2,6 +2,8 @@ package com.pacoprojects.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
+
 public class TesteCnpjCpf {
     public static void main(String[] args) {
         boolean cnpj = ValidadorCnpj.isCNPJ("33.460.650/0001-79");
@@ -12,5 +14,7 @@ public class TesteCnpjCpf {
         System.out.println("Cpf válido: " + cpf);
         System.out.println(new BCryptPasswordEncoder().encode("12345678"));
         System.out.println(teste.split(",")[1]);
+        System.out.println(LocalDate.now().plusDays(7).toString());
+        System.out.println(LocalDate.parse("1989-09-24").atStartOfDay());
     }
 }

@@ -1,12 +1,13 @@
 package com.pacoprojects.api.integration.juno.criar.cobranca.request;
 
 import lombok.Builder;
+import lombok.Data;
 
 @Builder
-public record RequestJunoCriarCobrancaDto(
-        RequestCriarCobrancaChargeDto charge,
-
-        RequestCobrancaBillingDto billing) {
+@Data
+public class RequestJunoCriarCobrancaDto {
+    private RequestCriarCobrancaChargeDto charge;
+    private RequestCriarCobrancaBillingDto billing;
 }
 
 

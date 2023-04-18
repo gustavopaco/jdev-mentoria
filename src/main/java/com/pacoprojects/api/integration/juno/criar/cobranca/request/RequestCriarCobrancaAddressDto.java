@@ -1,10 +1,17 @@
 package com.pacoprojects.api.integration.juno.criar.cobranca.request;
 
 import lombok.Builder;
+import lombok.Data;
 
-@Builder
 // Endereco do comprador
-public record RequestCriarCobrancaAddressDto(String number, String city, String street, String postCode,
-                                             String neighborhood, String state,
-                                             String complement) {
+@Builder
+@Data
+public class RequestCriarCobrancaAddressDto {
+    private String number;
+    private String city;
+    private String street;
+    private String postCode;
+    private String neighborhood;
+    private String state;
+    private String complement;
 }

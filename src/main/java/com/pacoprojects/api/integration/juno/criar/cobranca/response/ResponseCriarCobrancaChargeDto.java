@@ -30,5 +30,5 @@ public record ResponseCriarCobrancaChargeDto(
 
         ResponseCriarCobrancaPixDto pix,
 
-        List<ResponseCriarCobrancaLinkDto> _links) {
+        ResponseCriarCobrancaLinkDto _links) {
 }
