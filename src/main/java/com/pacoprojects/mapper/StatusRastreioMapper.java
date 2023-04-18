@@ -1,6 +1,6 @@
 package com.pacoprojects.mapper;
 
-import com.pacoprojects.api.integration.melhor.envio.response.rastreio.pedido.ResponseMelhorEnvioRastreioPedidoDto;
+import com.pacoprojects.api.integration.melhor.envio.rastreio.pedido.response.ResponseMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.model.StatusRastreio;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

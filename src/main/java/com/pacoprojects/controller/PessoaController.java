@@ -1,8 +1,8 @@
 package com.pacoprojects.controller;
 
-import com.pacoprojects.api.ApiReceitaAwsCnpj;
-import com.pacoprojects.api.ApiViaCep;
-import com.pacoprojects.api.integration.receitaaws.ConsultaReceitaAwsDto;
+import com.pacoprojects.api.integration.receitaaws.ApiReceitaAws;
+import com.pacoprojects.api.integration.receitaaws.response.ConsultaReceitaAwsDto;
+import com.pacoprojects.api.integration.viacep.ApiViaCep;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.PessoaJuridicaDto;
@@ -25,7 +25,7 @@ public class PessoaController {
     private final PessoaUserService pessoaUserService;
     private final ApiViaCep apiViaCep;
     private final EndPointService endPointService;
-    private final ApiReceitaAwsCnpj apiReceitaAwsCnpj;
+    private final ApiReceitaAws apiReceitaAwsCnpj;
 
     @PostMapping(path = "addJuridica")
     public ResponseEntity<PessoaJuridicaDto> addPessoaJuridica(@Valid @RequestBody PessoaJuridicaDto pessoaJuridica) {

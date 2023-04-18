@@ -1,6 +1,6 @@
 package com.pacoprojects.service;
 
-import com.pacoprojects.api.integration.melhor.envio.response.rastreio.pedido.ResponseMelhorEnvioRastreioPedidoDto;
+import com.pacoprojects.api.integration.melhor.envio.rastreio.pedido.response.ResponseMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.dto.projections.StatusRastreioProjection;
 import com.pacoprojects.mapper.StatusRastreioMapper;
 import com.pacoprojects.model.StatusRastreio;

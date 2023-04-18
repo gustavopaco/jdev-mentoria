@@ -1,6 +1,6 @@
 package com.pacoprojects.service;
 
-import com.pacoprojects.api.ApiViaCep;
+import com.pacoprojects.api.integration.viacep.ApiViaCep;
 import com.pacoprojects.dto.EnderecoDto;
 import com.pacoprojects.dto.PessoaFisicaDto;
 import com.pacoprojects.dto.PessoaJuridicaDto;

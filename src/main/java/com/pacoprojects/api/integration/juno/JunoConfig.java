@@ -35,4 +35,8 @@ public class JunoConfig {
     public String urlPixKeys() {
         return apiIntegration() + "/pix/keys";
     }
+
+    public String urlCancelarCobranca(String idChrBoleto) {
+        return urlCobranca() + "/" + idChrBoleto + "/cancelation";
+    }
 }

@@ -1,11 +1,11 @@
 package com.pacoprojects.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pacoprojects.api.ApiMelhorEnvio;
+import com.pacoprojects.api.integration.melhor.envio.ApiMelhorEnvio;
 import com.pacoprojects.api.integration.melhor.envio.MelhorEnvioConsultaFreteDto;
-import com.pacoprojects.api.integration.melhor.envio.request.consulta.frete.RequestMelhorEnvioConsultaFreteDto;
-import com.pacoprojects.api.integration.melhor.envio.response.imprimir.etiqueta.ResponseMelhorEnvioImprimirEtiquetaDto;
-import com.pacoprojects.api.integration.melhor.envio.response.rastreio.pedido.ResponseMelhorEnvioRastreioPedidoDto;
+import com.pacoprojects.api.integration.melhor.envio.consulta.frete.request.RequestMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.imprimir.etiqueta.response.ResponseMelhorEnvioImprimirEtiquetaDto;
+import com.pacoprojects.api.integration.melhor.envio.rastreio.pedido.response.ResponseMelhorEnvioRastreioPedidoDto;
 import com.pacoprojects.dto.VendaCompraDto;
 import com.pacoprojects.dto.projections.ItemVendaCompraSelected;
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;

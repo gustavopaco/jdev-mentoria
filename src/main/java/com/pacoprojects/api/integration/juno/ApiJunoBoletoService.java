@@ -74,36 +74,6 @@ public class ApiJunoBoletoService {
                 .build();
     }
 
-    private String saveNewBoleto(ResponseJunoCriarCobrancaDto cobrancaDto, VendaCompra vendaCompra) {
-
-        int qtdParcelas = 1;
-        List<BoletoJuno> boletos = new ArrayList<>();
-        for (ResponseCriarCobrancaChargeDto charge : cobrancaDto._embedded().charges()) {
-            BoletoJuno boletoJuno = BoletoJuno
-                    .builder()
-                    .empresa(vendaCompra.getEmpresa())
-                    .vendaCompra(vendaCompra)
-                    .code(charge.code())
-                    .link(charge.link())
-                    .dataVencimento(LocalDate.parse(charge.dueDate()).atStartOfDay())
-                    .valor(new BigDecimal(charge.amount()))
-                    .checkoutUrl(charge.checkoutUrl())
-                    .installmentLink(charge.installmentLink())
-                    .idChrBoleto(charge.id())
-                    .idPix(charge.pix().id())
-                    .payloadInBase64(charge.pix().payloadInBase64())
-                    .imageInBase64(charge.pix().imageInBase64())
-                    .recorrencia(qtdParcelas)
-                    .build();
-
-            boletos.add(boletoJuno);
-            qtdParcelas++;
-        }
-        repositoryBoletoJuno.saveAll(boletos);
-        return boletos.get(0).getLink();
-    }
-
-
     private RequestJunoCriarCobrancaDto apiGerarBoletoDtoMapped(RequestCobrancaJunoDto cobrancaJunoDto, AccessTokenJuno accessTokenJuno) {
 
         return RequestJunoCriarCobrancaDto.builder()
@@ -137,5 +107,68 @@ public class ApiJunoBoletoService {
                         .phone(cobrancaJunoDto.payerPhone())
                         .build())
                 .build();
+    }
+
+    private String saveNewBoleto(ResponseJunoCriarCobrancaDto cobrancaDto, VendaCompra vendaCompra) {
+
+        int qtdParcelas = 1;
+        List<BoletoJuno> boletos = new ArrayList<>();
+        for (ResponseCriarCobrancaChargeDto charge : cobrancaDto._embedded().charges()) {
+            BoletoJuno boletoJuno = BoletoJuno
+                    .builder()
+                    .empresa(vendaCompra.getEmpresa())
+                    .vendaCompra(vendaCompra)
+                    .code(charge.code())
+                    .link(charge.link())
+                    .dataVencimento(LocalDate.parse(charge.dueDate()).atStartOfDay())
+                    .valor(new BigDecimal(charge.amount()))
+                    .checkoutUrl(charge.checkoutUrl())
+                    .installmentLink(charge.installmentLink())
+                    .idChrBoleto(charge.id())
+                    .idPix(charge.pix().id())
+                    .payloadInBase64(charge.pix().payloadInBase64())
+                    .imageInBase64(charge.pix().imageInBase64())
+                    .recorrencia(qtdParcelas)
+                    .build();
+
+            boletos.add(boletoJuno);
+            qtdParcelas++;
+        }
+        repositoryBoletoJuno.saveAll(boletos);
+        return boletos.get(0).getLink();
+    }
+
+    private HttpHeaders getHeadersConfigurationCancelarBoleto(String bearerToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(bearerToken);
+        headers.set("X-Api-Version", "2");
+        headers.set("X-Resource-Token", junoConfig.getXResourceToken());
+        return  headers;
+    }
+
+    public void apiCancelarBoleto(Long idBoleto) {
+
+        AccessTokenJuno accessTokenJuno = serviceJunoAccessToken.apiGerarNovoToken();
+
+        BoletoJuno boletoJuno = repositoryBoletoJuno.findById(idBoleto)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Boleto não foi encontrado no banco."));
+
+        // TODO verificar se o status do boleto ja esta pago "PAID" ou se ja esta cancelado "CANCELLED"
+
+        HttpHeaders headers = getHeadersConfigurationCancelarBoleto(accessTokenJuno.getAccess_token());
+
+        HttpEntity<?> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Void> response = applicationConfig
+                .getRestTemplateInstance()
+                .exchange(junoConfig.urlCancelarCobranca(boletoJuno.getIdChrBoleto()), HttpMethod.PUT, request, Void.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ocorreu um erro ao cancelar o boleto entre em contato com o administrador.");
+        }
+
+        // TODO trocar status do boleto para "CANCELLED"
+        // TODO enviar email para o cliente falando que a compra foi cancelada
+
     }
 }

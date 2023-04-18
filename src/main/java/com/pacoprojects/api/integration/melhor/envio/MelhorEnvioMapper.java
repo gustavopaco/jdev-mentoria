@@ -1,7 +1,7 @@
 package com.pacoprojects.api.integration.melhor.envio;
 
-import com.pacoprojects.api.integration.melhor.envio.response.consulta.frete.ResponseMelhorEnvioConsultaFreteDto;
-import com.pacoprojects.api.integration.melhor.envio.response.inserir.frete.carrinho.ResponseMelhorEnvioInserirFreteCarrinhoDto;
+import com.pacoprojects.api.integration.melhor.envio.consulta.frete.response.ResponseMelhorEnvioConsultaFreteDto;
+import com.pacoprojects.api.integration.melhor.envio.inserir.frete.carrinho.response.ResponseMelhorEnvioInserirFreteCarrinhoDto;
 import com.pacoprojects.model.VendaCompra;
 import org.mapstruct.*;
 

@@ -6,10 +6,7 @@ import com.pacoprojects.api.integration.juno.criar.cobranca.ResponseCobrancaJuno
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "pagamento")
@@ -21,5 +18,10 @@ public class PagamentoController {
     @PostMapping(path = "gerarBoleto")
     public ResponseEntity<ResponseCobrancaJunoDto> gerarBoletoPix(@Valid @RequestBody RequestCobrancaJunoDto cobrancaJunoDto) {
         return ResponseEntity.ok(apiJunoBoletoService.apiGerarBoleto(cobrancaJunoDto));
+    }
+
+    @DeleteMapping(path = "cancelarBoleto/{idBoleto}")
+    public void cancelarBoleto(@PathVariable(name = "idBoleto") Long idBoleto) {
+        apiJunoBoletoService.apiCancelarBoleto(idBoleto);
     }
 }
