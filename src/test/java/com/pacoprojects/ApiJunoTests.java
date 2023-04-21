@@ -1,11 +1,11 @@
 package com.pacoprojects;
 
-import com.pacoprojects.api.integration.juno.ApiJunoBoletoService;
+import com.pacoprojects.api.integration.juno.ApiJunoCobrancaService;
+import com.pacoprojects.api.integration.juno.ApiJunoPixService;
 import com.pacoprojects.api.integration.juno.JunoAccessTokenService;
-import com.pacoprojects.api.integration.juno.JunoPixService;
-import com.pacoprojects.api.integration.juno.criar.cobranca.RequestCobrancaJunoDto;
-import com.pacoprojects.api.integration.juno.criar.cobranca.RequestCobrancaJunoEnderecoDto;
-import com.pacoprojects.api.integration.juno.criar.cobranca.ResponseCobrancaJunoDto;
+import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.RequestCobrancaJunoDto;
+import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.RequestCobrancaJunoEnderecoDto;
+import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.ResponseCobrancaJunoDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,11 +18,11 @@ import java.math.BigDecimal;
 public class ApiJunoTests {
 
     private final JunoAccessTokenService serviceAccessTokenJuno;
-    private final JunoPixService serviceJunoPix;
-    private final ApiJunoBoletoService serviceJunoBoleto;
+    private final ApiJunoPixService serviceJunoPix;
+    private final ApiJunoCobrancaService serviceJunoBoleto;
 
     @Autowired
-    public ApiJunoTests(JunoAccessTokenService serviceAccessTokenJuno, JunoPixService serviceJunoPix, ApiJunoBoletoService serviceJunoBoleto) {
+    public ApiJunoTests(JunoAccessTokenService serviceAccessTokenJuno, ApiJunoPixService serviceJunoPix, ApiJunoCobrancaService serviceJunoBoleto) {
         this.serviceAccessTokenJuno = serviceAccessTokenJuno;
         this.serviceJunoPix = serviceJunoPix;
         this.serviceJunoBoleto = serviceJunoBoleto;
