@@ -171,6 +171,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>web-mvn-sb-jdev-mentoria-api</finalName>
     </build>
 
     <profiles>
