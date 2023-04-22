@@ -10,5 +10,6 @@ public class ApiConstantes {
 
     public static final String URL_AWS_API = "https://api.jdev.mentoria.pacoprojects.com/api/jdev-mentoria/pagamento/webhook";
 
-    public static final String ID_WEBHOOK = "wbh_B4CDBA74B4859D09";
+    public static final String JUNO_ID_WEBHOOK = "wbh_B4CDBA74B4859D09";
+    public static final String JUNO_PUBLIC_TOKEN = "230AA59BBD64353A43C0528137F70B7353B3C8D2AE6FCFE987103811735C0CE6";
 }

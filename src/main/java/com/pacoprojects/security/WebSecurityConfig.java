@@ -28,7 +28,8 @@ public class WebSecurityConfig {
                 .and()
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
-                .requestMatchers("/error", "/health", "/auth/**").permitAll()
+                .requestMatchers("/error", "/health", "/auth/**", "/actuator/**").permitAll()
+                .requestMatchers("/mvc/**", "/resources/**", "/static/**", "/templates/**", "classpath:/resources/**" ,"classpath:/static/**", "classpath:/templates/**").permitAll()
                 .requestMatchers(
                         "/roles/**",
                         "/pessoas/**",
