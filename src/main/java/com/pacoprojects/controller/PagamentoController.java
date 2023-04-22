@@ -4,9 +4,10 @@ import com.pacoprojects.api.integration.juno.ApiJunoCobrancaService;
 import com.pacoprojects.api.integration.juno.ApiJunoWebHookService;
 import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.RequestCobrancaJunoDto;
 import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.ResponseCobrancaJunoDto;
-import com.pacoprojects.api.integration.juno.webhook.receber.notificacao.ResponseWebHookReceberNotificacaoDto;
+import com.pacoprojects.api.integration.juno.webhook.receber.notificacao.ResponseJunoWebHookReceberNotificacaoDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class PagamentoController {
     }
 
     @PostMapping(path = "webhook")
-    public void receberNotificacaoPagamento(@RequestBody ResponseWebHookReceberNotificacaoDto notificacaoDto) {
-        apiJunoWebHookService.receberNotificacaoPagamento(notificacaoDto);
+    public void receberNotificacaoPagamento(@RequestBody ResponseJunoWebHookReceberNotificacaoDto notificacaoDto, @RequestHeader HttpHeaders headers) {
+        apiJunoWebHookService.apiReceberNotificacaoPagamento(notificacaoDto, headers);
     }
 }

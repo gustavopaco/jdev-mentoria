@@ -1,17 +1,21 @@
 package com.pacoprojects;
 
+import com.pacoprojects.api.ApiConstantes;
 import com.pacoprojects.api.integration.juno.ApiJunoCobrancaService;
 import com.pacoprojects.api.integration.juno.ApiJunoPixService;
+import com.pacoprojects.api.integration.juno.ApiJunoWebHookService;
 import com.pacoprojects.api.integration.juno.JunoAccessTokenService;
 import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.RequestCobrancaJunoDto;
 import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.RequestCobrancaJunoEnderecoDto;
 import com.pacoprojects.api.integration.juno.cobranca.criar.boleto.ResponseCobrancaJunoDto;
+import com.pacoprojects.api.integration.juno.webhook.criar.request.RequestJunoCriarWebHook;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("dev")
@@ -20,12 +24,14 @@ public class ApiJunoTests {
     private final JunoAccessTokenService serviceAccessTokenJuno;
     private final ApiJunoPixService serviceJunoPix;
     private final ApiJunoCobrancaService serviceJunoBoleto;
+    private final ApiJunoWebHookService serviceJunoWebHook;
 
     @Autowired
-    public ApiJunoTests(JunoAccessTokenService serviceAccessTokenJuno, ApiJunoPixService serviceJunoPix, ApiJunoCobrancaService serviceJunoBoleto) {
+    public ApiJunoTests(JunoAccessTokenService serviceAccessTokenJuno, ApiJunoPixService serviceJunoPix, ApiJunoCobrancaService serviceJunoBoleto, ApiJunoWebHookService serviceJunoWebHook) {
         this.serviceAccessTokenJuno = serviceAccessTokenJuno;
         this.serviceJunoPix = serviceJunoPix;
         this.serviceJunoBoleto = serviceJunoBoleto;
+        this.serviceJunoWebHook = serviceJunoWebHook;
     }
 
     @Test
@@ -66,5 +72,28 @@ public class ApiJunoTests {
         ResponseCobrancaJunoDto responseDto = serviceJunoBoleto.apiGerarBoleto(junoDto);
 
         System.out.println(responseDto.url());
+    }
+
+    @Test
+    void testeCriarWebhook() {
+
+        RequestJunoCriarWebHook webHook = RequestJunoCriarWebHook
+                .builder()
+                .url(ApiConstantes.URL_AWS_API)
+                .eventTypes(List.of("PAYMENT_NOTIFICATION", "BILL_PAYMENT_STATUS_CHANGED", "CHARGE_STATUS_CHANGED"))
+                .build();
+
+        serviceJunoWebHook.apiCriarWebHook(webHook);
+
+    }
+
+    @Test
+    void testeListarWebHooks() {
+        serviceJunoWebHook.apiListarWebHooks();
+    }
+
+    @Test
+    void testeDeletarWebHook() {
+        serviceJunoWebHook.deletarWebHook();
     }
 }

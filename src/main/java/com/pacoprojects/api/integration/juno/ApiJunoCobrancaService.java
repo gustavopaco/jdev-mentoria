@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,16 +34,6 @@ public class ApiJunoCobrancaService {
     private final VendaCompraRepository repositoryVendaCompra;
     private final BoletoJunoRepository repositoryBoletoJuno;
 
-    private HttpHeaders getHeadersConfiguration(String bearerToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-Api-Version", "2");
-        headers.set("X-Resource-Token", junoConfig.getXResourceToken());
-        headers.setBearerAuth(bearerToken);
-        return headers;
-    }
-
     public ResponseCobrancaJunoDto apiGerarBoleto(RequestCobrancaJunoDto cobrancaJunoDto) {
 
         VendaCompra vendaCompra = repositoryVendaCompra.findById(cobrancaJunoDto.idVenda())
@@ -52,7 +41,7 @@ public class ApiJunoCobrancaService {
 
         AccessTokenJuno accessTokenJuno = serviceJunoAccessToken.apiGerarNovoToken();
 
-        HttpHeaders headers = getHeadersConfiguration(accessTokenJuno.getAccess_token());
+        HttpHeaders headers = junoConfig.getDefaultHeaders(accessTokenJuno.getAccess_token());
 
         RequestJunoCriarCobrancaDto requestDto = apiGerarBoletoDtoMapped(cobrancaJunoDto, accessTokenJuno);
 
