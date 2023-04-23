@@ -25,7 +25,7 @@ public record RequestCobrancaJunoDto(
         BigDecimal amount,
 
         @NotNull(message = "Número de parcelas deve ser informado.")
-        Long installMents,
+        Integer installMents,
 
         String reference,
 

@@ -21,7 +21,7 @@ public class PagamentoController {
 
     @PostMapping(path = "gerarBoleto")
     public ResponseEntity<ResponseCobrancaJunoDto> gerarBoletoPix(@Valid @RequestBody RequestCobrancaJunoDto cobrancaJunoDto) {
-        return ResponseEntity.ok(apiJunoCobrancaService.apiGerarBoleto(cobrancaJunoDto));
+        return ResponseEntity.ok(apiJunoCobrancaService.apiGerarCobrancaBoleto(cobrancaJunoDto));
     }
 
     @DeleteMapping(path = "cancelarBoleto/{idBoleto}")

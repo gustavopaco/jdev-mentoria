@@ -5,19 +5,15 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum StatusVendaCompra {
+public enum TipoPagamento {
 
-
-    FINALIZADA("Finalizada"),
-    CANCELADA("Cancelada"),
-    PENDENTE("Pendente"),
-    ABANDONOU_CARRINHO("Abandonou Carrinho");
-
+    CREDIT_CARD("CREDIT_CARD"),
+    BOLETO_PIX("BOLETO_PIX");
 
     private final String descricao;
 
     @Override
     public String toString() {
-        return descricao;
+        return this.descricao;
     }
 }

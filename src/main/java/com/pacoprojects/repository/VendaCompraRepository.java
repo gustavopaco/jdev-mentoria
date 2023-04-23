@@ -1,6 +1,7 @@
 package com.pacoprojects.repository;
 
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
+import com.pacoprojects.enums.StatusVendaCompra;
 import com.pacoprojects.model.VendaCompra;
 import com.pacoprojects.report.ReportVendaCanceladaProjection;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,10 @@ public interface VendaCompraRepository extends JpaRepository<VendaCompra, Long> 
     Optional<VendaCompraProjectionSelected> findVendaCompraById(@Param("id") Long id);
 
     List<VendaCompraProjectionSelected> findAllByEmpresa_Id(Long idEmpresa);
+
+    @Modifying
+    @Query(value = "UPDATE VendaCompra v set v.statusVendaCompra =:statusVendaCompra where v.id =:idVenda ")
+    void updateStatusVendaFinalizada(@Param("idVenda") Long idVenda, @Param("statusVendaCompra") StatusVendaCompra statusVendaCompra);
 
     @Modifying
     @Query(value = "UPDATE VendaCompra set enabled = false where id = ?1")

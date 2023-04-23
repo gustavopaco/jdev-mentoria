@@ -52,6 +52,10 @@ public class JunoConfig {
         return urlWebHook() + "/" + idWebHook;
     }
 
+    public String urlPagarCobrancaCartao() {
+        return apiIntegration() + "/payments";
+    }
+
     public HttpHeaders getDefaultHeaders(String bearerToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

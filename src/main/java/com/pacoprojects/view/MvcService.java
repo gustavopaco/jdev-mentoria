@@ -1,6 +1,7 @@
 package com.pacoprojects.view;
 
 import com.pacoprojects.dto.projections.VendaCompraProjectionSelected;
+import com.pacoprojects.repository.VendaCompraRepository;
 import com.pacoprojects.service.VendaCompraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MvcService {
 
     private final VendaCompraService serviceVendaCompra;
+    private final VendaCompraRepository repositoryVendaCompra;
 
     public ModelAndView getVenda(String idVenda) {
         ModelAndView modelAndView = new ModelAndView("pagamento");

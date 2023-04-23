@@ -16,7 +16,7 @@
                 <h2 class="py-2">Tela de pagamento</h2>
             </div><!--card-header-->
             <div class="card-body">
-                <form action="#">
+                <form>
                     <input id="vendaId" th:value="${venda.id}" type="hidden">
                     <div class="row">
                         <div class="col-md-12 mb-3">
@@ -97,7 +97,11 @@
                         </div><!--col-->
                     </div><!--row-->
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="bairro">Bairro</label>
+                            <input class="form-control" id="bairro" placeholder="" required type="text">
+                        </div><!--col-->
+                        <div class="col-md-5 mb-3">
                             <label class="form-label" for="cidade">Cidade</label>
                             <input class="form-control" id="cidade" placeholder="" required type="text">
                         </div><!--col-->
@@ -119,11 +123,12 @@
                             <h5 th:text="@{'Desconto R$' + ${venda.valorDesconto == null ? 0 : venda.valorDesconto}} ">
                                 Desconto: R$</h5>
                             <h5 th:text="@{'Total R$' + ${venda.valorTotal}}">Total: R$</h5>
+                            <input id="valorTotal" th:value="${venda.valorTotal}" type="hidden">
                         </div><!--col-->
                     </div><!--row-->
                     <div class="row">
                         <div class="col-sm-auto col-12">
-                            <button class="btn btn-primary" id="realizarPagamento">Realizar Pagamento</button>
+                            <button class="btn btn-primary" id="btnPagamento" type="button">Realizar Pagamento</button>
                         </div><!--col-->
                     </div><!--row-->
                 </form>
@@ -148,6 +153,7 @@
         function limpa_formulario_cep() {
             // Limpa valores do formulário de cep.
             $("#rua").val("");
+            $("#bairro").val("");
             $("#cidade").val("");
             $("#estado").val("");
         }
@@ -169,6 +175,7 @@
 
                     //Preenche os campos com "..." enquanto consulta webservice.
                     $("#rua").val("...");
+                    $("#bairro").val("...");
                     $("#cidade").val("...");
                     $("#estado").val("...");
 
@@ -178,6 +185,7 @@
                         if (!("erro" in dados)) {
                             //Atualiza os campos com os valores da consulta.
                             $("#rua").val(dados.logradouro);
+                            $("#bairro").val(dados.bairro);
                             $("#cidade").val(dados.localidade);
                             $("#estado").val(dados.uf);
                         } //end if.
@@ -206,14 +214,16 @@
 
         $('#validade').mask('00/0000');
         $('#cpf').mask('000.000.000-00');
-        $('#cep').mask('000000-000');
+        $('#cep').mask('00000-000');
         $('#codigoSeguranca').mask('000');
         $('#numeroCartao').mask('0000 0000 0000 0000');
 
 
-        $('#realizarPagamento').click(() => {
+        $('#btnPagamento').click(() => {
 
             let idVenda = $('#vendaId').val();
+            let nome = $('#nome').val();
+            let email = $('#email').val();
             let numeroCartao = $('#numeroCartao').val().replaceAll(" ", "");
             let titularCartao = $('#titularCartao').val();
             let cpf = $('#cpf').val();
@@ -221,11 +231,13 @@
             let anoValidade = $('#validade').val().split('/')[1];
             let cvv = $('#codigoSeguranca').val();
             let parcelas = $('#parcelas').val();
-            let cep = $('#cep').val();
+            let cep = $('#cep').val().replaceAll("-", "");
             let numeroEndereco = $('#numeroEndereco').val();
             let rua = $('#rua').val();
+            let bairro = $('#bairro').val();
             let cidade = $('#cidade').val();
             let estado = $('#estado').val();
+            let valorTotal = $('#valorTotal').val();
 
 
             var cardData = {
@@ -236,25 +248,62 @@
                 expirationYear: anoValidade
             }
 
+            var address = {
+                street: rua,
+                number: numeroEndereco,
+                neighborhood: bairro,
+                city: cidade,
+                state: estado,
+                postCode: cep
+            }
+
+            console.log('Endereco ', address)
+
+            // Validando numero do cartao
             let isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber);
             if (isValidCardNumber === true) {
 
+                // Validando Chave de seguranca do cartao | Validacao do banco nao funciona
                 let isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cardData.securityCode);
                 if (isValidSecurityCode === true) {
 
+                    // Validando mes/ano de validade do cartao
                     let isValidExpiration = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear);
                     if (isValidExpiration === true) {
 
+                        // Validando dados em geral do cartao "Titular"
                         let isValidCardData = checkout.isValidCardData(cardData, error => {
                             error.toString().includes('Invalid holder name', error) ? alert('Nome do titular inválido') : alert('Ok');
                         });
                         if (isValidCardData === true) {
 
+                            // Verificando bandeira do cartao | Somente de teste
                             let cardType = checkout.getCardType(cardData.cardNumber);
                             console.log('Tipo do Cartão', cardType)
+
+                            // Obtendo Hash do Cartao
+                            checkout.getCardHash(cardData, function (cardHash) {
+                                console.log("Obteve o Hash: ", cardHash)
+
+                                let request = {
+                                    idVenda: idVenda,
+                                    nome: nome,
+                                    email: email,
+                                    cpf: cpf,
+                                    parcelas: parcelas,
+                                    valorTotal: valorTotal,
+                                    cardData: cardData,
+                                    cardHash: cardHash,
+                                    address: address
+                                }
+                                $('#btnPagamento').prop("disabled", true);
+                                realizarChamadaBackend(request);
+                                /* Sucesso - A variável cardHash conterá o hash do cartão de crédito */
+                            }, function (error) {
+                                console.log("Deu Erro: ", error)
+                                /* Erro - A variável error conterá o erro ocorrido ao obter o hash */
+                            });
                         }
-
-
                     } else {
                         alert('Data de expiracao invalida.');
                     }
@@ -265,13 +314,25 @@
                 alert('Número do cartão inválido.');
             }
         });
-        // checkout.getCardHash(cardData,
-        //     cardHash => {
-        //         console.log('Hash do cartao', cardHash)
-        //     }, error => {
-        //         console.log('Erro do cartao', error)
-        //     })
     });
+
+    function realizarChamadaBackend(request) {
+        $.ajax({
+            method: "POST",
+            url: "[[@{/mvc/realizarVendaCartao}]]",
+            data: JSON.stringify(request),
+            // data: {cardHash: request.cardHash},
+            contentType: "application/json"
+        }).done(function (response) {
+            console.log(response)
+            alert(response.status + "\n" + response.message)
+            $('#btnPagamento').prop("disabled", false);
+        }).fail(function (jqXHR, textStatus) {
+            console.error("Request failed: " + textStatus);
+            console.error(jqXHR);
+            $('#btnPagamento').prop("disabled", false);
+        });
+    }
 </script>
 </body>
 </html>

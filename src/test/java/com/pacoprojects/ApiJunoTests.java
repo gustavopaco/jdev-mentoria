@@ -54,7 +54,7 @@ public class ApiJunoTests {
                 .description("Descricao de Boleto Teste para mim mesmo")
                 .payerCpfCnpj("09360780065")
                 .amount(new BigDecimal("96.50"))
-                .installMents(6L)
+                .installMents(6)
                 .payerName("Fulano da Silva")
                 .payerPhone("31993039064")
                 .address(RequestCobrancaJunoEnderecoDto
@@ -69,7 +69,7 @@ public class ApiJunoTests {
                         .build())
                 .build();
 
-        ResponseCobrancaJunoDto responseDto = serviceJunoBoleto.apiGerarBoleto(junoDto);
+        ResponseCobrancaJunoDto responseDto = serviceJunoBoleto.apiGerarCobrancaBoleto(junoDto);
 
         System.out.println(responseDto.url());
     }
