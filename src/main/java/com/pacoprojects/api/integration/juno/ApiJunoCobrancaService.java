@@ -246,10 +246,9 @@ public class ApiJunoCobrancaService {
         HttpEntity<RequestJunoPagarCobrancaCartao> bodyHeaders = new HttpEntity<>(requestDto, headers);
 
         ResponseEntity<ResponsePagarCobrancaDto> response = null;
+        ResponseEntity<String> responseJson = null;
         try {
-            response = applicationConfig
-                    .getRestTemplateInstance()
-                    .exchange(junoConfig.urlPagarCobrancaCartao(), HttpMethod.POST, bodyHeaders, ResponsePagarCobrancaDto.class);
+            response = applicationConfig.getRestTemplateInstance().exchange(junoConfig.urlPagarCobrancaCartao(), HttpMethod.POST, bodyHeaders, ResponsePagarCobrancaDto.class);
         } catch (HttpStatusCodeException exception) {
 
             // Caso felhe ao tentar realizar uma compra estou cancelando os boletos

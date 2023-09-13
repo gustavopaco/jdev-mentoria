@@ -145,194 +145,272 @@
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
         src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-<script src="https://sandbox.boletobancario.com/boletofacil/wro/direct-checkout.min.js" type="text/javascript"></script>
-<script>
-    $(() => {
-        var checkout = new DirectCheckout('230AA59BBD64353A43C0528137F70B7353B3C8D2AE6FCFE987103811735C0CE6', false);
+    <script src="https://sandbox.boletobancario.com/boletofacil/wro/direct-checkout.min.js" type="text/javascript"></script>
+    <script>
+        $(() => {
+            var checkout = new DirectCheckout('230AA59BBD64353A43C0528137F70B7353B3C8D2AE6FCFE987103811735C0CE6', false);
+            // var checkout = new DirectCheckout('230AA59BBD64353A43C0528137F70B7302709DE7BF0CAD652FB3301BD6940F1E', false);
 
-        function limpa_formulario_cep() {
-            // Limpa valores do formulário de cep.
-            $("#rua").val("");
-            $("#bairro").val("");
-            $("#cidade").val("");
-            $("#estado").val("");
-        }
+            function limpa_formulario_cep() {
+                // Limpa valores do formulário de cep.
+                $("#rua").val("");
+                $("#bairro").val("");
+                $("#cidade").val("");
+                $("#estado").val("");
+            }
 
-        //Quando o campo cep perde o foco.
-        $("#cep").blur(function () {
+            //Quando o campo cep perde o foco.
+            $("#cep").blur(function () {
 
-            //Nova variável "cep" somente com dígitos.
-            var cep = $(this).val().replace(/\D/g, '');
+                //Nova variável "cep" somente com dígitos.
+                var cep = $(this).val().replace(/\D/g, '');
 
-            //Verifica se campo cep possui valor informado.
-            if (cep != "") {
+                //Verifica se campo cep possui valor informado.
+                if (cep != "") {
 
-                //Expressão regular para validar o CEP.
-                var validacep = /^[0-9]{8}$/;
+                    //Expressão regular para validar o CEP.
+                    var validacep = /^[0-9]{8}$/;
 
-                //Valida o formato do CEP.
-                if (validacep.test(cep)) {
+                    //Valida o formato do CEP.
+                    if (validacep.test(cep)) {
 
-                    //Preenche os campos com "..." enquanto consulta webservice.
-                    $("#rua").val("...");
-                    $("#bairro").val("...");
-                    $("#cidade").val("...");
-                    $("#estado").val("...");
+                        //Preenche os campos com "..." enquanto consulta webservice.
+                        $("#rua").val("...");
+                        $("#bairro").val("...");
+                        $("#cidade").val("...");
+                        $("#estado").val("...");
 
-                    //Consulta o webservice viacep.com.br/
-                    $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function (dados) {
+                        //Consulta o webservice viacep.com.br/
+                        $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function (dados) {
 
-                        if (!("erro" in dados)) {
-                            //Atualiza os campos com os valores da consulta.
-                            $("#rua").val(dados.logradouro);
-                            $("#bairro").val(dados.bairro);
-                            $("#cidade").val(dados.localidade);
-                            $("#estado").val(dados.uf);
-                        } //end if.
-                        else {
-                            //CEP pesquisado não foi encontrado.
-                            limpa_formulario_cep();
-                            alert("CEP não encontrado.");
-                        }
-                    });
+                            if (!("erro" in dados)) {
+                                //Atualiza os campos com os valores da consulta.
+                                $("#rua").val(dados.logradouro);
+                                $("#bairro").val(dados.bairro);
+                                $("#cidade").val(dados.localidade);
+                                $("#estado").val(dados.uf);
+                            } //end if.
+                            else {
+                                //CEP pesquisado não foi encontrado.
+                                limpa_formulario_cep();
+                                alert("CEP não encontrado.");
+                            }
+                        });
+                    } //end if.
+                    else {
+                        //cep é inválido.
+                        limpa_formulario_cep();
+                        alert("Formato de CEP inválido.");
+                    }
                 } //end if.
                 else {
-                    //cep é inválido.
+                    //cep sem valor, limpa formulário.
                     limpa_formulario_cep();
-                    alert("Formato de CEP inválido.");
                 }
-            } //end if.
-            else {
-                //cep sem valor, limpa formulário.
-                limpa_formulario_cep();
-            }
-        });
+            });
 
-        $('#validadeMes').focusout(() => {
-            console.log($('#validadeMes').val());
-        });
+            $('#validadeMes').focusout(() => {
+                console.log($('#validadeMes').val());
+            });
 
-        $('#validade').mask('00/0000');
-        $('#cpf').mask('000.000.000-00');
-        $('#cep').mask('00000-000');
-        $('#codigoSeguranca').mask('000');
-        $('#numeroCartao').mask('0000 0000 0000 0000');
+            $('#validade').mask('00/0000');
+            $('#cpf').mask('000.000.000-00');
+            $('#cep').mask('00000-000');
+            $('#codigoSeguranca').mask('000');
+            $('#numeroCartao').mask('0000 0000 0000 0000');
 
 
-        $('#btnPagamento').click(() => {
+            $('#btnPagamento').click(() => {
 
-            let idVenda = $('#vendaId').val();
-            let nome = $('#nome').val();
-            let email = $('#email').val();
-            let numeroCartao = $('#numeroCartao').val().replaceAll(" ", "");
-            let titularCartao = $('#titularCartao').val();
-            let cpf = $('#cpf').val();
-            let mesValidade = $('#validade').val().split('/')[0];
-            let anoValidade = $('#validade').val().split('/')[1];
-            let cvv = $('#codigoSeguranca').val();
-            let parcelas = $('#parcelas').val();
-            let cep = $('#cep').val().replaceAll("-", "");
-            let numeroEndereco = $('#numeroEndereco').val();
-            let rua = $('#rua').val();
-            let bairro = $('#bairro').val();
-            let cidade = $('#cidade').val();
-            let estado = $('#estado').val();
-            let valorTotal = $('#valorTotal').val();
+                let idVenda = $('#vendaId').val();
+                let nome = $('#nome').val();
+                let email = $('#email').val();
+                let numeroCartao = $('#numeroCartao').val().replaceAll(" ", "");
+                let titularCartao = $('#titularCartao').val();
+                let cpf = $('#cpf').val();
+                let mesValidade = $('#validade').val().split('/')[0];
+                let anoValidade = $('#validade').val().split('/')[1];
+                let cvv = $('#codigoSeguranca').val();
+                let parcelas = $('#parcelas').val();
+                let cep = $('#cep').val().replaceAll("-", "");
+                let numeroEndereco = $('#numeroEndereco').val();
+                let rua = $('#rua').val();
+                let bairro = $('#bairro').val();
+                let cidade = $('#cidade').val();
+                let estado = $('#estado').val();
+                let valorTotal = $('#valorTotal').val();
 
 
-            var cardData = {
-                cardNumber: numeroCartao,
-                holderName: titularCartao,
-                securityCode: cvv,
-                expirationMonth: mesValidade,
-                expirationYear: anoValidade
-            }
+                var cardData = {
+                    cardNumber: numeroCartao,
+                    holderName: titularCartao,
+                    securityCode: cvv,
+                    expirationMonth: mesValidade,
+                    expirationYear: anoValidade
+                }
 
-            var address = {
-                street: rua,
-                number: numeroEndereco,
-                neighborhood: bairro,
-                city: cidade,
-                state: estado,
-                postCode: cep
-            }
+                var address = {
+                    street: rua,
+                    number: numeroEndereco,
+                    neighborhood: bairro,
+                    city: cidade,
+                    state: estado,
+                    postCode: cep
+                }
 
-            console.log('Endereco ', address)
+                console.log('Endereco ', address)
 
-            // Validando numero do cartao
-            let isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber);
-            if (isValidCardNumber === true) {
+                // Validando numero do cartao
+                let isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber);
+                if (isValidCardNumber === true) {
 
-                // Validando Chave de seguranca do cartao | Validacao do banco nao funciona
-                let isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cardData.securityCode);
-                if (isValidSecurityCode === true) {
+                    // Validando Chave de seguranca do cartao | Validacao do banco nao funciona
+                    let isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cardData.securityCode);
+                    if (isValidSecurityCode === true) {
 
-                    // Validando mes/ano de validade do cartao
-                    let isValidExpiration = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear);
-                    if (isValidExpiration === true) {
+                        // Validando mes/ano de validade do cartao
+                        let isValidExpiration = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear);
+                        if (isValidExpiration === true) {
 
-                        // Validando dados em geral do cartao "Titular"
-                        let isValidCardData = checkout.isValidCardData(cardData, error => {
-                            error.toString().includes('Invalid holder name', error) ? alert('Nome do titular inválido') : alert('Ok');
-                        });
-                        if (isValidCardData === true) {
-
-                            // Verificando bandeira do cartao | Somente de teste
-                            let cardType = checkout.getCardType(cardData.cardNumber);
-                            console.log('Tipo do Cartão', cardType)
-
-                            // Obtendo Hash do Cartao
-                            checkout.getCardHash(cardData, function (cardHash) {
-                                console.log("Obteve o Hash: ", cardHash)
-
-                                let request = {
-                                    idVenda: idVenda,
-                                    nome: nome,
-                                    email: email,
-                                    cpf: cpf,
-                                    parcelas: parcelas,
-                                    valorTotal: valorTotal,
-                                    cardData: cardData,
-                                    cardHash: cardHash,
-                                    address: address
-                                }
-                                $('#btnPagamento').prop("disabled", true);
-                                realizarChamadaBackend(request);
-                                /* Sucesso - A variável cardHash conterá o hash do cartão de crédito */
-                            }, function (error) {
-                                console.log("Deu Erro: ", error)
-                                /* Erro - A variável error conterá o erro ocorrido ao obter o hash */
+                            // Validando dados em geral do cartao "Titular"
+                            console.log('Dados do cartao', cardData)
+                            let isValidCardData = checkout.isValidCardData(cardData, error => {
+                                error.toString().includes('Invalid holder name', error) ? alert('Nome do titular inválido') : alert('Ok');
                             });
+                            if (isValidCardData === true) {
+
+                                // Verificando bandeira do cartao | Somente de teste
+                                let cardType = checkout.getCardType(cardData.cardNumber);
+                                console.log('Tipo do Cartão', cardType)
+
+                                // Obtendo Hash do Cartao
+                                checkout.getCardHash(cardData, function (cardHash) {
+                                    console.log("Obteve o Hash: ", cardHash)
+
+                                    let request = {
+                                        idVenda: idVenda,
+                                        nome: nome,
+                                        email: email,
+                                        cpf: cpf,
+                                        parcelas: parcelas,
+                                        valorTotal: valorTotal,
+                                        cardData: cardData,
+                                        cardHash: cardHash,
+                                        address: address
+                                    }
+                                    $('#btnPagamento').prop("disabled", true);
+                                    realizarChamadaBackend(request);
+                                    /* Sucesso - A variável cardHash conterá o hash do cartão de crédito */
+                                }, function (error) {
+                                    console.log("Deu Erro: ", error)
+                                    /* Erro - A variável error conterá o erro ocorrido ao obter o hash */
+                                });
+                            }
+                        } else {
+                            alert('Data de expiracao invalida.');
                         }
                     } else {
-                        alert('Data de expiracao invalida.');
+                        alert('Código de segurança inválido.');
                     }
                 } else {
-                    alert('Código de segurança inválido.');
+                    alert('Número do cartão inválido.');
                 }
-            } else {
-                alert('Número do cartão inválido.');
-            }
+            });
         });
-    });
 
-    function realizarChamadaBackend(request) {
-        $.ajax({
-            method: "POST",
-            url: "[[@{/mvc/realizarVendaCartao}]]",
-            data: JSON.stringify(request),
-            // data: {cardHash: request.cardHash},
-            contentType: "application/json"
-        }).done(function (response) {
-            console.log(response)
-            alert(response.status + "\n" + response.message)
-            $('#btnPagamento').prop("disabled", false);
-        }).fail(function (jqXHR, textStatus) {
-            console.error("Request failed: " + textStatus);
-            console.error(jqXHR);
-            $('#btnPagamento').prop("disabled", false);
-        });
-    }
-</script>
+        function realizarChamadaBackend(request) {
+            $.ajax({
+                method: "POST",
+                url: "[[@{/mvc/realizarVendaCartao}]]",
+                data: JSON.stringify(request),
+                // data: {cardHash: request.cardHash},
+                contentType: "application/json"
+            }).done(function (response) {
+                console.log(response)
+                alert(response.status + "\n" + response.message)
+                $('#btnPagamento').prop("disabled", false);
+            }).fail(function (jqXHR, textStatus) {
+                console.error("Request failed: " + textStatus);
+                console.error(jqXHR);
+                $('#btnPagamento').prop("disabled", false);
+            });
+        }
+    </script>
+
+
+
+<!--<script>-->
+<!--    $(() => {-->
+<!--        var checkout = new DirectCheckout('230AA59BBD64353A43C0528137F70B7353B3C8D2AE6FCFE987103811735C0CE6', false);-->
+<!--        // var checkout = new DirectCheckout('230AA59BBD64353A43C0528137F70B7302709DE7BF0CAD652FB3301BD6940F1E', false);-->
+
+<!--        var cardData = {-->
+<!--            cardNumber: '5142365387591675',-->
+<!--            holderName: 'Gustavo Paco',-->
+<!--            securityCode: '324',-->
+<!--            expirationMonth: '01',-->
+<!--            expirationYear: '2024'-->
+<!--        }-->
+
+<!--        setTimeout(() => {-->
+<!--            // Validando numero do cartao-->
+<!--            let isValidCardNumber = checkout.isValidCardNumber(cardData.cardNumber);-->
+<!--            if (isValidCardNumber === true) {-->
+
+<!--                // Validando Chave de seguranca do cartao | Validacao do banco nao funciona-->
+<!--                let isValidSecurityCode = checkout.isValidSecurityCode(cardData.cardNumber, cardData.securityCode);-->
+<!--                if (isValidSecurityCode === true) {-->
+
+<!--                    // Validando mes/ano de validade do cartao-->
+<!--                    let isValidExpiration = checkout.isValidExpireDate(cardData.expirationMonth, cardData.expirationYear);-->
+<!--                    if (isValidExpiration === true) {-->
+
+<!--                        // Validando dados em geral do cartao "Titular"-->
+<!--                        console.log('Dados do cartao', cardData)-->
+<!--                        let isValidCardData = checkout.isValidCardData(cardData, error => {-->
+<!--                            error.toString().includes('Invalid holder name', error) ? alert('Nome do titular inválido') : console.log(error);-->
+<!--                        });-->
+<!--                        if (isValidCardData === true) {-->
+
+<!--                            // Verificando bandeira do cartao | Somente de teste-->
+<!--                            let cardType = checkout.getCardType(cardData.cardNumber);-->
+<!--                            console.log('Tipo do Cartão', cardType)-->
+
+<!--                            // Obtendo Hash do Cartao-->
+<!--                            checkout.getCardHash(cardData, function (cardHash) {-->
+<!--                                console.log("Obteve o Hash: ", cardHash)-->
+
+<!--                                let request = {-->
+<!--                                    idVenda: idVenda,-->
+<!--                                    nome: nome,-->
+<!--                                    email: email,-->
+<!--                                    cpf: cpf,-->
+<!--                                    parcelas: parcelas,-->
+<!--                                    valorTotal: valorTotal,-->
+<!--                                    cardData: cardData,-->
+<!--                                    cardHash: cardHash,-->
+<!--                                    address: address-->
+<!--                                }-->
+<!--                                $('#btnPagamento').prop("disabled", true);-->
+<!--                                // realizarChamadaBackend(request);-->
+<!--                                /* Sucesso - A variável cardHash conterá o hash do cartão de crédito */-->
+<!--                            }, function (error) {-->
+<!--                                console.log("Deu Erro: ", error)-->
+<!--                                /* Erro - A variável error conterá o erro ocorrido ao obter o hash */-->
+<!--                            });-->
+<!--                        }-->
+<!--                    } else {-->
+<!--                        alert('Data de expiracao invalida.');-->
+<!--                    }-->
+<!--                } else {-->
+<!--                    alert('Código de segurança inválido.');-->
+<!--                }-->
+<!--            } else {-->
+<!--                alert('Número do cartão inválido.');-->
+<!--            }-->
+<!--        },5000);-->
+
+<!--    });-->
+<!--</script>-->
 </body>
 </html>
